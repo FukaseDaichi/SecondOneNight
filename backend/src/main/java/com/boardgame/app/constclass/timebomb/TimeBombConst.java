@@ -8,6 +8,7 @@ import java.util.List;
 public class TimeBombConst {
 
 	public static final String ROOM_TYPE = "TIMEBOMB";
+	public static final int DEFAULT_MAXUSERSIZE = 8;
 
 	/**
 	 * 1:時空警察

@@ -19,6 +19,11 @@ public class TimeBombRoom extends Room {
 	private int turn;
 	private List<LeadCards> leadCardsList;
 
+	public TimeBombRoom() {
+		maxUserSize = TimeBombConst.DEFAULT_MAXUSERSIZE;
+		userList = new ArrayList<User>();
+	}
+
 	public void init() {
 		// ターンの初期化
 		turn = 1;
