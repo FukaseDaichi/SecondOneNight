@@ -18,15 +18,19 @@ public class TimeBombRoom extends Room {
 	private static final long serialVersionUID = 6252639126815391708L;
 	private int turn;
 	private List<LeadCards> leadCardsList;
+	private int winnerTeam;
 
 	public TimeBombRoom() {
 		maxUserSize = TimeBombConst.DEFAULT_MAXUSERSIZE;
 		userList = new ArrayList<User>();
+		turn = 0;
+		winnerTeam = 0;
 	}
 
 	public void init() {
 		// ターンの初期化
 		turn = 1;
+		winnerTeam = 0;
 
 		// ユーザの初期化
 		int userSize = userList.size();
@@ -70,7 +74,7 @@ public class TimeBombRoom extends Room {
 		return user;
 	}
 
-	public int playTurn(int cardIndex) throws ApplicationException {
+	public void playTurn(int cardIndex) throws ApplicationException {
 		// エラーチェック
 		if (leadCardsList.get(cardIndex).isOpenFlg()) {
 			throw new ApplicationException("対象カードなし");
@@ -93,14 +97,14 @@ public class TimeBombRoom extends Room {
 			}
 		}
 
-		return judgment();
+		judgment();
 	}
 
 	/**
 	 * 0:勝敗なし
 	 * @return
 	 */
-	private int judgment() {
+	private void judgment() {
 		int result = 0;
 
 		if (leadCardsList.stream().filter(o -> (o.getCardType() == TimeBombConst.BOMB_CARD_NO) && o.isOpenFlg())
@@ -117,7 +121,7 @@ public class TimeBombRoom extends Room {
 			result = TimeBombConst.BOMB_TEAM;
 		}
 
-		return result;
+		winnerTeam = result;
 	}
 
 }

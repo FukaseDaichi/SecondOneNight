@@ -12,6 +12,7 @@ public class RoomUserInfo implements Serializable {
 
 	}
 
+	private String action;
 	private String roomId;
 	private String userName;
 	private int cardIndex;
