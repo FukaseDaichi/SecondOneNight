@@ -1,8 +1,10 @@
 package com.boardgame.app.entity.timebomb;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import com.boardgame.app.constclass.timebomb.TimeBombConst;
 import com.boardgame.app.entity.Room;
@@ -19,17 +21,20 @@ public class TimeBombRoom extends Room {
 	private int turn;
 	private List<LeadCards> leadCardsList;
 	private int winnerTeam;
+	private int round;
 
 	public TimeBombRoom() {
 		maxUserSize = TimeBombConst.DEFAULT_MAXUSERSIZE;
 		userList = new ArrayList<User>();
 		turn = 0;
 		winnerTeam = 0;
+		round = 0;
 	}
 
 	public void init() {
 		// ターンの初期化
 		turn = 1;
+		round = 1;
 		winnerTeam = 0;
 
 		// ユーザの初期化
@@ -82,10 +87,12 @@ public class TimeBombRoom extends Room {
 
 		// 実行
 		leadCardsList.get(cardIndex).setOpenFlg(true);
+
+		// ターン経過
 		turn++;
 
 		// 手番ユーザの決定
-		int turnUserNo = (cardIndex) / 5;
+		int turnUserNo = (cardIndex) / (6 - round);
 
 		for (int i = 0; i < userList.size(); i++) {
 			TimeBombUser timeBombUser = (TimeBombUser) userList.get(i);
@@ -98,6 +105,18 @@ public class TimeBombRoom extends Room {
 		}
 
 		judgment();
+
+		// ラウンドチェック
+		if ((turn - 1) % userList.size() == 0) {
+			round++;
+
+			// カードの回収
+			leadCardsList = leadCardsList.stream().filter(o -> !o.isOpenFlg()).collect(Collectors.toList());
+			// 入れ替える
+			Collections.shuffle(leadCardsList);
+
+		}
+
 	}
 
 	/**

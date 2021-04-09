@@ -84,10 +84,22 @@ public class TimeBombController {
 				return;
 			}
 
-			if (5 * (user.getUserNo() - 1) <= userInfo.getCardIndex()
-					&& userInfo.getCardIndex() < 5 * user.getUserNo()) {
+			if ((6 - room.getRound()) * (user.getUserNo() - 1) <= userInfo.getCardIndex()
+					&& userInfo.getCardIndex() < (6 - room.getRound()) * user.getUserNo()) {
 				// 自信のユーザではないため終了
 				return;
+			}
+
+			if (room.getLeadCardsList().get(userInfo.getCardIndex()).isOpenFlg()) {
+				// 既にオープンされているため終了
+				return;
+			}
+
+			if (room.getWinnerTeam() > 0) {
+				ErrObj obj = new ErrObj(HttpsURLConnection.HTTP_ACCEPTED, "ゲームを開始してください", null);
+				simpMessagingTemplate.convertAndSend(description, obj);
+				return;
+
 			}
 
 			room.playTurn(userInfo.getCardIndex());
