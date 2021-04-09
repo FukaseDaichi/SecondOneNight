@@ -96,8 +96,7 @@ public class TimeBombController {
 			}
 
 			if (room.getWinnerTeam() > 0) {
-				ErrObj obj = new ErrObj(HttpsURLConnection.HTTP_ACCEPTED, "ゲームを開始してください", null);
-				simpMessagingTemplate.convertAndSend(description, obj);
+				// ゲーム終了時
 				return;
 
 			}
