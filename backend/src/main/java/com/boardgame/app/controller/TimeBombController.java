@@ -56,7 +56,9 @@ public class TimeBombController {
 		TimeBombRoom room = (TimeBombRoom) appInfo.getRoom(userInfo.getRoomId());
 
 		if (room != null) {
-			room.init();
+			if(room.getUserList().size() > 2) {
+				room.init();
+			}
 
 		} else {
 			ErrObj obj = new ErrObj(HttpsURLConnection.HTTP_NOT_FOUND, "部屋が存在しません。部屋の作成をしてください", null);
