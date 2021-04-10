@@ -138,12 +138,10 @@ public class TimeBombRoom extends Room {
 				.count() > 0) {
 			// 爆弾が爆発した場合
 			result = TimeBombConst.BOMB_TEAM;
-		} else if (leadCardsList.stream()
-				.filter(o -> o.getCardType() == TimeBombConst.RELEASE_CARD_NO && o.isOpenFlg())
-				.count() >= maxUserSize) {
+		} else if (releaseNo >= userList.size()) {
 			// 解除成功
 			result = TimeBombConst.TIME_POLIS;
-		} else if (turn > leadCardsList.size()) {
+		} else if (turn > leadCardsList.size() * 4) {
 			// 時間切れ
 			result = TimeBombConst.BOMB_TEAM;
 		}
