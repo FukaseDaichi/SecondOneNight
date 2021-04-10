@@ -95,14 +95,14 @@ public class TimeBombConst {
 			break;
 
 		case 7:
-			returnIntList = new ArrayList<>(Arrays.asList(1, 1, 1, 1, 2, 2, 2));
+			returnIntList = new ArrayList<>(Arrays.asList(1, 1, 1, 1, 1, 2, 2, 2));
 			Collections.shuffle(returnIntList);
 			// 先頭要素削除
 			returnIntList.remove(0);
 			break;
 
 		case 8:
-			returnIntList = new ArrayList<>(Arrays.asList(1, 1, 1, 1, 2, 2, 2));
+			returnIntList = new ArrayList<>(Arrays.asList(1, 1, 1, 1, 1, 2, 2, 2));
 			Collections.shuffle(returnIntList);
 			break;
 		}

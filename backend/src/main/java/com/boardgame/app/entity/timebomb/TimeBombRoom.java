@@ -22,6 +22,7 @@ public class TimeBombRoom extends Room {
 	private List<LeadCards> leadCardsList;
 	private int winnerTeam;
 	private int round;
+	private int releaseNo;
 
 	public TimeBombRoom() {
 		maxUserSize = TimeBombConst.DEFAULT_MAXUSERSIZE;
@@ -29,6 +30,7 @@ public class TimeBombRoom extends Room {
 		turn = 0;
 		winnerTeam = 0;
 		round = 0;
+		releaseNo = 0;
 	}
 
 	public void init() {
@@ -36,6 +38,7 @@ public class TimeBombRoom extends Room {
 		turn = 1;
 		round = 1;
 		winnerTeam = 0;
+		releaseNo = 0;
 
 		// ユーザの初期化
 		int userSize = userList.size();
@@ -90,6 +93,11 @@ public class TimeBombRoom extends Room {
 
 		// ターン経過
 		turn++;
+
+		// 解除数のカウント
+		if (leadCardsList.get(cardIndex).getCardType() == TimeBombConst.RELEASE_CARD_NO) {
+			releaseNo++;
+		}
 
 		// 手番ユーザの決定
 		int turnUserNo = (cardIndex) / (6 - round);
