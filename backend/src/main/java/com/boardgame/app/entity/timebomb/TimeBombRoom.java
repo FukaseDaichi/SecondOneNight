@@ -114,6 +114,14 @@ public class TimeBombRoom extends Room {
 
 		judgment();
 
+		if (winnerTeam > 0) {
+			// 勝敗が決定したためカードを全て表にする
+			if (winnerTeam > 0) {
+				leadCardsList.forEach(o -> o.setOpenFlg(true));
+			}
+			return;
+		}
+
 		// ラウンドチェック
 		if ((turn - 1) % userList.size() == 0) {
 			round++;
@@ -147,6 +155,7 @@ public class TimeBombRoom extends Room {
 		}
 
 		winnerTeam = result;
+
 	}
 
 }
