@@ -56,7 +56,7 @@ public class TimeBombController {
 		TimeBombRoom room = (TimeBombRoom) appInfo.getRoom(userInfo.getRoomId());
 
 		if (room != null) {
-			if(room.getUserList().size() > 2) {
+			if (room.getUserList().size() > 2) {
 				room.init();
 			}
 
@@ -129,4 +129,24 @@ public class TimeBombController {
 		simpMessagingTemplate.convertAndSend(description, room);
 	}
 
+	@MessageMapping("/changeIcon")
+	public void changeIcon(RoomUserInfo userInfo) throws Exception {
+		String description = "/topic/" + userInfo.getRoomId() + "/timebomb";
+
+		Room room = appInfo.getRoom(userInfo.getRoomId());
+
+		if (room != null) {
+			room.getUserList().forEach(o -> {
+				if (o.getUserName().equals(userInfo.getUserName())) {
+					o.setUserIconUrl(userInfo.getAction());
+				}
+			});
+		} else {
+			ErrObj obj = new ErrObj(HttpsURLConnection.HTTP_NOT_FOUND, "部屋が存在しません。部屋の作成をしてください", null);
+			simpMessagingTemplate.convertAndSend(description, obj);
+			return;
+		}
+
+		simpMessagingTemplate.convertAndSend(description, room);
+	}
 }
