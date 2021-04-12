@@ -146,7 +146,8 @@ public class TimeBombController {
 			simpMessagingTemplate.convertAndSend(description, obj);
 			return;
 		}
+		ErrObj obj = new ErrObj(HttpsURLConnection.HTTP_CREATED, null, room.getUserList());
 
-		simpMessagingTemplate.convertAndSend(description, room);
+		simpMessagingTemplate.convertAndSend(description, obj);
 	}
 }
