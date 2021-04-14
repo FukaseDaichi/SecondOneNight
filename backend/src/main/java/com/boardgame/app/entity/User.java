@@ -11,4 +11,5 @@ public abstract class User implements Serializable {
 	protected String userId;
 	protected String userName;
 	protected String userIconUrl;
+
 }

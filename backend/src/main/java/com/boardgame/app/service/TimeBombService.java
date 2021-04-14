@@ -24,7 +24,7 @@ public class TimeBombService implements Serializable {
 		Room room = new TimeBombRoom();
 		room.setRoomType(TimeBombConst.ROOM_TYPE);
 		room.setRoomId(roomId);
-		appInfo.addRomm(room);
+		appInfo.addRoom(room);
 		return roomId;
 	}
 }

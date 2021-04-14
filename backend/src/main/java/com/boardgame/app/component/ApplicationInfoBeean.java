@@ -22,7 +22,7 @@ public class ApplicationInfoBeean implements Serializable {
 	private int maxRoomSize;
 	private List<Room> roomList;
 
-	public void addRomm(Room room) {
+	public void addRoom(Room room) {
 
 		if (roomList == null) {
 			roomList = new ArrayList<Room>();

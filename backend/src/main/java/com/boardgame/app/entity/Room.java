@@ -49,4 +49,15 @@ public abstract class Room implements Serializable {
 
 	public abstract User joinUser(String userName) throws ApplicationException;
 
+	public User getUserbyName(String userName) {
+		// nullチェック
+		if (userName == null || userList == null) {
+			return null;
+		}
+
+		User user = userList.stream().filter(o -> userName.equals(o.getUserName())).findFirst().orElse(null);
+
+		return user;
+	}
+
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.boardgame.app.component.ApplicationInfoBeean;
 import com.boardgame.app.entity.Room;
+import com.boardgame.app.entity.werewolf.WerewolfRoom;
 import com.boardgame.app.service.TimeBombService;
 
 @Controller
@@ -25,6 +26,17 @@ public class MainController {
 	public Room createTimeBombRoom() {
 		String roomId = timeBombService.createTimeBombRoom();
 		Room room = appInfo.getRoom(roomId);
+		return room;
+	}
+
+	@CrossOrigin
+	@RequestMapping(value = { "/createroom/werewolf" })
+	public Room createWerwolfRoom() {
+		String roomId = appInfo.createRoomId();
+		Room room = new WerewolfRoom();
+		room.setRoomId(roomId);
+		room.setRoomType("test");
+		appInfo.addRoom(room);
 		return room;
 	}
 
