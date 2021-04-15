@@ -25,28 +25,33 @@ public class TimeBombController {
 	private ApplicationInfoBeean appInfo;
 
 	@MessageMapping("/roomin")
-	public void roomIn(RoomUserInfo userInfo) throws Exception {
+	public void roomIn(RoomUserInfo userInfo) {
 		String description = "/topic/" + userInfo.getRoomId() + "/timebomb";
-
 		Room room = appInfo.getRoom(userInfo.getRoomId());
 
-		if (room != null) {
-			try {
+		try {
+
+			if (room != null) {
 				room.joinUser(userInfo.getUserName());
-
-			} catch (ApplicationException e) {
-				ErrObj obj = new ErrObj(e.getStatus(), e.getMessage(), room);
-
+			} else {
+				ErrObj obj = new ErrObj(HttpsURLConnection.HTTP_NOT_FOUND, "部屋が存在しません。部屋の作成をしてください", null);
 				simpMessagingTemplate.convertAndSend(description, obj);
 				return;
 			}
-		} else {
-			ErrObj obj = new ErrObj(HttpsURLConnection.HTTP_NOT_FOUND, "部屋が存在しません。部屋の作成をしてください", null);
+
+			simpMessagingTemplate.convertAndSend(description, room);
+
+		} catch (ApplicationException e) {
+			ErrObj obj = new ErrObj(e.getStatus(), e.getMessage(), room);
+			simpMessagingTemplate.convertAndSend(description, obj);
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+			ErrObj obj = new ErrObj(HttpsURLConnection.HTTP_NOT_FOUND, "システムエラー、部屋を立て直してください", null);
 			simpMessagingTemplate.convertAndSend(description, obj);
 			return;
 		}
 
-		simpMessagingTemplate.convertAndSend(description, room);
 	}
 
 	@MessageMapping("/start")
