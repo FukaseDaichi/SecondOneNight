@@ -3,7 +3,7 @@ package com.boardgame.app.entity.chat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.boardgame.app.constclass.timebomb.SystemConst;
+import com.boardgame.app.constclass.SystemConst;
 import com.boardgame.app.entity.Room;
 import com.boardgame.app.entity.User;
 

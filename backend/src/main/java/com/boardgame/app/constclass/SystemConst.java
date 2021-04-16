@@ -1,4 +1,4 @@
-package com.boardgame.app.constclass.timebomb;
+package com.boardgame.app.constclass;
 
 public class SystemConst {
 
