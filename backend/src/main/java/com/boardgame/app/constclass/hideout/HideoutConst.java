@@ -10,6 +10,8 @@ import com.boardgame.app.entity.hideout.MemberCard;
 
 public class HideoutConst {
 
+	public static final String ROOM_TYPE = "HIDEOUT";
+
 	/**
 	 * 1:スワット
 	 * 2:テロリスト

@@ -23,6 +23,8 @@ public class HideoutRoom extends ChatRoom {
 	private int winnerTeam;
 	private List<MemberCard> memberCardList;
 	private boolean rushFlg;
+	private List<MemberCard> memberFirldList;
+	private BuildingCard firldBuilding;
 
 	public HideoutRoom() {
 		turn = 0;
@@ -30,14 +32,24 @@ public class HideoutRoom extends ChatRoom {
 		winnerTeam = 0;
 		buildingCardList = new ArrayList<BuildingCard>();
 		memberCardList = new ArrayList<MemberCard>();
+		memberFirldList = new ArrayList<MemberCard>();
+		maxUserSize = 6;
 	}
 
-	public void init() {
+	public void init() throws ApplicationException {
+
+		if (userList.size() < 4) {
+			// 人数足りない
+			throw new ApplicationException("人数が足りません");
+		}
+
+		maxUserSize = userList.size();
 		turn = 1;
 		rushFlg = false;
 		winnerTeam = 0;
 		buildingCardList = HideoutConst.getBuildingCardList(userList.size());
 		memberCardList = HideoutConst.getMembersList(userList.size());
+		memberFirldList = new ArrayList<MemberCard>();
 
 		// インデックスをふる
 		for (int i = 0; i < buildingCardList.size(); i++) {
@@ -65,6 +77,8 @@ public class HideoutRoom extends ChatRoom {
 				user.setTurnFlg(false);
 			}
 		}
+		// フィールドの建物を設定
+		firldBuilding = buildingCardList.get(buildingCardList.size() - 1);
 	}
 
 	public void wait(int buildingCardIndex, int userIndex) throws ApplicationException {
@@ -96,6 +110,7 @@ public class HideoutRoom extends ChatRoom {
 		// ラッシュフラグに応じて対応
 		if (buildingCardList.get(buildingCardIndex).getWaitUserIndexList().size() > 3) {
 			rushFlg = true;
+			memberFirldList.clear();
 
 			// 残りの隊員カードを取得
 			List<MemberCard> resideList = memberCardList.stream().filter(o -> !o.isConsumeFlg())
@@ -136,13 +151,73 @@ public class HideoutRoom extends ChatRoom {
 			throw new ApplicationException("対象のユーザじゃありません");
 		}
 
-		MemberCard card = memberCardList.stream().filter(o -> (o.getNo() == userIndex) && !o.isConsumeFlg()).findAny()
+		MemberCard card = memberCardList.stream().filter(o -> (o.getNo() == memberCardNo) && !o.isConsumeFlg())
+				.findAny()
 				.orElse(null);
 
 		if (card == null) {
 			throw new ApplicationException("対象の隊員カードがありません");
+		}
+
+		// カード消費
+		card.setConsumeFlg(true);
+
+		// 所持ユーザ設定
+		card.setHaveUserIndex(userIndex);
+
+		memberFirldList.add(card);
+
+		// 4枚集まった場合
+		if (memberFirldList.size() > 3) {
+			rushFlg = false;
+
+			// 突入判定
+			int sum = memberFirldList.stream().mapToInt(MemberCard::getCardType).sum();
+			if (sum > 0) {
+				// 突入失敗は処理なし
+			} else {
+				// 突入成功 すべてのカードがSWATの場合廃棄しない
+				if (memberFirldList.stream().filter(o -> o.getCardType() == HideoutConst.MEMBER_CARD_SWAT)
+						.count() > 3) {
+					// 廃棄フラグをfalseにする
+					memberFirldList.forEach(o -> o.setConsumeFlg(false));
+				}
+
+				// 建物公開
+				targetBuilding.setOpenFlg(true);
+
+				// 非公開建物のNoを取得
+				List<Integer> resideBuildIntList = buildingCardList.stream().filter(o -> !o.isOpenFlg())
+						.map(BuildingCard::getNo).collect(Collectors.toList());
+
+				// シャッフル
+				Collections.shuffle(resideBuildIntList);
+				int index = 0;
+
+				// 各ユーザに建物を再設定
+				for (User user : userList) {
+					HideoutUser hideoutUser = (HideoutUser) user;
+					if (!hideoutUser.getBuildingCard().isOpenFlg()) {
+						hideoutUser.setBuildingCard(buildingCardList.get(resideBuildIntList.get(index)));
+						index++;
+					}
+				}
+
+				if (!firldBuilding.isOpenFlg()) {
+					firldBuilding = buildingCardList.get(resideBuildIntList.get(index));
+				}
+
+			}
+
+			// 待機メンバーリセット
+			targetBuilding.getWaitUserIndexList().clear();
+			// フィールド隊員カード初期化
+			memberFirldList.clear();
+			turn++;
+			judgment();
 
 		}
+
 	}
 
 	@Override
@@ -153,9 +228,29 @@ public class HideoutRoom extends ChatRoom {
 		return user;
 	}
 
-	private List<MemberCard> getResideMembercard() {
+	/**
+	 * 勝敗判定
+	 */
+	private void judgment() {
 
-		return null;
+		// 爆弾が開いているか判定
+		if (buildingCardList.stream().filter(o -> o.getCatdType() == HideoutConst.BUILD_CARD_BOMB && o.isOpenFlg())
+				.count() > 0) {
+			winnerTeam = HideoutConst.ROLL_TERRORIST;
+		} else if (buildingCardList.stream()
+				// すべてのアジト壊滅判定
+				.filter(o -> o.getCatdType() == HideoutConst.BUILD_CARD_HIDEOUT && !o.isOpenFlg())
+				.count() > 0) {
+			winnerTeam = HideoutConst.ROLL_SWAT;
+		} else if (memberCardList.stream().filter(o -> !o.isConsumeFlg()).count() < 8) {
+			// 時間切れ判定
+			winnerTeam = HideoutConst.ROLL_TERRORIST;
+		}
+
+		if (winnerTeam > 0) {
+			// 全ての建物公開
+			buildingCardList.forEach(o -> o.setOpenFlg(true));
+		}
 	}
 
 }
