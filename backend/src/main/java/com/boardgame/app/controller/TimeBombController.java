@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import com.boardgame.app.component.ApplicationInfoBeean;
 import com.boardgame.app.entity.ErrObj;
 import com.boardgame.app.entity.Room;
+import com.boardgame.app.entity.SocketInfo;
 import com.boardgame.app.entity.timebomb.RoomUserInfo;
 import com.boardgame.app.entity.timebomb.TimeBombRoom;
 import com.boardgame.app.entity.timebomb.TimeBombUser;
@@ -155,4 +156,20 @@ public class TimeBombController {
 
 		simpMessagingTemplate.convertAndSend(description, obj);
 	}
+
+	@MessageMapping("/timebomb-limittime")
+	public void limittime(SocketInfo socketInfo) throws Exception {
+		String description = "/topic/" + socketInfo.getRoomId() + "/timebomb";
+
+		TimeBombRoom room = (TimeBombRoom) appInfo.getRoom(socketInfo.getRoomId());
+
+		if (room == null) {
+			return;
+		} else {
+			room.doOverLimit((Integer) socketInfo.getObj());
+		}
+
+		simpMessagingTemplate.convertAndSend(description, room);
+	}
+
 }

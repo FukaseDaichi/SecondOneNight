@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import com.boardgame.app.constclass.timebomb.TimeBombConst;
 import com.boardgame.app.entity.Room;
 import com.boardgame.app.entity.User;
+import com.boardgame.app.entity.enif.LimitTimeInterface;
 import com.boardgame.app.exception.ApplicationException;
 
 import lombok.Data;
@@ -16,13 +17,15 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class TimeBombRoom extends Room {
+public class TimeBombRoom extends Room implements LimitTimeInterface {
 	private static final long serialVersionUID = 6252639126815391708L;
 	private int turn;
 	private List<LeadCards> leadCardsList;
 	private int winnerTeam;
 	private int round;
 	private int releaseNo;
+
+	private int limitTime;
 
 	public TimeBombRoom() {
 		maxUserSize = TimeBombConst.DEFAULT_MAXUSERSIZE;
@@ -156,6 +159,45 @@ public class TimeBombRoom extends Room {
 
 		winnerTeam = result;
 
+	}
+
+	@Override
+	public void doOverLimit(int turn) throws ApplicationException {
+		if (turn != this.turn || winnerTeam > 0) {
+			// 処理終了
+			return;
+		}
+
+		try {
+			// 開いていないカード取得
+
+			TimeBombUser turnUser = null;
+			for (User user : userList) {
+				TimeBombUser timebombUser = (TimeBombUser) user;
+
+				if (timebombUser.isTurnFlg()) {
+					turnUser = timebombUser;
+				}
+			}
+
+			int index = 0;
+			for (int i = 0; i < leadCardsList.size(); i++) {
+				if (!leadCardsList.get(i).isOpenFlg()) {
+					if ((6 - round) * (turnUser.getUserNo() - 1) <= i
+							&& i < (6 - round) * turnUser.getUserNo()) {
+						// 自分のカードであるため継続
+						continue;
+					}
+					index = i;
+					break;
+				}
+			}
+
+			playTurn(index);
+
+		} catch (Throwable e) {
+			throw new ApplicationException(e.getMessage());
+		}
 	}
 
 }
