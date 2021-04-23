@@ -152,7 +152,7 @@ public class TimeBombRoom extends Room implements LimitTimeInterface {
 		} else if (releaseNo >= userList.size()) {
 			// 解除成功
 			result = TimeBombConst.TIME_POLIS;
-		} else if (turn > leadCardsList.size() * 4) {
+		} else if (turn > userList.size() * 4) {
 			// 時間切れ
 			result = TimeBombConst.BOMB_TEAM;
 		}
