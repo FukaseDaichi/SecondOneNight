@@ -181,7 +181,7 @@ public class TimeBombController {
 
 		room.setLimitTime((Integer) socketInfo.getObj());
 
-		ErrObj obj = new ErrObj(900, null, room.getLimitTime());
+		ErrObj obj = new ErrObj(socketInfo.getStatus(), null, room.getLimitTime());
 
 		simpMessagingTemplate.convertAndSend(description, obj);
 
