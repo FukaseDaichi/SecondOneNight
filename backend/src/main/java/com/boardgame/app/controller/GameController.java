@@ -12,6 +12,7 @@ import com.boardgame.app.entity.Room;
 import com.boardgame.app.entity.SocketInfo;
 import com.boardgame.app.entity.User;
 import com.boardgame.app.entity.chat.ChatRoom;
+import com.boardgame.app.entity.enif.LimitTimeInterface;
 import com.boardgame.app.exception.ApplicationException;
 
 @Controller
@@ -56,6 +57,19 @@ public class GameController {
 		room.chat(user, socketInfo.getMessage());
 
 		SocketInfo rtnObj = new SocketInfo(socketInfo.getStatus(), null, room.getChatList());
+
+		simpMessagingTemplate.convertAndSend(description, rtnObj);
+
+	}
+
+	@MessageMapping("game-setlimittime")
+	public void setLimitTime(SocketInfo socketInfo) throws Exception {
+		String description = "/topic/" + socketInfo.getRoomId();
+		LimitTimeInterface room = (LimitTimeInterface) appInfo.getRoom(socketInfo.getRoomId());
+
+		room.setLimitTime((Integer) socketInfo.getObj());
+
+		SocketInfo rtnObj = new SocketInfo(socketInfo.getStatus(), null, room.getLimitTime());
 
 		simpMessagingTemplate.convertAndSend(description, rtnObj);
 

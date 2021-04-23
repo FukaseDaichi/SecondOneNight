@@ -11,6 +11,7 @@ import com.boardgame.app.component.ApplicationInfoBeean;
 import com.boardgame.app.entity.ErrObj;
 import com.boardgame.app.entity.Room;
 import com.boardgame.app.entity.SocketInfo;
+import com.boardgame.app.entity.enif.LimitTimeInterface;
 import com.boardgame.app.entity.timebomb.RoomUserInfo;
 import com.boardgame.app.entity.timebomb.TimeBombRoom;
 import com.boardgame.app.entity.timebomb.TimeBombUser;
@@ -170,6 +171,20 @@ public class TimeBombController {
 		}
 
 		simpMessagingTemplate.convertAndSend(description, room);
+	}
+
+	@MessageMapping("timebomb-setlimittime")
+	public void setTimeBombLimitTime(SocketInfo socketInfo) throws Exception {
+		String description = "/topic/" + socketInfo.getRoomId() + "/timebomb";
+
+		LimitTimeInterface room = (LimitTimeInterface) appInfo.getRoom(socketInfo.getRoomId());
+
+		room.setLimitTime((Integer) socketInfo.getObj());
+
+		ErrObj obj = new ErrObj(900, null, room.getLimitTime());
+
+		simpMessagingTemplate.convertAndSend(description, obj);
+
 	}
 
 }
