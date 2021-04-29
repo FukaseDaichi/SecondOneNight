@@ -19,6 +19,6 @@ public class HideoutUser extends User {
 
 	private BuildingCard buildingCard;
 
-	private List<MemberCard> memberCard;
+	private List<MemberCard> memberCardList;
 
 }

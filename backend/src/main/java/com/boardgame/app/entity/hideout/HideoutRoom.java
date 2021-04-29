@@ -68,7 +68,7 @@ public class HideoutRoom extends ChatRoom {
 		for (int i = 0; i < userList.size(); i++) {
 			HideoutUser user = (HideoutUser) userList.get(i);
 			user.setBuildingCard(buildingCardList.get(i));
-			user.setMemberCard(new ArrayList<MemberCard>());
+			user.setMemberCardList(new ArrayList<MemberCard>());
 			user.setUserNo(i + 1);
 			user.setUserRoleNo(rollList.get(i));
 			if (i == 0) {
@@ -121,10 +121,10 @@ public class HideoutRoom extends ChatRoom {
 			for (Integer integer : buildingCardList.get(buildingCardIndex).getWaitUserIndexList()) {
 				HideoutUser rushuUser = (HideoutUser) userList.get(integer);
 				// 2枚の隊員カードを追加
-				rushuUser.getMemberCard().add(resideList.get(resideIndex));
+				rushuUser.getMemberCardList().add(resideList.get(resideIndex));
 				resideIndex++;
 
-				rushuUser.getMemberCard().add(resideList.get(resideIndex));
+				rushuUser.getMemberCardList().add(resideList.get(resideIndex));
 				resideIndex++;
 			}
 
