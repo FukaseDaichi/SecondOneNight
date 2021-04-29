@@ -214,10 +214,14 @@ public class HideoutRoom extends ChatRoom {
 
 			}
 
+			// 突入カードをクリア
+			for (User user : userList) {
+				HideoutUser hideoutUser = (HideoutUser) user;
+				hideoutUser.getMemberCardList().clear();
+			}
+
 			// 待機メンバーリセット
 			targetBuilding.getWaitUserIndexList().clear();
-			// フィールド隊員カード初期化
-			memberFirldList.clear();
 			turn++;
 			judgment();
 
