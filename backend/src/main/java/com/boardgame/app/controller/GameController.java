@@ -8,6 +8,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import com.boardgame.app.component.ApplicationInfoBeean;
+import com.boardgame.app.entity.ErrObj;
 import com.boardgame.app.entity.Room;
 import com.boardgame.app.entity.SocketInfo;
 import com.boardgame.app.entity.User;
@@ -73,6 +74,28 @@ public class GameController {
 
 		simpMessagingTemplate.convertAndSend(description, rtnObj);
 
+	}
+
+	@MessageMapping("game-changeIcon")
+	public void changeIcon(SocketInfo socketInfo) throws Exception {
+		String description = "/topic/" + socketInfo.getRoomId();
+
+		Room room = appInfo.getRoom( socketInfo.getRoomId());
+
+		if (room != null) {
+			room.getUserList().forEach(o -> {
+				if (o.getUserName().equals( socketInfo.getUserName())) {
+					o.setUserIconUrl( (String)socketInfo.getObj());
+				}
+			});
+		} else {
+			ErrObj obj = new ErrObj(HttpsURLConnection.HTTP_NOT_FOUND, "部屋が存在しません。部屋の作成をしてください", null);
+			simpMessagingTemplate.convertAndSend(description, obj);
+			return;
+		}
+		SocketInfo rtnObj = new SocketInfo(socketInfo.getStatus(), null, room.getUserList());
+
+		simpMessagingTemplate.convertAndSend(description, rtnObj);
 	}
 
 }

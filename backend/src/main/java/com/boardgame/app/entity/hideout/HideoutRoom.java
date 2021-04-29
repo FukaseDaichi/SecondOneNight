@@ -234,12 +234,12 @@ public class HideoutRoom extends ChatRoom {
 	private void judgment() {
 
 		// 爆弾が開いているか判定
-		if (buildingCardList.stream().filter(o -> o.getCatdType() == HideoutConst.BUILD_CARD_BOMB && o.isOpenFlg())
+		if (buildingCardList.stream().filter(o -> o.getCardType() == HideoutConst.BUILD_CARD_BOMB && o.isOpenFlg())
 				.count() > 0) {
 			winnerTeam = HideoutConst.ROLL_TERRORIST;
 		} else if (buildingCardList.stream()
 				// すべてのアジト壊滅判定
-				.filter(o -> o.getCatdType() == HideoutConst.BUILD_CARD_HIDEOUT && !o.isOpenFlg())
+				.filter(o -> o.getCardType() == HideoutConst.BUILD_CARD_HIDEOUT && !o.isOpenFlg())
 				.count() > 0) {
 			winnerTeam = HideoutConst.ROLL_SWAT;
 		} else if (memberCardList.stream().filter(o -> !o.isConsumeFlg()).count() < 8) {

@@ -66,7 +66,7 @@ public class HideoutController {
 			return;
 		}
 
-		SocketInfo rtnObj = new SocketInfo(socketInfo.getStatus(), null, room.getChatList());
+		SocketInfo rtnObj = new SocketInfo(socketInfo.getStatus(), null, room);
 
 		simpMessagingTemplate.convertAndSend(description, rtnObj);
 
@@ -92,7 +92,7 @@ public class HideoutController {
 			return;
 		}
 
-		SocketInfo rtnObj = new SocketInfo(socketInfo.getStatus(), null, room.getChatList());
+		SocketInfo rtnObj = new SocketInfo(socketInfo.getStatus(), null, room);
 
 		simpMessagingTemplate.convertAndSend(description, rtnObj);
 

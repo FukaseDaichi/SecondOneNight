@@ -11,7 +11,7 @@ public class BuildingCard implements Serializable {
 
 	private static final long serialVersionUID = 4983549308136127379L;
 
-	private int catdType;
+	private int cardType;
 	private boolean openFlg;
 	private int no;
 	private List<Integer> waitUserIndexList;
@@ -19,7 +19,7 @@ public class BuildingCard implements Serializable {
 	public BuildingCard(boolean openFlg, int catdType) {
 		super();
 		this.openFlg = openFlg;
-		this.catdType = catdType;
+		this.cardType = catdType;
 		waitUserIndexList = new ArrayList<Integer>();
 	}
 
