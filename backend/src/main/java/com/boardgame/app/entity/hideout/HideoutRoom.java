@@ -159,6 +159,11 @@ public class HideoutRoom extends ChatRoom {
 			throw new ApplicationException("対象の隊員カードがありません");
 		}
 
+		if (memberFirldList.stream().filter(o -> o.getHaveUserIndex() == userIndex).count() >= targetBuilding
+				.getWaitUserIndexList().stream().filter(o -> o == userIndex).count()) {
+			throw new ApplicationException("既に選択済みです");
+		}
+
 		// カード消費
 		card.setConsumeFlg(true);
 
@@ -240,7 +245,7 @@ public class HideoutRoom extends ChatRoom {
 		} else if (buildingCardList.stream()
 				// すべてのアジト壊滅判定
 				.filter(o -> o.getCardType() == HideoutConst.BUILD_CARD_HIDEOUT && !o.isOpenFlg())
-				.count() > 0) {
+				.count() == 0) {
 			winnerTeam = HideoutConst.ROLL_SWAT;
 		} else if (memberCardList.stream().filter(o -> !o.isConsumeFlg()).count() < 8) {
 			// 時間切れ判定
