@@ -25,6 +25,7 @@ public class HideoutRoom extends ChatRoom {
 	private boolean rushFlg;
 	private List<MemberCard> memberFirldList;
 	private BuildingCard firldBuilding;
+	private List<Integer> waitUserIndexList;
 
 	public HideoutRoom() {
 		turn = 0;
@@ -33,6 +34,7 @@ public class HideoutRoom extends ChatRoom {
 		buildingCardList = new ArrayList<BuildingCard>();
 		memberCardList = new ArrayList<MemberCard>();
 		memberFirldList = new ArrayList<MemberCard>();
+		waitUserIndexList = new ArrayList<Integer>();
 		maxUserSize = 6;
 	}
 
@@ -50,6 +52,7 @@ public class HideoutRoom extends ChatRoom {
 		buildingCardList = HideoutConst.getBuildingCardList(userList.size());
 		memberCardList = HideoutConst.getMembersList(userList.size());
 		memberFirldList = new ArrayList<MemberCard>();
+		waitUserIndexList = new ArrayList<Integer>();
 
 		// インデックスをふる
 		for (int i = 0; i < buildingCardList.size(); i++) {
@@ -100,7 +103,7 @@ public class HideoutRoom extends ChatRoom {
 		}
 
 		// 待機組に追加
-		buildingCardList.get(buildingCardIndex).getWaitUserIndexList().add(userIndex);
+		getTargetWaitUserIndexList(buildingCardIndex).add(userIndex);
 
 		// ターンユーザを次へ変更
 		turnUser.setTurnFlg(false);
@@ -108,7 +111,7 @@ public class HideoutRoom extends ChatRoom {
 		((HideoutUser) userList.get(nextUserIndex)).setTurnFlg(true);
 
 		// ラッシュフラグに応じて対応
-		if (buildingCardList.get(buildingCardIndex).getWaitUserIndexList().size() > 3) {
+		if (getTargetWaitUserIndexList(buildingCardIndex).size() > 3) {
 			rushFlg = true;
 			memberFirldList.clear();
 
@@ -118,7 +121,7 @@ public class HideoutRoom extends ChatRoom {
 			Collections.shuffle(resideList);
 			int resideIndex = 0;
 
-			for (Integer integer : buildingCardList.get(buildingCardIndex).getWaitUserIndexList()) {
+			for (Integer integer : getTargetWaitUserIndexList(buildingCardIndex)) {
 				HideoutUser rushuUser = (HideoutUser) userList.get(integer);
 				// 2枚の隊員カードを追加
 				rushuUser.getMemberCardList().add(resideList.get(resideIndex));
@@ -140,14 +143,25 @@ public class HideoutRoom extends ChatRoom {
 			throw new ApplicationException("突入判定中ではありません");
 		}
 
-		BuildingCard targetBuilding = buildingCardList.stream().filter(o -> o.getWaitUserIndexList().size() > 3)
-				.findAny().orElse(null);
+		BuildingCard targetBuilding = null;
+		if (waitUserIndexList.size() > 3) {
+			targetBuilding = firldBuilding;
+		} else {
+			for (User user : userList) {
+				HideoutUser hideoutUser = (HideoutUser) user;
+				if (hideoutUser.getWaitUserIndexList().size() > 3) {
+					targetBuilding = hideoutUser.getBuildingCard();
+				}
+			}
+		}
 
 		if (targetBuilding == null) {
 			throw new ApplicationException("対象の建物がありません");
 		}
 
-		if (!targetBuilding.getWaitUserIndexList().contains(userIndex)) {
+		List<Integer> targetWaitUserIndexList = getTargetWaitUserIndexList(targetBuilding.getNo());
+
+		if (!targetWaitUserIndexList.contains(userIndex)) {
 			throw new ApplicationException("対象のユーザじゃありません");
 		}
 
@@ -159,8 +173,9 @@ public class HideoutRoom extends ChatRoom {
 			throw new ApplicationException("対象の隊員カードがありません");
 		}
 
-		if (memberFirldList.stream().filter(o -> o.getHaveUserIndex() == userIndex).count() >= targetBuilding
-				.getWaitUserIndexList().stream().filter(o -> o == userIndex).count()) {
+		if (memberFirldList.stream().filter(o -> o.getHaveUserIndex() == userIndex)
+				.count() >= targetWaitUserIndexList.stream().filter(o -> o == userIndex)
+						.count()) {
 			throw new ApplicationException("既に選択済みです");
 		}
 
@@ -221,7 +236,7 @@ public class HideoutRoom extends ChatRoom {
 			}
 
 			// 待機メンバーリセット
-			targetBuilding.getWaitUserIndexList().clear();
+			targetWaitUserIndexList.clear();
 			turn++;
 			judgment();
 
@@ -262,4 +277,17 @@ public class HideoutRoom extends ChatRoom {
 		}
 	}
 
+	private List<Integer> getTargetWaitUserIndexList(int buildingCardIndex) {
+
+		// 各ユーザに建物を再設定
+		for (User user : userList) {
+			HideoutUser hideoutUser = (HideoutUser) user;
+			if (hideoutUser.getBuildingCard().getNo() == buildingCardList.get(buildingCardIndex).getNo()) {
+				return hideoutUser.getWaitUserIndexList();
+			}
+		}
+
+		return this.waitUserIndexList;
+
+	}
 }

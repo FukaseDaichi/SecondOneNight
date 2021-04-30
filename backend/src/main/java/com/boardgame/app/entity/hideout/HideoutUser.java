@@ -1,5 +1,6 @@
 package com.boardgame.app.entity.hideout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.boardgame.app.entity.User;
@@ -20,5 +21,11 @@ public class HideoutUser extends User {
 	private BuildingCard buildingCard;
 
 	private List<MemberCard> memberCardList;
+
+	private List<Integer> waitUserIndexList;
+
+	public HideoutUser() {
+		waitUserIndexList = new ArrayList<Integer>();
+	}
 
 }
