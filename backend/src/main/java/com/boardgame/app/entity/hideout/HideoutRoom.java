@@ -277,6 +277,11 @@ public class HideoutRoom extends ChatRoom {
 		}
 	}
 
+	/**
+	 * ターゲットビルディング取得
+	 * @param buildingCardIndex
+	 * @return
+	 */
 	private List<Integer> getTargetWaitUserIndexList(int buildingCardIndex) {
 
 		// 各ユーザに建物を再設定
