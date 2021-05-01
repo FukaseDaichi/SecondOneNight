@@ -74,6 +74,8 @@ public class HideoutRoom extends ChatRoom {
 			user.setMemberCardList(new ArrayList<MemberCard>());
 			user.setUserNo(i + 1);
 			user.setUserRoleNo(rollList.get(i));
+			user.setWaitUserIndexList(new ArrayList<Integer>());
+
 			if (i == 0) {
 				user.setTurnFlg(true);
 			} else {
@@ -206,6 +208,11 @@ public class HideoutRoom extends ChatRoom {
 				// 建物公開
 				targetBuilding.setOpenFlg(true);
 
+				judgment();
+				if(winnerTeam > 0) {
+					return;
+				}
+
 				// 非公開建物のNoを取得
 				List<Integer> resideBuildIntList = buildingCardList.stream().filter(o -> !o.isOpenFlg())
 						.map(BuildingCard::getNo).collect(Collectors.toList());
@@ -238,7 +245,6 @@ public class HideoutRoom extends ChatRoom {
 			// 待機メンバーリセット
 			targetWaitUserIndexList.clear();
 			turn++;
-			judgment();
 
 		}
 
