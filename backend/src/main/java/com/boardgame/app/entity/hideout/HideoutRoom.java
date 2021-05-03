@@ -196,6 +196,7 @@ public class HideoutRoom extends ChatRoom {
 			// 突入判定
 			int sum = memberFirldList.stream().mapToInt(MemberCard::getCardType).sum();
 			if (sum > 0) {
+				judgment();
 				// 突入失敗は処理なし
 			} else {
 				// 突入成功 すべてのカードがSWATの場合廃棄しない
