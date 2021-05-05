@@ -21,17 +21,13 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 	private WerewolfRoll firldRoll;
 
 	/**
-	 * 役職設定
-	 * 役職増加時にはここを修正する
 	 * @param rollNoList
 	 * @throws ApplicationException
 	 */
 	public void setRollRegulation(List<Integer> rollNoList) throws ApplicationException {
 
-		if(rollNoList.size() =< userList.size()) {
-
+		if (rollNoList.size() <= userList.size()) {
 		}
-
 
 		rollNoList.forEach((rollNo) -> {
 			switch (rollNo) {
