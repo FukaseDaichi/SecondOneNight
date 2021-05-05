@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.boardgame.app.entity.werewolf.WerewolfRoll;
 import com.boardgame.app.entity.werewolf.WerewolfRoom;
+import com.boardgame.app.exception.ApplicationException;
 
 public class Diviner extends WerewolfRoll {
 
@@ -17,7 +18,7 @@ public class Diviner extends WerewolfRoll {
 	}
 
 	@Override
-	public void discussionAction(WerewolfRoom room, List<String> usernameList) {
+	public void discussionAction(WerewolfRoom room, List<String> usernameList) throws ApplicationException {
 		// 議論中のアクションあるぞ！
 		return;
 	}

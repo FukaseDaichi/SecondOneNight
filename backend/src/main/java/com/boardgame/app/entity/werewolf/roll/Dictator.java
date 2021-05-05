@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.boardgame.app.entity.werewolf.WerewolfRoll;
 import com.boardgame.app.entity.werewolf.WerewolfRoom;
+import com.boardgame.app.exception.ApplicationException;
 
 public class Dictator extends WerewolfRoll {
 
@@ -18,8 +19,8 @@ public class Dictator extends WerewolfRoll {
 	}
 
 	@Override
-	public void discussionAction(WerewolfRoom room, List<String> usernameList) {
-		// 議論中のアクションなし
+	public void discussionAction(WerewolfRoom room, List<String> usernameList) throws ApplicationException {
+		// 議論中のアクションあるぞ
 		return;
 	}
 
