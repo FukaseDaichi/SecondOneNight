@@ -24,8 +24,8 @@ public class TimeBombRoom extends Room implements LimitTimeInterface {
 	private int winnerTeam;
 	private int round;
 	private int releaseNo;
-
 	private int limitTime;
+	private boolean secretFlg;
 
 	public TimeBombRoom() {
 		maxUserSize = TimeBombConst.DEFAULT_MAXUSERSIZE;
@@ -34,6 +34,7 @@ public class TimeBombRoom extends Room implements LimitTimeInterface {
 		winnerTeam = 0;
 		round = 0;
 		releaseNo = 0;
+		secretFlg = false;
 	}
 
 	public void init() {

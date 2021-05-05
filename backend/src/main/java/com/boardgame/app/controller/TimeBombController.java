@@ -187,4 +187,18 @@ public class TimeBombController {
 
 	}
 
+	@MessageMapping("timebomb-changesecret")
+	public void changeSecret(SocketInfo socketInfo) throws Exception {
+		String description = "/topic/" + socketInfo.getRoomId() + "/timebomb";
+
+		TimeBombRoom room = (TimeBombRoom) appInfo.getRoom(socketInfo.getRoomId());
+
+		room.setSecretFlg(!room.isSecretFlg());
+
+		ErrObj obj = new ErrObj(socketInfo.getStatus(), null, room.isSecretFlg());
+
+		simpMessagingTemplate.convertAndSend(description, obj);
+
+	}
+
 }
