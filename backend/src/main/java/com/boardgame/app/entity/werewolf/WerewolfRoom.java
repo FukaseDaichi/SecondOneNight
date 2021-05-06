@@ -180,7 +180,7 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 			user.setUserNo(i);
 			user.setHandRollList(new ArrayList<WerewolfRoll>());
 			user.setRoll(null);
-			user.setVotingDoneFlg(false);
+			user.setVotingUser(null);
 			user.setLastMessage("");
 
 			if (i == 0) {
@@ -301,10 +301,56 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		}
 	}
 
-	public void voting(String username, String targetUsername) {
+	public void voting(String username, String targetUsername) throws ApplicationException {
 		WerewolfUser actionUser = getWerewolfUser(username);
-		WerewolfUser target = getWerewolfUser(targetUsername);
+		WerewolfUser targetUser = getWerewolfUser(targetUsername);
 
+		if (turn != 3) {
+			throw new ApplicationException("投票中ではありません");
+		}
+		// 投票
+		actionUser.setVotingUser(targetUser);
+
+		int noVotingCount = 0;
+		for (User user : userList) {
+			WerewolfUser werewolfUser = (WerewolfUser) user;
+			if (werewolfUser.getVotingUser() == null) {
+				noVotingCount++;
+			}
+		}
+
+		// 全員投票していた場合
+		if (noVotingCount == 0) {
+			turn++;
+
+			// 投票集計
+			aggregate();
+
+			// 判定
+			judgement();
+
+		}
+
+	}
+
+	/**
+	 * 投票集計
+	 */
+	private void aggregate() {
+
+		// ユーザの投票集計
+		for (User user : userList) {
+			WerewolfUser werewolfUser = (WerewolfUser) user;
+
+			// 投票値に加算
+			werewolfUser.getVotingUser().getRoll().setVotingCount(
+					werewolfUser.getVotingUser().getRoll().getVotingCount() + werewolfUser.getRoll().getVotingSize());
+
+			// メッセージ追加
+			werewolfUser.setLastMessage(
+					String.format(WereWolfConst.MSG_VOTING, werewolfUser.getVotingUser().getUserName()));
+
+		}
 	}
 
 	public void judgement() {
