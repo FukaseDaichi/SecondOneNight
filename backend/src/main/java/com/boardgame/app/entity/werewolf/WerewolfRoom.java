@@ -2,8 +2,10 @@ package com.boardgame.app.entity.werewolf;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import com.boardgame.app.constclass.werewolf.WereWolfConst;
 import com.boardgame.app.entity.User;
 import com.boardgame.app.entity.chat.ChatRoom;
 import com.boardgame.app.entity.enif.LimitTimeInterface;
@@ -75,19 +77,19 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		int teruteruSize = 0;
 		for (Integer integer : rollNoList) {
 			switch (integer) {
-			case 1:
+			case WereWolfConst.ROLL_NO_WEREWOLF:
 				rollList.add(new Werewolf());
 				werewolfSize++;
 				break;
-			case 2:
+			case WereWolfConst.ROLL_NO_VILLAGER:
 				rollList.add(new Villager());
 				break;
 
-			case 3:
+			case WereWolfConst.ROLL_NO_MAYOR:
 				rollList.add(new Mayor());
 				break;
 
-			case 4:
+			case WereWolfConst.ROLL_NO_TERUTERU:
 				rollList.add(new Teruteru());
 				teruteruSize++;
 				if (teruteruSize > 1) {
@@ -95,19 +97,19 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 				}
 				break;
 
-			case 5:
+			case WereWolfConst.ROLL_NO_MADMAN:
 				rollList.add(new Madman());
 				break;
 
-			case 6:
+			case WereWolfConst.ROLL_NO_DICTATOR:
 				rollList.add(new Dictator());
 				break;
 
-			case 7:
+			case WereWolfConst.ROLL_NO_ZEALOT:
 				rollList.add(new Zealot());
 				break;
 
-			case 8:
+			case WereWolfConst.ROLL_NO_DIVINER:
 				rollList.add(new Diviner());
 				break;
 			}
@@ -129,7 +131,7 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		missingRollList = new ArrayList<WerewolfRoll>();
 		winteamList = new ArrayList<Integer>();
 		npcuser = new WerewolfUser();
-		npcuser.setUserName("NPC");
+		npcuser.setUserName(WereWolfConst.USERNAME_NPC);
 		npcuser.setUserNo(userList.size());
 		cutInUserNo = -1;
 
@@ -175,11 +177,11 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		int rollIndex = 0;
 		for (int i = 0; i < userList.size(); i++) {
 			WerewolfUser user = (WerewolfUser) userList.get(i);
-			user.setUserNo(1);
+			user.setUserNo(i);
 			user.setHandRollList(new ArrayList<WerewolfRoll>());
 			user.setRoll(null);
-			user.setVotingCount(0);
-			user.setLastMessage(null);
+			user.setVotingDoneFlg(false);
+			user.setLastMessage("");
 
 			if (i == 0) {
 				user.getHandRollList().add(rollList.get(rollIndex));
@@ -226,9 +228,25 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		int nextUserNo = user.getUserNo() + 1;
 
 		if (nextUserNo >= userList.size()) {
+
 			//終了
 			npcuser.setRoll(nextRoll);
 			turn = 2;
+
+			for (User decisionUser : userList) {
+				WerewolfUser werewolfUser = (WerewolfUser) decisionUser;
+
+				// 人狼または狂信者の場合 人狼の役開示する
+				if (werewolfUser.getRoll().getRollNo() == WereWolfConst.ROLL_NO_WEREWOLF
+						|| werewolfUser.getRoll().getRollNo() == WereWolfConst.ROLL_NO_ZEALOT) {
+					for (WerewolfRoll roll : rollList) {
+						if (roll.getRollNo() == WereWolfConst.ROLL_NO_WEREWOLF) {
+							roll.getOpenTargetUsernameList().add(werewolfUser.getUserName());
+						}
+					}
+				}
+			}
+
 		} else {
 			WerewolfUser nextUser = (WerewolfUser) userList.get(nextUserNo);
 			nextUser.getHandRollList().add(nextRoll);
@@ -237,22 +255,6 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		//手札を空にする
 		user.getHandRollList().clear();
 
-	}
-
-	@Override
-	public User joinUser(String userName) throws ApplicationException {
-
-		if (0 < turn && turn < 4) {
-			throw new ApplicationException("プレイ中です");
-		}
-
-		User user = new WerewolfUser();
-		user.setUserName(userName);
-		addUser(user);
-
-		checkMissingFlg();
-
-		return user;
 	}
 
 	/**
@@ -264,6 +266,26 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 			throw new ApplicationException("議論中ではありません");
 		}
 		getWerewolfUser(username).getRoll().discussionAction(this, usernameList);
+	}
+
+	@Override
+	public User joinUser(String userName) throws ApplicationException {
+
+		if (0 < turn && turn < 4) {
+			throw new ApplicationException("プレイ中です");
+		}
+
+		if (userName.equals(WereWolfConst.USERNAME_NPC)) {
+			throw new ApplicationException("その名前は使用できません");
+		}
+
+		User user = new WerewolfUser();
+		user.setUserName(userName);
+		addUser(user);
+
+		checkMissingFlg();
+
+		return user;
 	}
 
 	@Override
@@ -279,8 +301,49 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		}
 	}
 
+	public void voting(String username, String targetUsername) {
+		WerewolfUser actionUser = getWerewolfUser(username);
+		WerewolfUser target = getWerewolfUser(targetUsername);
+
+	}
+
+	public void judgement() {
+		// ターン設定
+		turn = 4;
+
+		// 最大値取得
+		int maxVotingCount = rollList.stream().max(Comparator.comparing(WerewolfRoll::getVotingCount)).get()
+				.getVotingSize();
+
+		// 処刑フラグ設定
+		rollList.stream().filter(o -> o.getVotingCount() == maxVotingCount).forEach(o -> o.setPunishmentFlg(true));
+
+		if (0 < rollList.stream().filter(o -> o.getRollNo() == WereWolfConst.ROLL_NO_TERUTERU && o.isPunishmentFlg())
+				.count()) {
+			// てるてるがつられていた場合
+			winteamList.add(WereWolfConst.TEAM_NO_TERUTERU);
+		} else if (0 < rollList.stream()
+				.filter(o -> o.getRollNo() == WereWolfConst.ROLL_NO_WEREWOLF && o.isPunishmentFlg())
+				.count()) {
+			// 人狼がつられていた場合
+			winteamList.add(WereWolfConst.TEAM_NO_VILLAGER);
+		} else {
+			// 人狼がつられていない場合
+			winteamList.add(WereWolfConst.TEAM_NO_WEREWOLF);
+		}
+
+		// スコアに加算
+		for (User user : userList) {
+			WerewolfUser werewolfUser = (WerewolfUser) user;
+			if (winteamList.contains(werewolfUser.getRoll().getTeamNo())) {
+				werewolfUser.setScore(werewolfUser.getScore() + werewolfUser.getRoll().getPoint());
+			}
+		}
+
+	}
+
 	public WerewolfUser getWerewolfUser(String username) {
-		return (WerewolfUser) userList.stream().filter(o -> username.equals(o.getUserName())).findAny().orElse(null);
+		return (WerewolfUser) userList.stream().filter(o -> username.equals(o.getUserName())).findAny().orElse(npcuser);
 	}
 
 }

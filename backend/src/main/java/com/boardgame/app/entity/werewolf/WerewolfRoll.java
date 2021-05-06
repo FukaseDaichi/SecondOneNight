@@ -22,6 +22,9 @@ public abstract class WerewolfRoll {
 	protected boolean missingAbleFlg;
 	protected boolean openFlg;
 	private int no;
+	private int votingCount;
+	private boolean votingAbleFlg;
+	private boolean punishmentFlg;
 
 	public WerewolfRoll() {
 		point = 1;
@@ -31,9 +34,14 @@ public abstract class WerewolfRoll {
 		missingAbleFlg = true; //欠け有
 		openFlg = false;
 		no = 0;
+		votingCount = 0;
+		votingAbleFlg = true; // 投票可能
+		punishmentFlg = false; //処刑なし
 
 	}
 
-	abstract public void discussionAction(WerewolfRoom room, List<String> usernameList) throws ApplicationException;
+	public void discussionAction(WerewolfRoom room, List<String> usernameList) throws ApplicationException {
+		// 処理なし
+	};
 
 }
