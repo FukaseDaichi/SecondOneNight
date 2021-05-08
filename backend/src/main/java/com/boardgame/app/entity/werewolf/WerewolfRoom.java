@@ -37,15 +37,8 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 	private boolean missingFlg;
 	private int cutInUserNo;
 
-	public static List<WerewolfRoll> staticRollList;
-
-	static {
-		staticRollList = new ArrayList<WerewolfRoll>();
-
-		for (int i = 1; i <= WereWolfConst.ROLL_SIZE; i++) {
-			staticRollList.add(WereWolfConst.createRoll(i));
-		}
-	}
+	// 役職リスト
+	private List<WerewolfRoll> staticRollList;
 
 	public WerewolfRoom() {
 		maxUserSize = 10; //仮置き最大人数
@@ -59,6 +52,12 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		winteamList = new ArrayList<Integer>();
 		npcuser = null;
 		cutInUserNo = -1;
+
+		staticRollList = new ArrayList<WerewolfRoll>();
+
+		for (int i = 1; i <= WereWolfConst.ROLL_SIZE; i++) {
+			staticRollList.add(WereWolfConst.createRoll(i));
+		}
 
 	}
 
