@@ -9,14 +9,6 @@ import com.boardgame.app.constclass.werewolf.WereWolfConst;
 import com.boardgame.app.entity.User;
 import com.boardgame.app.entity.chat.ChatRoom;
 import com.boardgame.app.entity.enif.LimitTimeInterface;
-import com.boardgame.app.entity.werewolf.roll.Dictator;
-import com.boardgame.app.entity.werewolf.roll.Diviner;
-import com.boardgame.app.entity.werewolf.roll.Madman;
-import com.boardgame.app.entity.werewolf.roll.Mayor;
-import com.boardgame.app.entity.werewolf.roll.Teruteru;
-import com.boardgame.app.entity.werewolf.roll.Villager;
-import com.boardgame.app.entity.werewolf.roll.Werewolf;
-import com.boardgame.app.entity.werewolf.roll.Zealot;
 import com.boardgame.app.exception.ApplicationException;
 
 import lombok.Data;
@@ -45,11 +37,15 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 	private boolean missingFlg;
 	private int cutInUserNo;
 
-	/**
-	 * 役職設定
-	 * 人数チェックも実施
-	 * @param rollNoList
-	 */
+	public static List<WerewolfRoll> staticRollList;
+
+	static {
+		staticRollList = new ArrayList<WerewolfRoll>();
+
+		for (int i = 1; i <= WereWolfConst.ROLL_SIZE; i++) {
+			staticRollList.add(WereWolfConst.createRoll(i));
+		}
+	}
 
 	public WerewolfRoom() {
 		maxUserSize = 10; //仮置き最大人数
@@ -63,8 +59,14 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		winteamList = new ArrayList<Integer>();
 		npcuser = null;
 		cutInUserNo = -1;
+
 	}
 
+	/**
+	 * 役職設定
+	 * 人数チェックも実施
+	 * @param rollNoList
+	 */
 	public void setRollRegulation(List<Integer> rollNoList) throws ApplicationException {
 
 		if (rollNoList.size() > 15) {
@@ -76,41 +78,22 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		int werewolfSize = 0;
 		int teruteruSize = 0;
 		for (Integer integer : rollNoList) {
+
+			setingRollList.add(WereWolfConst.createRoll(integer));
+
 			switch (integer) {
+
+			// 人狼チェック
 			case WereWolfConst.ROLL_NO_WEREWOLF:
-				rollList.add(new Werewolf());
 				werewolfSize++;
 				break;
-			case WereWolfConst.ROLL_NO_VILLAGER:
-				rollList.add(new Villager());
-				break;
 
-			case WereWolfConst.ROLL_NO_MAYOR:
-				rollList.add(new Mayor());
-				break;
-
+			// てるてるチェック
 			case WereWolfConst.ROLL_NO_TERUTERU:
-				rollList.add(new Teruteru());
 				teruteruSize++;
 				if (teruteruSize > 1) {
 					throw new ApplicationException("てるてるは1人までしか設定できません。");
 				}
-				break;
-
-			case WereWolfConst.ROLL_NO_MADMAN:
-				rollList.add(new Madman());
-				break;
-
-			case WereWolfConst.ROLL_NO_DICTATOR:
-				rollList.add(new Dictator());
-				break;
-
-			case WereWolfConst.ROLL_NO_ZEALOT:
-				rollList.add(new Zealot());
-				break;
-
-			case WereWolfConst.ROLL_NO_DIVINER:
-				rollList.add(new Diviner());
 				break;
 			}
 		}
