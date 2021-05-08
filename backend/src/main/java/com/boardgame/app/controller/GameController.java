@@ -29,25 +29,31 @@ public class GameController {
 	public void werewolfRoomIn(SocketInfo socketInfo) throws Exception {
 		String description = "/topic/" + socketInfo.getRoomId();
 
-		Room room = appInfo.getRoom(socketInfo.getRoomId());
-		SocketInfo obj = null;
-		if (room != null) {
-			try {
-				room.joinUser(socketInfo.getUserName());
+		try {
+			Room room = appInfo.getRoom(socketInfo.getRoomId());
+			SocketInfo obj = null;
+			if (room != null) {
+				try {
+					room.joinUser(socketInfo.getUserName());
 
-			} catch (ApplicationException e) {
-				obj = new SocketInfo(e.getStatus(), e.getMessage(), room);
+				} catch (ApplicationException e) {
+					obj = new SocketInfo(e.getStatus(), e.getMessage(), room);
 
+					simpMessagingTemplate.convertAndSend(description, obj);
+					return;
+				}
+			} else {
+				obj = new SocketInfo(HttpsURLConnection.HTTP_NOT_FOUND, "部屋が存在しません。部屋の作成をしてください", null);
 				simpMessagingTemplate.convertAndSend(description, obj);
 				return;
 			}
-		} else {
-			obj = new SocketInfo(HttpsURLConnection.HTTP_NOT_FOUND, "部屋が存在しません。部屋の作成をしてください", null);
-			simpMessagingTemplate.convertAndSend(description, obj);
-			return;
-		}
 
-		simpMessagingTemplate.convertAndSend(description, new SocketInfo(socketInfo.getStatus(), null, room));
+			simpMessagingTemplate.convertAndSend(description, new SocketInfo(socketInfo.getStatus(), null, room));
+		} catch (Throwable e) {
+			simpMessagingTemplate.convertAndSend(description,
+					new SocketInfo(HttpsURLConnection.HTTP_NOT_FOUND, "部屋が存在しません。部屋の作成をしてください", null));
+
+		}
 	}
 
 	@MessageMapping("game-chat")
@@ -80,12 +86,12 @@ public class GameController {
 	public void changeIcon(SocketInfo socketInfo) throws Exception {
 		String description = "/topic/" + socketInfo.getRoomId();
 
-		Room room = appInfo.getRoom( socketInfo.getRoomId());
+		Room room = appInfo.getRoom(socketInfo.getRoomId());
 
 		if (room != null) {
 			room.getUserList().forEach(o -> {
-				if (o.getUserName().equals( socketInfo.getUserName())) {
-					o.setUserIconUrl( (String)socketInfo.getObj());
+				if (o.getUserName().equals(socketInfo.getUserName())) {
+					o.setUserIconUrl((String) socketInfo.getObj());
 				}
 			});
 		} else {
