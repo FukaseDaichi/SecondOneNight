@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.boardgame.app.constclass.SystemConst;
 import com.boardgame.app.constclass.werewolf.WereWolfConst;
 import com.boardgame.app.entity.User;
 import com.boardgame.app.entity.chat.ChatRoom;
@@ -69,7 +70,11 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 	public void setRollRegulation(List<Integer> rollNoList) throws ApplicationException {
 
 		if (rollNoList.size() > 15) {
-			throw new ApplicationException("役職の設定数が多すぎます。");
+			throw new ApplicationException(SystemConst.ERR_MSG_OWNVIEW_STATUS_CODE, "役職の設定数が多すぎます");
+		}
+
+		if (rollNoList.size() <= userList.size()) {
+			throw new ApplicationException(SystemConst.ERR_MSG_OWNVIEW_STATUS_CODE, "役職の数は参加者より多く設定してください");
 		}
 
 		List<WerewolfRoll> setingRollList = new ArrayList<WerewolfRoll>();
@@ -91,14 +96,14 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 			case WereWolfConst.ROLL_NO_TERUTERU:
 				teruteruSize++;
 				if (teruteruSize > 1) {
-					throw new ApplicationException("てるてるは1人までしか設定できません。");
+					throw new ApplicationException(SystemConst.ERR_MSG_OWNVIEW_STATUS_CODE, "てるてるは1人までしか設定できません");
 				}
 				break;
 			}
 		}
 
 		if (werewolfSize < 1) {
-			throw new ApplicationException("人狼が設定されていません");
+			throw new ApplicationException(SystemConst.ERR_MSG_OWNVIEW_STATUS_CODE, "人狼が設定されていません");
 		}
 		rollList = setingRollList;
 
@@ -119,12 +124,12 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 
 		// 役職設定確認
 		if (userList.size() < 3) {
-			throw new ApplicationException("人数が少なすぎます。");
+			throw new ApplicationException(SystemConst.ERR_MSG_ALLVIEW_STATUS_CODE, "参加者が少ないため開始できません");
 		}
 
 		// 役職設定確認
 		if (rollList.size() <= userList.size()) {
-			throw new ApplicationException("役職の数は人数より多く設定してください");
+			throw new ApplicationException(SystemConst.ERR_MSG_ALLVIEW_STATUS_CODE, "役職の数は参加者より多く設定してください");
 		}
 
 		int loopCount = 0;

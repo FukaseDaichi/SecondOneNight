@@ -37,6 +37,7 @@ public class WereWolfController {
 
 			} catch (ApplicationException e) {
 				obj = new SocketInfo(e.getStatus(), e.getMessage(), room);
+				obj.setUserName(socketInfo.getUserName());
 				simpMessagingTemplate.convertAndSend(description, obj);
 				return;
 			}
@@ -61,6 +62,7 @@ public class WereWolfController {
 
 			} catch (ApplicationException e) {
 				obj = new SocketInfo(e.getStatus(), e.getMessage(), room);
+				obj.setUserName(socketInfo.getUserName());
 				simpMessagingTemplate.convertAndSend(description, obj);
 				return;
 			}
@@ -86,6 +88,7 @@ public class WereWolfController {
 
 			} catch (ApplicationException e) {
 				obj = new SocketInfo(e.getStatus(), e.getMessage(), room);
+				obj.setUserName(socketInfo.getUserName());
 				simpMessagingTemplate.convertAndSend(description, obj);
 				return;
 			}
@@ -112,6 +115,7 @@ public class WereWolfController {
 
 			} catch (ApplicationException e) {
 				obj = new SocketInfo(e.getStatus(), e.getMessage(), room);
+				obj.setUserName(socketInfo.getUserName());
 				simpMessagingTemplate.convertAndSend(description, obj);
 				return;
 			}
@@ -136,6 +140,7 @@ public class WereWolfController {
 
 		} else {
 			obj = new SocketInfo(HttpsURLConnection.HTTP_NOT_FOUND, "部屋が存在しません。部屋の作成をしてください", null);
+			obj.setUserName(socketInfo.getUserName());
 			simpMessagingTemplate.convertAndSend(description, obj);
 			return;
 		}
@@ -156,6 +161,7 @@ public class WereWolfController {
 
 			} catch (ApplicationException e) {
 				obj = new SocketInfo(e.getStatus(), e.getMessage(), room);
+				obj.setUserName(socketInfo.getUserName());
 				simpMessagingTemplate.convertAndSend(description, obj);
 				return;
 			}
