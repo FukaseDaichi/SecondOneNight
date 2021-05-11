@@ -259,7 +259,11 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 	public User joinUser(String userName) throws ApplicationException {
 
 		if (0 < turn && turn < 4) {
-			throw new ApplicationException("プレイ中です");
+			// プレイ中で同名ユーザがいる時
+			if (userList.stream().filter(o -> o.getUserName().equals(userName)).count() == 0) {
+				throw new ApplicationException("プレイ中です");
+
+			}
 		}
 
 		if (userName.equals(WereWolfConst.USERNAME_NPC)) {
@@ -268,6 +272,7 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 
 		User user = new WerewolfUser();
 		user.setUserName(userName);
+
 		addUser(user);
 
 		checkMissingFlg();
