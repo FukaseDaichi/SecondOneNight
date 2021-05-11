@@ -15,8 +15,9 @@ public class Diviner extends WerewolfRoll {
 		teamNo = WereWolfConst.TEAM_NO_VILLAGER;
 		name = "占い師";
 		winDescription = "人狼の処刑";
-		description = "議論中に占える（自分を選択）\r\n"
+		description = "議論中に占うことができる。\r\n"
 				+ "指名した1人の役職がわかるが、投票できなくなる。能力の使用はばれない。";
+		actionName = "占う";
 	}
 
 	/**

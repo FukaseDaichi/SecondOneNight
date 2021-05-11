@@ -16,8 +16,9 @@ public class Dictator extends WerewolfRoll {
 		teamNo = WereWolfConst.TEAM_NO_VILLAGER;
 		name = "独裁者";
 		winDescription = "人狼の処刑";
-		description = "議論中に役職の開示ができる。（自分を選択）\r\n"
+		description = "議論中に役職の開示ができる。\r\n"
 				+ "その場合、指名した1人を直ちに処刑する。";
+		actionName = "独裁";
 	}
 
 	/**

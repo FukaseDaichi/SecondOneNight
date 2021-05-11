@@ -21,6 +21,7 @@ public abstract class WerewolfRoll {
 	protected List<String> openTargetUsernameList;
 	protected boolean missingAbleFlg;
 	protected boolean openFlg;
+	protected String actionName;
 	private int no;
 	private int votingCount;
 	private boolean votingAbleFlg;
@@ -37,6 +38,7 @@ public abstract class WerewolfRoll {
 		votingCount = 0;
 		votingAbleFlg = true; // 投票可能
 		punishmentFlg = false; //処刑なし
+		actionName = null;
 
 	}
 
