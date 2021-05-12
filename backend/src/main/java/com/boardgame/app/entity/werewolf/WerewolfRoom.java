@@ -113,15 +113,6 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 
 	public void init() throws ApplicationException {
 
-		// 初期化
-		turn = 1;
-		missingRollList = new ArrayList<WerewolfRoll>();
-		winteamList = new ArrayList<Integer>();
-		npcuser = new WerewolfUser();
-		npcuser.setUserName(WereWolfConst.USERNAME_NPC);
-		npcuser.setUserNo(userList.size());
-		cutInUserNo = -1;
-
 		// 役職設定確認
 		if (userList.size() < 3) {
 			throw new ApplicationException(SystemConst.ERR_MSG_ALLVIEW_STATUS_CODE, "参加者が少ないため開始できません");
@@ -131,6 +122,15 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		if (rollList.size() <= userList.size()) {
 			throw new ApplicationException(SystemConst.ERR_MSG_ALLVIEW_STATUS_CODE, "役職の数は参加者より多く設定してください");
 		}
+
+		// 初期化
+		turn = 1;
+		missingRollList = new ArrayList<WerewolfRoll>();
+		winteamList = new ArrayList<Integer>();
+		npcuser = new WerewolfUser();
+		npcuser.setUserName(WereWolfConst.USERNAME_NPC);
+		npcuser.setUserNo(userList.size());
+		cutInUserNo = -1;
 
 		int loopCount = 0;
 
@@ -159,7 +159,7 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		}
 
 		// ユーザの設定
-		Collections.shuffle(rollList);
+		Collections.shuffle(userList);
 
 		int rollIndex = 0;
 		for (int i = 0; i < userList.size(); i++) {
