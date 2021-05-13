@@ -357,7 +357,7 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 
 		// 最大値取得
 		int maxVotingCount = rollList.stream().max(Comparator.comparing(WerewolfRoll::getVotingCount)).get()
-				.getVotingSize();
+				.getVotingCount();
 
 		// 処刑フラグ設定
 		rollList.stream().filter(o -> o.getVotingCount() == maxVotingCount).forEach(o -> o.setPunishmentFlg(true));
