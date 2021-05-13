@@ -300,13 +300,15 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		if (turn != 3) {
 			throw new ApplicationException("投票中ではありません");
 		}
+
 		// 投票
 		actionUser.setVotingUser(targetUser);
 
 		int noVotingCount = 0;
+
 		for (User user : userList) {
 			WerewolfUser werewolfUser = (WerewolfUser) user;
-			if (werewolfUser.getVotingUser() == null) {
+			if (werewolfUser.getVotingUser() == null && werewolfUser.getRoll().isVotingAbleFlg()) {
 				noVotingCount++;
 			}
 		}
@@ -335,12 +337,16 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 			WerewolfUser werewolfUser = (WerewolfUser) user;
 
 			// 投票値に加算
-			werewolfUser.getVotingUser().getRoll().setVotingCount(
-					werewolfUser.getVotingUser().getRoll().getVotingCount() + werewolfUser.getRoll().getVotingSize());
+			if (werewolfUser.getVotingUser() != null) {
+				werewolfUser.getVotingUser().getRoll().setVotingCount(
+						werewolfUser.getVotingUser().getRoll().getVotingCount()
+								+ werewolfUser.getRoll().getVotingSize());
 
-			// メッセージ追加
-			werewolfUser.setLastMessage(
-					String.format(WereWolfConst.MSG_VOTING, werewolfUser.getVotingUser().getUserName()));
+				// メッセージ追加
+				werewolfUser.setLastMessage(
+						String.format(WereWolfConst.MSG_VOTING, werewolfUser.getVotingUser().getUserName()));
+
+			}
 
 		}
 	}
