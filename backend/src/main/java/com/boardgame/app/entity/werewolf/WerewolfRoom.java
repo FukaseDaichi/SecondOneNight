@@ -37,6 +37,7 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 	private List<Integer> winteamList;
 	private boolean missingFlg;
 	private int cutInUserNo;
+	private List<Integer> rollNoList;
 
 	// 役職リスト
 	private List<WerewolfRoll> staticRollList;
@@ -108,6 +109,7 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		rollList = setingRollList;
 
 		checkMissingFlg();
+		setRollNoList(rollNoList);
 
 	}
 
@@ -116,6 +118,13 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		// 役職設定確認
 		if (userList.size() < 3) {
 			throw new ApplicationException(SystemConst.ERR_MSG_ALLVIEW_STATUS_CODE, "参加者が少ないため開始できません");
+		}
+
+		// 役職設定確認
+		if (rollNoList == null) {
+			throw new ApplicationException(SystemConst.ERR_MSG_ALLVIEW_STATUS_CODE, "役職を設定してください。");
+		} else {
+			setRollRegulation(rollNoList);
 		}
 
 		// 役職設定確認
