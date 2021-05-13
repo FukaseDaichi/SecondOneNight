@@ -113,6 +113,8 @@ public class WereWolfController {
 			try {
 				room.discussionAction(socketInfo.getUserName(), (List<String>) socketInfo.getObj());
 				socketInfo.setObj(room);
+
+				// メッセージにユーザ番号設定
 				socketInfo.setMessage(String.valueOf(room.getUserbyName(socketInfo.getUserName()).getUserNo()));
 				obj = socketInfo;
 
