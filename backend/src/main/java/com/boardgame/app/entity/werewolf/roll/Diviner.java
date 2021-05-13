@@ -38,6 +38,8 @@ public class Diviner extends WerewolfRoll {
 
 		WerewolfUser targetUser = room.getWerewolfUser(usernameList.get(0));
 		targetUser.getRoll().getOpenTargetUsernameList().add(playUser.getUserName());
+		playUser.getRoll().setVotingAbleFlg(false);
+		playUser.getRoll().setVotingSize(0);
 	}
 
 }
