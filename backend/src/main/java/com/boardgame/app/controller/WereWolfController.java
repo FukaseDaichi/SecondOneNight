@@ -112,6 +112,8 @@ public class WereWolfController {
 		if (room != null) {
 			try {
 				room.discussionAction(socketInfo.getUserName(), (List<String>) socketInfo.getObj());
+				socketInfo.setObj(room);
+				obj = socketInfo;
 
 			} catch (ApplicationException e) {
 				obj = new SocketInfo(e.getStatus(), e.getMessage(), room);
@@ -125,7 +127,7 @@ public class WereWolfController {
 			return;
 		}
 
-		simpMessagingTemplate.convertAndSend(description, new SocketInfo(socketInfo.getStatus(), null, room));
+		simpMessagingTemplate.convertAndSend(description, obj);
 	}
 
 	@MessageMapping("werewolf-changeturn")
