@@ -291,7 +291,39 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 
 	@Override
 	public void doOverLimit(int turn) throws ApplicationException {
+		endDiscussion();
+	}
 
+	public void endDiscussion() throws ApplicationException {
+
+		if (turn != 2) {
+			throw new ApplicationException("状況が変更しています。");
+		}
+
+		turn = 3;
+
+		// 以降がないときようの設定
+
+		int noVotingCount = 0;
+
+		for (User user : userList) {
+			WerewolfUser werewolfUser = (WerewolfUser) user;
+			if (werewolfUser.getVotingUser() == null && werewolfUser.getRoll().isVotingAbleFlg()) {
+				noVotingCount++;
+			}
+		}
+
+		// 全員投票していた場合
+		if (noVotingCount == 0) {
+			turn++;
+
+			// 投票集計
+			aggregate();
+
+			// 判定
+			judgement();
+
+		}
 	}
 
 	private void checkMissingFlg() {
