@@ -82,6 +82,16 @@ public class GameController {
 
 	}
 
+	@MessageMapping("game-dooverLimit")
+	public void doOverLimit(SocketInfo socketInfo) throws Exception {
+		String description = "/topic/" + socketInfo.getRoomId();
+		LimitTimeInterface room = (LimitTimeInterface) appInfo.getRoom(socketInfo.getRoomId());
+
+		room.doOverLimit((Integer) socketInfo.getObj());
+		socketInfo.setObj(room);
+		simpMessagingTemplate.convertAndSend(description, socketInfo);
+	}
+
 	@MessageMapping("game-changeIcon")
 	public void changeIcon(SocketInfo socketInfo) throws Exception {
 		String description = "/topic/" + socketInfo.getRoomId();
