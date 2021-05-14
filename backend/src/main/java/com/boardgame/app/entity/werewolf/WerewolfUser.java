@@ -16,11 +16,11 @@ public class WerewolfUser extends User {
 	private List<WerewolfRoll> handRollList;
 	private int score;
 	private String lastMessage;
-	private WerewolfUser votingUser;
+	private String votingUserName;
 
 	public WerewolfUser() {
 		score = 0;
-		votingUser = null;
+		votingUserName = null;
 	}
 
 }

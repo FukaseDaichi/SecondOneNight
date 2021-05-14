@@ -176,7 +176,8 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 			user.setUserNo(i);
 			user.setHandRollList(new ArrayList<WerewolfRoll>());
 			user.setRoll(null);
-			user.setVotingUser(null);
+			user.setVotingUserName(null);
+			;
 			user.setLastMessage("");
 
 			if (i == 0) {
@@ -308,7 +309,7 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 
 		for (User user : userList) {
 			WerewolfUser werewolfUser = (WerewolfUser) user;
-			if (werewolfUser.getVotingUser() == null && werewolfUser.getRoll().isVotingAbleFlg()) {
+			if (werewolfUser.getVotingUserName() == null && werewolfUser.getRoll().isVotingAbleFlg()) {
 				noVotingCount++;
 			}
 		}
@@ -336,20 +337,19 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 
 	public void voting(String username, String targetUsername) throws ApplicationException {
 		WerewolfUser actionUser = getWerewolfUser(username);
-		WerewolfUser targetUser = getWerewolfUser(targetUsername);
 
 		if (turn != 3) {
 			throw new ApplicationException("投票中ではありません");
 		}
 
 		// 投票
-		actionUser.setVotingUser(targetUser);
+		actionUser.setVotingUserName(targetUsername);
 
 		int noVotingCount = 0;
 
 		for (User user : userList) {
 			WerewolfUser werewolfUser = (WerewolfUser) user;
-			if (werewolfUser.getVotingUser() == null && werewolfUser.getRoll().isVotingAbleFlg()) {
+			if (werewolfUser.getVotingUserName() == null && werewolfUser.getRoll().isVotingAbleFlg()) {
 				noVotingCount++;
 			}
 		}
@@ -378,14 +378,16 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 			WerewolfUser werewolfUser = (WerewolfUser) user;
 
 			// 投票値に加算
-			if (werewolfUser.getVotingUser() != null) {
-				werewolfUser.getVotingUser().getRoll().setVotingCount(
-						werewolfUser.getVotingUser().getRoll().getVotingCount()
+			if (werewolfUser.getVotingUserName() != null) {
+				WerewolfUser targetUser = getWerewolfUser(werewolfUser.getVotingUserName());
+
+				targetUser.getRoll().setVotingCount(
+						targetUser.getRoll().getVotingCount()
 								+ werewolfUser.getRoll().getVotingSize());
 
 				// メッセージ追加
 				werewolfUser.setLastMessage(
-						String.format(WereWolfConst.MSG_VOTING, werewolfUser.getVotingUser().getUserName()));
+						String.format(WereWolfConst.MSG_VOTING, targetUser.getUserName()));
 
 			}
 
