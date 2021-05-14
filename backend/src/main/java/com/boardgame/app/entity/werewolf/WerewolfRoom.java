@@ -417,12 +417,12 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 			winteamList.add(WereWolfConst.TEAM_NO_WEREWOLF);
 		}
 
+		// 役職を開示
+		rollList.stream().forEach(o -> o.setOpenFlg(true));
+
 		// スコアに加算
 		for (User user : userList) {
 			WerewolfUser werewolfUser = (WerewolfUser) user;
-
-			// 役職を開示
-			werewolfUser.getRoll().setOpenFlg(true);
 
 			if (winteamList.contains(werewolfUser.getRoll().getTeamNo())) {
 				werewolfUser.setScore(werewolfUser.getScore() + werewolfUser.getRoll().getPoint());
