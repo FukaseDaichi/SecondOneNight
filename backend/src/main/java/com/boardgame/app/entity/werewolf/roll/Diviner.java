@@ -44,6 +44,9 @@ public class Diviner extends WerewolfRoll {
 		targetUser.getRoll().getOpenTargetUsernameList().add(playUser.getUserName());
 		playUser.getRoll().setVotingAbleFlg(false);
 		playUser.getRoll().setVotingSize(0);
+
+		// メッセージ追加
+		playUser.setLastMessage(String.format(WereWolfConst.MSG_DIVINER, targetUser.getUserName()));
 	}
 
 }

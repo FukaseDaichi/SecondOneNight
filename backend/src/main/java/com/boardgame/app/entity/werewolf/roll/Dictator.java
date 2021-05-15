@@ -37,7 +37,7 @@ public class Dictator extends WerewolfRoll {
 		// 実行回数追加
 		playUser.getRoll().setDiscussionActionCount(playUser.getRoll().getDiscussionActionCount() + 1);
 
-		WerewolfUser targetUser = room.getWerewolfUser(usernameList.get(0));
+		WerewolfUser targetUser = room.getWerewolfUser(usernameList.get(1));
 
 		// ターゲットユーザ処刑
 		targetUser.getRoll().setPunishmentFlg(true);

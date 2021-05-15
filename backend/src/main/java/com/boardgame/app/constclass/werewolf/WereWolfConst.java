@@ -15,6 +15,7 @@ public class WereWolfConst {
 	public static final String ROOM_TYPE = "WEREWOLF";
 
 	public static final String MSG_VOTING = "「%s」に投票";
+	public static final String MSG_DIVINER = "「%s」を占った";
 
 	// RollNo
 	public static final int ROLL_SIZE = 8;
