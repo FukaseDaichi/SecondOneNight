@@ -8,6 +8,7 @@ import com.boardgame.app.entity.werewolf.roll.Diviner;
 import com.boardgame.app.entity.werewolf.roll.Madman;
 import com.boardgame.app.entity.werewolf.roll.Mayor;
 import com.boardgame.app.entity.werewolf.roll.Teruteru;
+import com.boardgame.app.entity.werewolf.roll.Thief;
 import com.boardgame.app.entity.werewolf.roll.Villager;
 import com.boardgame.app.entity.werewolf.roll.Werewolf;
 import com.boardgame.app.entity.werewolf.roll.Zealot;
@@ -20,11 +21,12 @@ public class WereWolfConst {
 	public static final String MSG_DIVINER = "「%s」を占った";
 	public static final String MSG_ASSISTANT = "「%s」に従った";
 	public static final String MSG_ASSASSIN = "「%s」を暗殺した";
+	public static final String MSG_THIEF = "怪盗した。";
 
 	public static final String USERNAME_NPC = "NPC";
 
 	// RollNo（役職追加時に要修正）
-	public static final int ROLL_SIZE = 10;
+	public static final int ROLL_SIZE = 11;
 	public static final int ROLL_NO_WEREWOLF = 1;
 	public static final int ROLL_NO_VILLAGER = 2;
 	public static final int ROLL_NO_MAYOR = 3;
@@ -35,6 +37,7 @@ public class WereWolfConst {
 	public static final int ROLL_NO_DIVINER = 8;
 	public static final int ROLL_NO_ASSISTANT = 9;
 	public static final int ROLL_NO_ASSASSIN = 10;
+	public static final int ROLL_NO_THIEF = 11;
 
 	// TeamNo
 	public static final int TEAM_NO_WEREWOLF = 1;
@@ -84,6 +87,11 @@ public class WereWolfConst {
 		case WereWolfConst.ROLL_NO_ASSASSIN:
 			roll = new Assasin();
 			break;
+
+		case WereWolfConst.ROLL_NO_THIEF:
+			roll = new Thief();
+			break;
+
 		}
 		return roll;
 	}
