@@ -45,6 +45,7 @@ public class Assasin extends WerewolfRoll {
 		WerewolfUser targetUser = room.getWerewolfUser(usernameList.get(1));
 
 		// ターゲットユーザ処刑
+		targetUser.getRoll().setDiscussionActionCount(99);
 		targetUser.getRoll().setPunishmentFlg(true);
 		targetUser.getRoll().setVotingAbleFlg(false);
 		targetUser.getRoll().setVotingSize(0);
