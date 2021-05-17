@@ -53,7 +53,10 @@ public class Thief extends WerewolfRoll {
 		playUser.getRoll().setOpenFlg(false);
 
 		// 自身の殺害をキャンセル
-		playUser.getRoll().setPunishmentFlg(false);
+		if (playUser.getRoll().isPunishmentFlg()) {
+			playUser.getRoll().setPunishmentFlg(false);
+			targetUser.getRoll().setPunishmentFlg(true);
+		}
 
 		// 開示をキャンセル
 		playUser.getRoll().getOpenTargetUsernameList().clear();

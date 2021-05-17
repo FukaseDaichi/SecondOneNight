@@ -83,6 +83,8 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		int werewolfSize = 0;
 		int teruteruSize = 0;
 		int assistantSize = 0;
+		int thiefSize = 0;
+
 		for (Integer integer : rollNoList) {
 
 			setingRollList.add(WereWolfConst.createRoll(integer));
@@ -106,6 +108,13 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 				assistantSize++;
 				if (assistantSize > 1) {
 					throw new ApplicationException(SystemConst.ERR_MSG_OWNVIEW_STATUS_CODE, "付き人は1人までしか設定できません");
+				}
+				break;
+
+			case WereWolfConst.ROLL_NO_THIEF:
+				assistantSize++;
+				if (assistantSize > 1) {
+					throw new ApplicationException(SystemConst.ERR_MSG_OWNVIEW_STATUS_CODE, "怪盗は1人までしか設定できません");
 				}
 				break;
 			}
