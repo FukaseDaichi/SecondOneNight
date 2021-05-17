@@ -53,6 +53,10 @@ public class Assasin extends WerewolfRoll {
 		// メッセージ追加
 		playUser.setLastMessage(String.format(WereWolfConst.MSG_ASSASSIN, targetUser.getUserName()));
 
+		if (targetUser.getRoll().getRollNo() == WereWolfConst.ROLL_NO_TERUTERU) {
+			room.judgement();
+		}
+
 	}
 
 }
