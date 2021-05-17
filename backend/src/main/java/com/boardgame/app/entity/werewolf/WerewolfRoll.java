@@ -22,9 +22,9 @@ public abstract class WerewolfRoll {
 	protected boolean missingAbleFlg;
 	protected boolean openFlg;
 	protected String actionName;
+	protected boolean votingAbleFlg;
 	private int no;
 	private int votingCount;
-	private boolean votingAbleFlg;
 	private boolean punishmentFlg;
 
 	public WerewolfRoll() {

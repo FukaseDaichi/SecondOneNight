@@ -82,6 +82,7 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 
 		int werewolfSize = 0;
 		int teruteruSize = 0;
+		int assistantSize = 0;
 		for (Integer integer : rollNoList) {
 
 			setingRollList.add(WereWolfConst.createRoll(integer));
@@ -98,6 +99,13 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 				teruteruSize++;
 				if (teruteruSize > 1) {
 					throw new ApplicationException(SystemConst.ERR_MSG_OWNVIEW_STATUS_CODE, "てるてるは1人までしか設定できません");
+				}
+				break;
+
+			case WereWolfConst.ROLL_NO_ASSISTANT:
+				assistantSize++;
+				if (assistantSize > 1) {
+					throw new ApplicationException(SystemConst.ERR_MSG_OWNVIEW_STATUS_CODE, "付き人は1人までしか設定できません");
 				}
 				break;
 			}
@@ -386,8 +394,16 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 								+ werewolfUser.getRoll().getVotingSize());
 
 				// メッセージ追加
-				werewolfUser.setLastMessage(
-						String.format(WereWolfConst.MSG_VOTING, targetUser.getUserName()));
+				if (werewolfUser.getLastMessage() == null || "".equals(werewolfUser.getLastMessage())) {
+					werewolfUser.setLastMessage(
+							String.format(WereWolfConst.MSG_VOTING, targetUser.getUserName()));
+				} else {
+					String message = werewolfUser.getLastMessage() + "/"
+							+ String.format(WereWolfConst.MSG_VOTING, targetUser.getUserName());
+
+					werewolfUser.setLastMessage(message);
+
+				}
 
 			}
 
