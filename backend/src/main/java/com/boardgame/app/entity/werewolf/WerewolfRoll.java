@@ -23,6 +23,9 @@ public abstract class WerewolfRoll {
 	protected boolean openFlg;
 	protected String actionName;
 	protected boolean votingAbleFlg;
+
+	// ループにならないように注意すること
+	protected List<WerewolfRoll> fakeRollList;
 	private int no;
 	private int votingCount;
 	private boolean punishmentFlg;
@@ -39,7 +42,6 @@ public abstract class WerewolfRoll {
 		votingAbleFlg = true; // 投票可能
 		punishmentFlg = false; //処刑なし
 		actionName = null;
-
 	}
 
 	public void discussionAction(WerewolfRoom room, List<String> usernameList) throws ApplicationException {

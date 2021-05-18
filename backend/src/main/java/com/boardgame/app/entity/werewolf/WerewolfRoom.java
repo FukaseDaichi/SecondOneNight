@@ -112,10 +112,15 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 				break;
 
 			case WereWolfConst.ROLL_NO_THIEF:
-				assistantSize++;
-				if (assistantSize > 1) {
+				thiefSize++;
+				if (thiefSize > 1) {
 					throw new ApplicationException(SystemConst.ERR_MSG_OWNVIEW_STATUS_CODE, "怪盗は1人までしか設定できません");
 				}
+				break;
+
+			// 人狼チェック
+			case WereWolfConst.ROLL_NO_WHITEWEREWOLF:
+				werewolfSize++;
 				break;
 			}
 		}
@@ -252,9 +257,11 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 
 				// 人狼または狂信者の場合 人狼の役開示する
 				if (werewolfUser.getRoll().getRollNo() == WereWolfConst.ROLL_NO_WEREWOLF
-						|| werewolfUser.getRoll().getRollNo() == WereWolfConst.ROLL_NO_ZEALOT) {
+						|| werewolfUser.getRoll().getRollNo() == WereWolfConst.ROLL_NO_ZEALOT
+						|| werewolfUser.getRoll().getRollNo() == WereWolfConst.ROLL_NO_WHITEWEREWOLF) {
 					for (WerewolfRoll roll : rollList) {
-						if (roll.getRollNo() == WereWolfConst.ROLL_NO_WEREWOLF) {
+						if (roll.getRollNo() == WereWolfConst.ROLL_NO_WEREWOLF
+								|| roll.getRollNo() == WereWolfConst.ROLL_NO_WHITEWEREWOLF) {
 							roll.getOpenTargetUsernameList().add(werewolfUser.getUserName());
 						}
 					}
@@ -435,7 +442,8 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 			// てるてるがつられていた場合
 			winteamList.add(WereWolfConst.TEAM_NO_TERUTERU);
 		} else if (0 < rollList.stream()
-				.filter(o -> o.getRollNo() == WereWolfConst.ROLL_NO_WEREWOLF && o.isPunishmentFlg())
+				.filter(o -> (o.getRollNo() == WereWolfConst.ROLL_NO_WEREWOLF && o.isPunishmentFlg())
+						|| (o.getRollNo() == WereWolfConst.ROLL_NO_WHITEWEREWOLF && o.isPunishmentFlg()))
 				.count()) {
 			// 人狼がつられていた場合
 			winteamList.add(WereWolfConst.TEAM_NO_VILLAGER);

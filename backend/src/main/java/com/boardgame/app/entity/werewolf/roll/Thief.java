@@ -1,5 +1,6 @@
 package com.boardgame.app.entity.werewolf.roll;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.boardgame.app.constclass.werewolf.WereWolfConst;
@@ -18,7 +19,7 @@ public class Thief extends WerewolfRoll {
 		winDescription = "※人狼が処刑されない";
 		description = "議論中にNPCと役職の交換ができる。\r\n"
 				+ "能力を使用した場合、交換後の役職が勝利条件となる。能力の使用はばれない。能力の使用をしない場合、人狼が処刑されないことが勝利条件となる。"
-				+ "※交換時点でNPCか自身が占い師などによって役職が開示されていた場合、それぞれ非公開になる。交換後に占われた場合、交換後の役職が開示される。";
+				+ "※占い結果などは、能力使用前の結果で表示される。";
 		actionName = "怪盗";
 	}
 
@@ -49,18 +50,31 @@ public class Thief extends WerewolfRoll {
 		playUser.setRoll(targetUser.getRoll());
 		targetUser.setRoll(roll);
 
-		// 自身の役職非公開
-		playUser.getRoll().setOpenFlg(false);
+		// 役職の開示情報を引き継ぎ
+		List<String> opentargetList = playUser.getRoll().getOpenTargetUsernameList();
+		playUser.getRoll().setOpenTargetUsernameList(targetUser.getRoll().getOpenTargetUsernameList());
+		targetUser.getRoll().setOpenTargetUsernameList(opentargetList);
 
+		// 自身の役職非公開
+		if (playUser.getRoll().isOpenFlg()) {
+			playUser.getRoll().setOpenFlg(false);
+			targetUser.getRoll().setOpenFlg(true);
+		}
 		// 自身の殺害をキャンセル
 		if (playUser.getRoll().isPunishmentFlg()) {
 			playUser.getRoll().setPunishmentFlg(false);
 			targetUser.getRoll().setPunishmentFlg(true);
 		}
 
-		// 開示をキャンセル
-		playUser.getRoll().getOpenTargetUsernameList().clear();
-		targetUser.getRoll().getOpenTargetUsernameList().clear();
+		// 役職の偽造
+		WerewolfRoll fakeThier = WereWolfConst.createRoll(WereWolfConst.ROLL_NO_THIEF);
+		WerewolfRoll fakeRoll = WereWolfConst.createRoll(playUser.getRoll().getRollNo());
+
+		WerewolfRoll[] playerArray = { fakeThier, fakeThier, fakeThier, fakeThier, fakeRoll };
+		playUser.getRoll().setFakeRollList(Arrays.asList(playerArray));
+
+		WerewolfRoll[] npcArray = { fakeRoll, fakeRoll, fakeRoll, fakeRoll, fakeThier };
+		targetUser.getRoll().setFakeRollList(Arrays.asList(npcArray));
 
 		// メッセージ追加
 		playUser.setLastMessage(WereWolfConst.MSG_THIEF);

@@ -1,5 +1,8 @@
 package com.boardgame.app.constclass.werewolf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.boardgame.app.entity.werewolf.WerewolfRoll;
 import com.boardgame.app.entity.werewolf.roll.Assasin;
 import com.boardgame.app.entity.werewolf.roll.Assistant;
@@ -11,6 +14,7 @@ import com.boardgame.app.entity.werewolf.roll.Teruteru;
 import com.boardgame.app.entity.werewolf.roll.Thief;
 import com.boardgame.app.entity.werewolf.roll.Villager;
 import com.boardgame.app.entity.werewolf.roll.Werewolf;
+import com.boardgame.app.entity.werewolf.roll.WhiteWerewolf;
 import com.boardgame.app.entity.werewolf.roll.Zealot;
 
 public class WereWolfConst {
@@ -26,7 +30,7 @@ public class WereWolfConst {
 	public static final String USERNAME_NPC = "NPC";
 
 	// RollNo（役職追加時に要修正）
-	public static final int ROLL_SIZE = 11;
+	public static final int ROLL_SIZE = 12;
 	public static final int ROLL_NO_WEREWOLF = 1;
 	public static final int ROLL_NO_VILLAGER = 2;
 	public static final int ROLL_NO_MAYOR = 3;
@@ -38,6 +42,7 @@ public class WereWolfConst {
 	public static final int ROLL_NO_ASSISTANT = 9;
 	public static final int ROLL_NO_ASSASSIN = 10;
 	public static final int ROLL_NO_THIEF = 11;
+	public static final int ROLL_NO_WHITEWEREWOLF = 12;
 
 	// TeamNo
 	public static final int TEAM_NO_WEREWOLF = 1;
@@ -90,6 +95,22 @@ public class WereWolfConst {
 
 		case WereWolfConst.ROLL_NO_THIEF:
 			roll = new Thief();
+			break;
+
+		case WereWolfConst.ROLL_NO_WHITEWEREWOLF:
+			roll = new WhiteWerewolf();
+
+			WerewolfRoll fakeVillager = new Villager();
+			WerewolfRoll fakeRoll = new WhiteWerewolf();
+			List<WerewolfRoll> rollList = new ArrayList<WerewolfRoll>();
+			rollList.add(fakeRoll);
+			rollList.add(fakeVillager);
+			rollList.add(fakeRoll);
+			rollList.add(fakeRoll);
+			rollList.add(fakeRoll);
+
+			roll.setFakeRollList(rollList);
+
 			break;
 
 		}
