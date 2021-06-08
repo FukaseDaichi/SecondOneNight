@@ -20,7 +20,7 @@ public class ApplicationInfoBeean implements Serializable {
 
 	@Value("${app.maxroomsize}")
 	private int maxRoomSize;
-	private List<Room> roomList;
+	private static List<Room> roomList;
 
 	public void addRoom(Room room) {
 
@@ -53,6 +53,11 @@ public class ApplicationInfoBeean implements Serializable {
 	}
 
 	public Room getRoom(String roomId) {
+
+		if (roomList == null) {
+			return null;
+		}
+
 		return roomList.stream().filter(o -> o.getRoomId().equals(roomId)).findAny().orElse(null);
 	}
 
