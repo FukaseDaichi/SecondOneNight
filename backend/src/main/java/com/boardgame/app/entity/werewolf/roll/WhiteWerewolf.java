@@ -11,7 +11,7 @@ public class WhiteWerewolf extends WerewolfRoll {
 		name = "白狼";
 		winDescription = "処刑されない";
 		description = "この役職は人狼として扱う。味方の人狼が誰かわかる。"
-				+ "役職選択時のとき村人として表示される。";
+				+ "役職選択のとき村人として表示される。";
 		missingAbleFlg = false; // 欠けなし
 	}
 
