@@ -1,3 +1,4 @@
+
 package com.boardgame.app.entity.decrypt;
 
 import com.boardgame.app.entity.User;
