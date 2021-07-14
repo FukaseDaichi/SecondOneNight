@@ -2,7 +2,9 @@ package com.boardgame.app.entity.decrypt;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import com.boardgame.app.constclass.decrypt.DecryptConst;
@@ -155,6 +157,36 @@ public class DecryptRoom extends ChatRoom {
 		gameTime = DecryptConst.TIME_DECRYPT;
 	}
 
+	public void handUpCreateCode(String userName) throws ApplicationException {
+
+		if (gameTime != DecryptConst.TIME_DECISTION) {
+			throw new ApplicationException("対象のターンではありません");
+		}
+
+		DecryptUser targetUser = getDecryptUser(userName);
+
+		if (!getTeamData(targetUser.getTeamNo()).isTebanFlg()) {
+			throw new ApplicationException("相手チームのターンです");
+		}
+
+		int count = 0;
+		for (User user : userList) {
+			DecryptUser decryputUser = (DecryptUser) user;
+
+			if (decryputUser.getTeamNo() == targetUser.getTeamNo() && decryputUser.isCryptUserFlg()) {
+				count++;
+			}
+		}
+
+		if (count > 0) {
+			throw new ApplicationException("既に暗号作成者がいます");
+		} else {
+			targetUser.setCryptUserFlg(true);
+			gameTime = DecryptConst.TIME_CREATE;
+		}
+
+	}
+
 	/**
 	 * 暗号解読
 	 * @param userName
@@ -170,6 +202,13 @@ public class DecryptRoom extends ChatRoom {
 
 		if (gameTime != DecryptConst.TIME_DECRYPT) {
 			throw new ApplicationException("暗号解読の時間ではありません");
+		}
+
+		Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+		codeList.forEach(o -> map.put(o, o));
+
+		if (map.size() != 3) {
+			throw new ApplicationException("重複値が設定されています");
 		}
 
 		int decryptTeamNo = turn % 2 == 0 ? DecryptConst.TEAM_NO_LEFT : DecryptConst.TEAM_NO_RIGHT;
@@ -193,9 +232,36 @@ public class DecryptRoom extends ChatRoom {
 			turnData.setOpponentDecryptList(codeList);
 		}
 
+		// 両チームが解読完了した場合の処理
 		if (turnData.getDecryptList() != null && turnData.getOpponentDecryptList() != null) {
-		}
 
+			// ターンフラグ削除
+			getTeamData(decryptTeamNo).setTebanFlg(false);
+
+			// ターンフラグ付与
+			TeamData opponentTeamData = decryptTeamNo == DecryptConst.TEAM_NO_LEFT ? leftTeam : rightTeam;
+			opponentTeamData.setTebanFlg(true);
+
+			// 暗号設定
+			opponentTeamData.addTurnData(DecryptConst.createCode());
+
+			// ターン経過
+			turn++;
+
+			// 暗号製作者リセット
+			cryptUserReset();
+			switch (choiceMode) {
+			case DecryptConst.CHOICE_MODE_HANDSUP:
+				gameTime = DecryptConst.TIME_DECISTION;
+				break;
+
+			case DecryptConst.CHOICE_MODE_RANDOM:
+				randomCryptUserChoice();
+				gameTime = DecryptConst.TIME_CREATE;
+			}
+
+			judge(decryptTeamNo, turnData);
+		}
 	}
 
 	/**
@@ -277,4 +343,68 @@ public class DecryptRoom extends ChatRoom {
 		}
 	}
 
+	/**
+	 * ジャッジ
+	 * @param teamNo
+	 * @param turnData
+	 */
+	private void judge(int teamNo, TurnData turnData) {
+
+		boolean faildEndFlg = false;
+
+		// 失敗チップの判定
+		for (int i = 0; i < 3; i++) {
+			if (turnData.getCryptCodeList().get(i) != turnData.getDecryptList().get(i)) {
+				getTeamData(teamNo).addFaildChipCount();
+				if (getTeamData(teamNo).getFaildChipCount() > 1) {
+					faildEndFlg = true;
+				}
+				break;
+			}
+		}
+
+		boolean successEndFlg = false;
+
+		// 成功チップの判定
+		boolean successFlg = true;
+		for (int i = 0; i < 3; i++) {
+			if (turnData.getCryptCodeList().get(i) != turnData.getOpponentDecryptList().get(i)) {
+				successFlg = false;
+			}
+		}
+
+		if (successFlg) {
+			TeamData opponentTeamData = teamNo == DecryptConst.TEAM_NO_LEFT ? leftTeam : rightTeam;
+			opponentTeamData.addSuccessChipCoun();
+			if (opponentTeamData.getSuccessChipCount() > 1) {
+				successEndFlg = true;
+			}
+		}
+
+		// 成功チップと失敗チップが同数終了
+		if (faildEndFlg && successEndFlg) {
+			int leftTeamScore = leftTeam.getSuccessChipCount() - leftTeam.getFaildChipCount();
+			int rightTeamScore = rightTeam.getSuccessChipCount() - rightTeam.getFaildChipCount();
+
+			if (leftTeamScore == rightTeamScore) {
+				winnerTeam = DecryptConst.WINNER_DRAW;
+			} else if (leftTeamScore > rightTeamScore) {
+				winnerTeam = DecryptConst.TEAM_NO_LEFT;
+			} else {
+				winnerTeam = DecryptConst.TEAM_NO_RIGHT;
+			}
+		} else if (faildEndFlg) {
+			// 相手の勝利
+			winnerTeam = teamNo == DecryptConst.TEAM_NO_LEFT ? DecryptConst.TEAM_NO_RIGHT : DecryptConst.TEAM_NO_LEFT;
+		} else if (successEndFlg) {
+			// 勝
+			winnerTeam = teamNo;
+		} else {
+			// 終了しないパターン
+			return;
+		}
+
+		gameTime = DecryptConst.TIME_END;
+
+	}
 }

@@ -25,6 +25,7 @@ public class DecryptConst {
 	 */
 	public static final int TEAM_NO_LEFT = 1;
 	public static final int TEAM_NO_RIGHT = 2;
+	public static final int WINNER_DRAW = 3;
 
 	/**
 	 * 0:初期状態 1:暗号作成者決定中 2:暗号作成中 3:暗号解読中 4:ゲーム終了
