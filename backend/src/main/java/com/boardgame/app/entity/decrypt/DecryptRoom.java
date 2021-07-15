@@ -24,7 +24,6 @@ public class DecryptRoom extends ChatRoom {
 	private int turn;
 	private int gameTime;
 	private int choiceMode;
-	private int maxTurn;
 	private int winnerTeam;
 	private TeamData leftTeam;
 	private TeamData rightTeam;
@@ -34,7 +33,6 @@ public class DecryptRoom extends ChatRoom {
 		turn = 0;
 		choiceMode = DecryptConst.CHOICE_MODE_RANDOM;
 		gameTime = DecryptConst.TIME_FIRST;
-		maxTurn = 10;
 		winnerTeam = 0;
 		maxUserSize = 16;
 		leftTeam = new TeamData();
@@ -157,6 +155,11 @@ public class DecryptRoom extends ChatRoom {
 		gameTime = DecryptConst.TIME_DECRYPT;
 	}
 
+	/**
+	 * 暗号作成者になる
+	 * @param userName
+	 * @throws ApplicationException
+	 */
 	public void handUpCreateCode(String userName) throws ApplicationException {
 
 		if (gameTime != DecryptConst.TIME_DECISTION) {
@@ -381,8 +384,13 @@ public class DecryptRoom extends ChatRoom {
 			}
 		}
 
-		// 成功チップと失敗チップが同数終了
-		if (faildEndFlg && successEndFlg) {
+		if (faildEndFlg && !successEndFlg) {
+			// 相手の勝利
+			winnerTeam = teamNo == DecryptConst.TEAM_NO_LEFT ? DecryptConst.TEAM_NO_RIGHT : DecryptConst.TEAM_NO_LEFT;
+		} else if (!faildEndFlg && successEndFlg) {
+			// 勝利
+			winnerTeam = teamNo;
+		} else if (faildEndFlg && successEndFlg || turn > 19) {
 			int leftTeamScore = leftTeam.getSuccessChipCount() - leftTeam.getFaildChipCount();
 			int rightTeamScore = rightTeam.getSuccessChipCount() - rightTeam.getFaildChipCount();
 
@@ -393,12 +401,6 @@ public class DecryptRoom extends ChatRoom {
 			} else {
 				winnerTeam = DecryptConst.TEAM_NO_RIGHT;
 			}
-		} else if (faildEndFlg) {
-			// 相手の勝利
-			winnerTeam = teamNo == DecryptConst.TEAM_NO_LEFT ? DecryptConst.TEAM_NO_RIGHT : DecryptConst.TEAM_NO_LEFT;
-		} else if (successEndFlg) {
-			// 勝
-			winnerTeam = teamNo;
 		} else {
 			// 終了しないパターン
 			return;
