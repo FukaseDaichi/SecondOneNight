@@ -41,6 +41,7 @@ public class DecryptRoom extends ChatRoom {
 
 	/**
 	 * 暗号リセット
+	 * 
 	 * @throws ApplicationException
 	 */
 	public void resetCode() throws ApplicationException {
@@ -57,6 +58,7 @@ public class DecryptRoom extends ChatRoom {
 
 	/**
 	 * チームリセット
+	 * 
 	 * @throws ApplicationException
 	 */
 	public void resetTeam() throws ApplicationException {
@@ -80,6 +82,7 @@ public class DecryptRoom extends ChatRoom {
 
 	/**
 	 * チーム参加
+	 * 
 	 * @param userName
 	 * @param teamNo
 	 * @throws ApplicationException
@@ -97,6 +100,7 @@ public class DecryptRoom extends ChatRoom {
 
 	/**
 	 * 開始
+	 * 
 	 * @throws ApplicationException
 	 */
 	public void init() throws ApplicationException {
@@ -126,6 +130,7 @@ public class DecryptRoom extends ChatRoom {
 
 	/**
 	 * 暗号作成
+	 * 
 	 * @param userName
 	 * @param codeWordList
 	 * @throws ApplicationException
@@ -157,6 +162,7 @@ public class DecryptRoom extends ChatRoom {
 
 	/**
 	 * 暗号作成者になる
+	 * 
 	 * @param userName
 	 * @throws ApplicationException
 	 */
@@ -192,6 +198,7 @@ public class DecryptRoom extends ChatRoom {
 
 	/**
 	 * 暗号解読
+	 * 
 	 * @param userName
 	 * @param codeList
 	 * @throws ApplicationException
@@ -279,18 +286,8 @@ public class DecryptRoom extends ChatRoom {
 	}
 
 	/**
-	 * ユーザ削除
-	 * @param userName
-	 */
-	public void removeUser(String userName) {
-		User user = getDecryptUser(userName);
-		if (user != null) {
-			userList.remove(user);
-		}
-	}
-
-	/**
 	 * ユーザ取得
+	 * 
 	 * @param username
 	 * @return
 	 */
@@ -300,6 +297,7 @@ public class DecryptRoom extends ChatRoom {
 
 	/**
 	 * チーム取得
+	 * 
 	 * @param teamNo
 	 * @return
 	 */
@@ -348,6 +346,7 @@ public class DecryptRoom extends ChatRoom {
 
 	/**
 	 * ジャッジ
+	 * 
 	 * @param teamNo
 	 * @param turnData
 	 */

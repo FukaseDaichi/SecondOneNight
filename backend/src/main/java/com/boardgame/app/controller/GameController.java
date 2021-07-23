@@ -8,6 +8,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import com.boardgame.app.component.ApplicationInfoBeean;
+import com.boardgame.app.controller.common.CommonLogic;
 import com.boardgame.app.entity.ErrObj;
 import com.boardgame.app.entity.Room;
 import com.boardgame.app.entity.SocketInfo;
@@ -26,7 +27,7 @@ public class GameController {
 	private ApplicationInfoBeean appInfo;
 
 	@MessageMapping("game-roomin")
-	public void werewolfRoomIn(SocketInfo socketInfo) throws Exception {
+	public void gameRoomIn(SocketInfo socketInfo) throws Exception {
 		String description = "/topic/" + socketInfo.getRoomId();
 
 		try {
@@ -54,6 +55,17 @@ public class GameController {
 					new SocketInfo(HttpsURLConnection.HTTP_NOT_FOUND, "部屋が存在しません。部屋の作成をしてください", null));
 
 		}
+	}
+
+	@MessageMapping("game-removeuser")
+	public void gameRemoveUser(SocketInfo socketInfo) throws Exception {
+		String description = "/topic/" + socketInfo.getRoomId();
+		Room room = appInfo.getRoom(socketInfo.getRoomId());
+		if (CommonLogic.isExistRoom(appInfo, simpMessagingTemplate, socketInfo)) {
+			room.joinUser(socketInfo.getUserName());
+			simpMessagingTemplate.convertAndSend(description, new SocketInfo(socketInfo.getStatus(), null, room));
+		}
+
 	}
 
 	@MessageMapping("game-chat")

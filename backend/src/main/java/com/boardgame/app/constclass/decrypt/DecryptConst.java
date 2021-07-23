@@ -38,13 +38,6 @@ public class DecryptConst {
 
 	public static final String FILE_PATH_WORD = "/src/main/resources/static/word.csv";
 
-	public static void main(String[] args) {
-		List<String> returnStrList = getCodeArray();
-		for (String string : returnStrList) {
-			System.out.println(string);
-		}
-	}
-
 	public static List<String> getCodeArray() {
 		List<String> returnStrList = new ArrayList<String>();
 		try {
@@ -67,11 +60,11 @@ public class DecryptConst {
 
 			File file = new File(path + FILE_PATH_WORD);
 
-			//文字コードUTF-8を指定してファイルを読み込む
+			// 文字コードUTF-8を指定してファイルを読み込む
 			try (FileInputStream input = new FileInputStream(file);
 					InputStreamReader stream = new InputStreamReader(input, "UTF-8");
 					BufferedReader buffer = new BufferedReader(stream);) {
-				//ファイルの最終行まで読み込む
+				// ファイルの最終行まで読み込む
 				String str = null;
 				int index = 0;
 				int lineIndex = 0;
