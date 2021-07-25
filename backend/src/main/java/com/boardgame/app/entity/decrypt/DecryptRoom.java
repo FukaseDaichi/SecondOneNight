@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.boardgame.app.constclass.SystemConst;
 import com.boardgame.app.constclass.decrypt.DecryptConst;
 import com.boardgame.app.entity.User;
 import com.boardgame.app.entity.chat.ChatRoom;
@@ -108,6 +109,21 @@ public class DecryptRoom extends ChatRoom {
 		leftTeam = new TeamData();
 		rightTeam = new TeamData();
 
+		int leftTeamSize = 0;
+		int rightTeamSize = 0;
+		for (User user : userList) {
+			DecryptUser decryptUser = (DecryptUser) user;
+			if (decryptUser.getTeamNo() == DecryptConst.TEAM_NO_LEFT) {
+				leftTeamSize++;
+			} else if (decryptUser.getTeamNo() == DecryptConst.TEAM_NO_RIGHT) {
+				rightTeamSize++;
+			}
+		}
+
+		if (leftTeamSize < 2 || rightTeamSize < 2) {
+			throw new ApplicationException(SystemConst.ERR_MSG_OWNVIEW_STATUS_CODE, "チームの人員が揃っていません");
+		}
+
 		// 暗号作成者なし;
 		cryptUserReset();
 
@@ -149,7 +165,7 @@ public class DecryptRoom extends ChatRoom {
 			throw new ApplicationException("設定してください");
 		}
 
-		TurnData turnData = getTeamData(user.getTeamNo()).getLatestTurnData();
+		TurnData turnData = getTeamData(user.getTeamNo()).findLatestTurnData();
 
 		if (turnData.getCryptWotdList() == null || turnData.getCryptCodeList().isEmpty()) {
 			throw new ApplicationException("設定済みです");
@@ -223,7 +239,7 @@ public class DecryptRoom extends ChatRoom {
 
 		int decryptTeamNo = turn % 2 == 0 ? DecryptConst.TEAM_NO_LEFT : DecryptConst.TEAM_NO_RIGHT;
 
-		TurnData turnData = getTeamData(decryptTeamNo).getLatestTurnData();
+		TurnData turnData = getTeamData(decryptTeamNo).findLatestTurnData();
 
 		int userTeamNo = user.getTeamNo();
 

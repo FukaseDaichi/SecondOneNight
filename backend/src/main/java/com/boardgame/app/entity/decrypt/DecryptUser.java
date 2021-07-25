@@ -11,7 +11,6 @@ import lombok.EqualsAndHashCode;
 public class DecryptUser extends User {
 	private static final long serialVersionUID = -51342577681730409L;
 
-	private int userRoleNo;
 	private int teamNo;
 	private boolean cryptUserFlg;
 

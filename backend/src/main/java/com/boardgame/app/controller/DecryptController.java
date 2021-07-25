@@ -21,7 +21,7 @@ public class DecryptController {
 	@Autowired
 	private ApplicationInfoBeean appInfo;
 
-	@MessageMapping("decrypt-resetCode")
+	@MessageMapping("decrypt-resetcode")
 	public void decryptResetCode(SocketInfo socketInfo) {
 
 		DecryptRoom room = (DecryptRoom) appInfo.getRoom(socketInfo.getRoomId());
@@ -30,11 +30,19 @@ public class DecryptController {
 		}, room, simpMessagingTemplate, socketInfo);
 	}
 
-	@MessageMapping("decrypt-resetTeam")
+	@MessageMapping("decrypt-resetteam")
 	public void decryptResetTeam(SocketInfo socketInfo) {
 		DecryptRoom room = (DecryptRoom) appInfo.getRoom(socketInfo.getRoomId());
 		CommonLogic.actionHandler(() -> {
 			room.resetTeam();
+		}, room, simpMessagingTemplate, socketInfo);
+	}
+
+	@MessageMapping("decrypt-modechange")
+	public void decryptModeChanee(SocketInfo socketInfo) {
+		DecryptRoom room = (DecryptRoom) appInfo.getRoom(socketInfo.getRoomId());
+		CommonLogic.actionHandler(() -> {
+			room.setChoiceMode((Integer) socketInfo.getObj());
 		}, room, simpMessagingTemplate, socketInfo);
 	}
 
@@ -63,7 +71,7 @@ public class DecryptController {
 		}, room, simpMessagingTemplate, socketInfo);
 	}
 
-	@MessageMapping("decrypt-handUpCreateCode")
+	@MessageMapping("decrypt-handupcreatecode")
 	public void decryptHandUpCreateCode(SocketInfo socketInfo) {
 		DecryptRoom room = (DecryptRoom) appInfo.getRoom(socketInfo.getRoomId());
 		CommonLogic.actionHandler(() -> {
@@ -72,7 +80,7 @@ public class DecryptController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@MessageMapping("decrypt-decryptCode")
+	@MessageMapping("decrypt-decryptcode")
 	public void decryptDecryptCode(SocketInfo socketInfo) {
 		DecryptRoom room = (DecryptRoom) appInfo.getRoom(socketInfo.getRoomId());
 		CommonLogic.actionHandler(() -> {

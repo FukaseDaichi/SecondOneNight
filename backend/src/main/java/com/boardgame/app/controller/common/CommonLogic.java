@@ -71,6 +71,7 @@ public class CommonLogic {
 			socketInfo.setMessage(e.getMessage());
 			simpMessagingTemplate.convertAndSend(description, socketInfo);
 		} catch (Throwable e) {
+			e.printStackTrace();
 			socketInfo.setStatus(HttpsURLConnection.HTTP_NOT_FOUND);
 			socketInfo.setMessage("部屋が存在しません。部屋の作成をしてください");
 			simpMessagingTemplate.convertAndSend(description, socketInfo);
