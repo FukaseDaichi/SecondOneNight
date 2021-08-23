@@ -60,4 +60,16 @@ public abstract class Room implements Serializable {
 		return user;
 	}
 
+	/**
+	 * ユーザ削除
+	 * 
+	 * @param userName
+	 */
+	public void removeUser(String userName) {
+		User user = getUserbyName(userName);
+		if (user != null) {
+			userList.remove(user);
+		}
+	}
+
 }

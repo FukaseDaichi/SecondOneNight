@@ -30,8 +30,16 @@ public class TeamData implements Serializable {
 		turnDataList.add(turnData);
 	}
 
-	public TurnData getLatestTurnData() {
+	public TurnData findLatestTurnData() {
 		return turnDataList.get(turnDataList.size() - 1);
+	}
+
+	public void addFaildChipCount() {
+		faildChipCount++;
+	}
+
+	public void addSuccessChipCoun() {
+		successChipCount++;
 	}
 
 }

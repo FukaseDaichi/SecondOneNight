@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.boardgame.app.component.ApplicationInfoBeean;
+import com.boardgame.app.constclass.decrypt.DecryptConst;
 import com.boardgame.app.constclass.hideout.HideoutConst;
 import com.boardgame.app.constclass.werewolf.WereWolfConst;
 import com.boardgame.app.entity.Room;
+import com.boardgame.app.entity.decrypt.DecryptRoom;
 import com.boardgame.app.entity.hideout.HideoutRoom;
 import com.boardgame.app.entity.werewolf.WerewolfRoom;
 import com.boardgame.app.service.TimeBombService;
@@ -50,6 +52,17 @@ public class MainController {
 		Room room = new HideoutRoom();
 		room.setRoomId(roomId);
 		room.setRoomType(HideoutConst.ROOM_TYPE);
+		appInfo.addRoom(room);
+		return room;
+	}
+
+	@CrossOrigin
+	@RequestMapping(value = { "/createroom/decrypt" })
+	public Room createDecryptRoom() {
+		String roomId = appInfo.createRoomId();
+		Room room = new DecryptRoom();
+		room.setRoomId(roomId);
+		room.setRoomType(DecryptConst.ROOM_TYPE);
 		appInfo.addRoom(room);
 		return room;
 	}
