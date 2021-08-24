@@ -17,7 +17,7 @@ public class CommonLogic {
 	 * @param appInfo
 	 * @param simpMessagingTemplate
 	 * @param socketInfo
-	 * @return
+	 * @return boolean
 	 */
 	public static boolean isExistRoom(ApplicationInfoBeean appInfo, SimpMessagingTemplate simpMessagingTemplate,
 			SocketInfo socketInfo) {

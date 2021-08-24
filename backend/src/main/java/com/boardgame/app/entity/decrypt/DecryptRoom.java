@@ -304,8 +304,8 @@ public class DecryptRoom extends ChatRoom {
 	/**
 	 * ユーザ取得
 	 * 
-	 * @param username
-	 * @return
+	 * @param userName
+	 * @return DecryptUser
 	 */
 	public DecryptUser getDecryptUser(String userName) {
 		return (DecryptUser) userList.stream().filter(o -> userName.equals(o.getUserName())).findAny().orElse(null);

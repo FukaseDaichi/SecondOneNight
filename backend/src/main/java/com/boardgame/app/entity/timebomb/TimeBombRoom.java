@@ -141,7 +141,6 @@ public class TimeBombRoom extends Room implements LimitTimeInterface {
 
 	/**
 	 * 0:勝敗なし
-	 * @return
 	 */
 	private void judgment() {
 		int result = 0;
@@ -184,8 +183,7 @@ public class TimeBombRoom extends Room implements LimitTimeInterface {
 			int index = 0;
 			for (int i = 0; i < leadCardsList.size(); i++) {
 				if (!leadCardsList.get(i).isOpenFlg()) {
-					if ((6 - round) * (turnUser.getUserNo() - 1) <= i
-							&& i < (6 - round) * turnUser.getUserNo()) {
+					if ((6 - round) * (turnUser.getUserNo() - 1) <= i && i < (6 - round) * turnUser.getUserNo()) {
 						// 自分のカードであるため継続
 						continue;
 					}
