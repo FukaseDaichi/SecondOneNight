@@ -39,8 +39,8 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 	 */
 	@Override
 	public User joinUser(String userName) throws ApplicationException {
-		if (gameTime != FakeArtistConst.TIME_FIRST || gameTime != FakeArtistConst.TIME_END) {
-			// プレイ中で同名ユーザがいる時
+		// プレイ中の場合
+		if (gameTime != FakeArtistConst.TIME_FIRST && gameTime != FakeArtistConst.TIME_END) {
 			if (userList.stream().filter(o -> o.getUserName().equals(userName)).count() == 0) {
 				throw new ApplicationException("プレイ中です");
 			}
