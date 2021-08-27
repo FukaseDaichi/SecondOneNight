@@ -9,8 +9,12 @@ import lombok.Data;
 public class ArtData implements Serializable {
 	private static final long serialVersionUID = -21342577681730409L;
 
-	private String param;
-	private String userName;
+	private int xPotision;
+	private int yPotision;
+	private String color;
+	private String lineWidth;
+	private int userNo;
+	private boolean lastFlg;
 
 	public ArtData() {
 	}
