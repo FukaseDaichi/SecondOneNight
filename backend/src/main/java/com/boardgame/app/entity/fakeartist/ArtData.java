@@ -12,7 +12,7 @@ public class ArtData implements Serializable {
 	private int xPotision;
 	private int yPotision;
 	private String color;
-	private String lineWidth;
+	private int lineWidth;
 	private int userNo;
 	private boolean lastFlg;
 
