@@ -24,13 +24,13 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 	private String theme;
 	private int turn;
 	private int gameTime;
-	private List<ArtData> artList;
+	private List<ArtDataStroke> artDataStrokeList;
 
 	public FakeArtistRoom() {
 		userList = new ArrayList<User>();
 		turn = 0;
 		gameTime = FakeArtistConst.TIME_FIRST;
-		artList = new ArrayList<ArtData>();
+		artDataStrokeList = new ArrayList<ArtDataStroke>();
 		maxUserSize = 16;
 	}
 
@@ -65,7 +65,7 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 
 		turn = 0;
 		gameTime = FakeArtistConst.TIME_ART;
-		artList = new ArrayList<ArtData>();
+		artDataStrokeList = new ArrayList<ArtDataStroke>();
 		theme = FakeArtistConst.getWord();
 
 		// ユーザ設定
@@ -98,10 +98,14 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 
 	}
 
-	public void drawing(ArtData artData, String username) throws ApplicationException {
+	public void drawing(ArtDataStroke artData, String username) throws ApplicationException {
 
 		if (gameTime == FakeArtistConst.TIME_FIRST || gameTime == FakeArtistConst.TIME_END) {
-			artList.add(artData);
+			artDataStrokeList.add(artData);
+			// 多かった場合先頭要素削除
+			if (artDataStrokeList.size() > 500) {
+				artDataStrokeList = artDataStrokeList.subList(10, artDataStrokeList.size());
+			}
 			return;
 		}
 
@@ -116,27 +120,19 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 
 		actionUser.setDrawFlg(false);
 
-		artList.add(artData);
+		artDataStrokeList.add(artData);
+		turn++;
 
-		// 多かった場合先頭要素削除
-		if (artList.size() > 10000) {
-			artList = artList.subList(1000, artList.size());
-		}
+		if (turn >= userList.size() * 2) {
+			gameTime = FakeArtistConst.TIME_DISCUSSION;
+		} else {
+			int nextUserNo = turn % userList.size();
 
-		if (artData.isLastFlg()) {
-			turn++;
-
-			if (turn >= userList.size() * 2) {
-				gameTime = FakeArtistConst.TIME_DISCUSSION;
-			} else {
-				int nextUserNo = turn % userList.size();
-
-				for (int i = 0; i < userList.size(); i++) {
-					FakeArtistUser fakeArtistUser = (FakeArtistUser) userList.get(i);
-					// お絵描きフラグの設定
-					if (i == nextUserNo) {
-						fakeArtistUser.setDrawFlg(true);
-					}
+			for (int i = 0; i < userList.size(); i++) {
+				FakeArtistUser fakeArtistUser = (FakeArtistUser) userList.get(i);
+				// お絵描きフラグの設定
+				if (i == nextUserNo) {
+					fakeArtistUser.setDrawFlg(true);
 				}
 			}
 		}

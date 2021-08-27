@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 import com.boardgame.app.component.ApplicationInfoBeean;
 import com.boardgame.app.controller.common.CommonLogic;
 import com.boardgame.app.entity.SocketInfo;
-import com.boardgame.app.entity.fakeartist.ArtData;
+import com.boardgame.app.entity.fakeartist.ArtDataStroke;
 import com.boardgame.app.entity.fakeartist.FakeArtistRoom;
 import com.boardgame.app.exception.ApplicationException;
 
@@ -40,17 +40,12 @@ public class FakeArtistController {
 				// err処理
 				throw new Exception();
 			}
+			ArtDataStroke data = new ArtDataStroke(socketInfo.getObj(), socketInfo.getUserName());
 
-			ArtData data = (ArtData) socketInfo.getObj();
 			room.drawing(data, socketInfo.getUserName());
-
-			if (data.isLastFlg()) {
-				socketInfo.setObj(room);
-			} else {
-				socketInfo.setObj(data);
-				socketInfo.setStatus(socketInfo.getStatus() + 1);
-			}
+			socketInfo.setObj(room);
 			simpMessagingTemplate.convertAndSend(description, socketInfo);
+
 		} catch (ApplicationException e) {
 			socketInfo.setStatus(e.getStatus());
 			socketInfo.setMessage(e.getMessage());
@@ -60,7 +55,6 @@ public class FakeArtistController {
 			socketInfo.setStatus(HttpsURLConnection.HTTP_NOT_FOUND);
 			socketInfo.setMessage("部屋が存在しません。部屋の作成をしてください");
 			simpMessagingTemplate.convertAndSend(description, socketInfo);
-
 		}
 	}
 
