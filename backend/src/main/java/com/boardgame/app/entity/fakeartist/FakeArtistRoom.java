@@ -25,6 +25,8 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 	private int turn;
 	private int gameTime;
 	private List<ArtDataStroke> artDataStrokeList;
+	private int rurleNo;
+	private String endMessage;
 
 	public FakeArtistRoom() {
 		userList = new ArrayList<User>();
@@ -32,6 +34,7 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 		gameTime = FakeArtistConst.TIME_FIRST;
 		artDataStrokeList = new ArrayList<ArtDataStroke>();
 		maxUserSize = 16;
+		rurleNo = 0;
 	}
 
 	/**
@@ -42,7 +45,7 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 		// プレイ中の場合
 		if (gameTime != FakeArtistConst.TIME_FIRST && gameTime != FakeArtistConst.TIME_END) {
 			if (userList.stream().filter(o -> o.getUserName().equals(userName)).count() == 0) {
-				throw new ApplicationException("プレイ中です");
+				throw new ApplicationException(SystemConst.ERR_MSG_OWNVIEW_STATUS_CODE, "プレイ中です");
 			}
 		}
 		User user = new FakeArtistUser();
@@ -64,6 +67,7 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 		}
 
 		turn = 0;
+		endMessage = null;
 		gameTime = FakeArtistConst.TIME_ART;
 		artDataStrokeList = new ArrayList<ArtDataStroke>();
 		theme = FakeArtistConst.getWord();
@@ -100,39 +104,48 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 
 	public void drawing(ArtDataStroke artData, String username) throws ApplicationException {
 
+		// 多かった場合先頭要素削除
+		if (artDataStrokeList.size() > 1000) {
+			artDataStrokeList = artDataStrokeList.subList(100, artDataStrokeList.size());
+		}
+
 		if (gameTime == FakeArtistConst.TIME_FIRST || gameTime == FakeArtistConst.TIME_END) {
 			artDataStrokeList.add(artData);
-			// 多かった場合先頭要素削除
-			if (artDataStrokeList.size() > 500) {
-				artDataStrokeList = artDataStrokeList.subList(10, artDataStrokeList.size());
-			}
 			return;
 		}
 
 		if (gameTime != FakeArtistConst.TIME_ART) {
-			throw new ApplicationException("状況が変更しています。");
+			throw new ApplicationException(SystemConst.ERR_MSG_NONVIW_STATUS_CODE, "状況が変更しています。");
 		}
 
 		FakeArtistUser actionUser = getFakeArtistUser(username);
 		if (!actionUser.isDrawFlg()) {
-			throw new ApplicationException("お絵描きの手版じゃありません");
+			throw new ApplicationException(SystemConst.ERR_MSG_NONVIW_STATUS_CODE, "お絵描きの手版じゃありません");
 		}
 
-		actionUser.setDrawFlg(false);
-
 		artDataStrokeList.add(artData);
-		turn++;
+		// 最後の場合
+		if (artData.isEndFlg()) {
+			actionUser.setDrawFlg(false);
+			turn++;
 
-		if (turn >= userList.size() * 2) {
-			gameTime = FakeArtistConst.TIME_DISCUSSION;
-		} else {
-			int nextUserNo = turn % userList.size();
+			if (turn >= userList.size() * 2) {
+				gameTime = FakeArtistConst.TIME_DISCUSSION;
 
-			for (int i = 0; i < userList.size(); i++) {
-				FakeArtistUser fakeArtistUser = (FakeArtistUser) userList.get(i);
-				// お絵描きフラグの設定
-				if (i == nextUserNo) {
-					fakeArtistUser.setDrawFlg(true);
+				for (int i = 0; i < userList.size(); i++) {
+					FakeArtistUser fakeArtistUser = (FakeArtistUser) userList.get(i);
+					// お絵描きフラグの設定
+					fakeArtistUser.setDrawFlg(false);
+				}
+			} else {
+				int nextUserNo = turn % userList.size();
+
+				for (int i = 0; i < userList.size(); i++) {
+					FakeArtistUser fakeArtistUser = (FakeArtistUser) userList.get(i);
+					// お絵描きフラグの設定
+					if (i == nextUserNo) {
+						fakeArtistUser.setDrawFlg(true);
+					}
 				}
 			}
 		}
@@ -147,20 +160,20 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 	public void endDiscussion() throws ApplicationException {
 
 		if (gameTime != FakeArtistConst.TIME_DISCUSSION) {
-			throw new ApplicationException("状況が変更しています。");
+			throw new ApplicationException(SystemConst.ERR_MSG_NONVIW_STATUS_CODE, "状況が変更しています。");
 		}
-		gameTime = FakeArtistConst.TIME_END;
+		gameTime = FakeArtistConst.TIME_VOTING;
 	}
 
 	public void voting(String username, String targetUsername) throws ApplicationException {
 		FakeArtistUser actionUser = getFakeArtistUser(username);
 
-		if (turn != FakeArtistConst.TIME_VOTING) {
-			throw new ApplicationException("投票中ではありません");
+		if (gameTime != FakeArtistConst.TIME_VOTING) {
+			throw new ApplicationException(SystemConst.ERR_MSG_NONVIW_STATUS_CODE, "投票中ではありません");
 		}
 
 		if (!actionUser.isVotingAbleFlg()) {
-			throw new ApplicationException("すでに投票済みです。");
+			throw new ApplicationException(SystemConst.ERR_MSG_NONVIW_STATUS_CODE, "すでに投票済みです。");
 		}
 
 		// 投票
@@ -173,7 +186,7 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 		int maxVoting = 0;
 		for (User user : userList) {
 			FakeArtistUser fakeArtistUser = (FakeArtistUser) user;
-			if (!fakeArtistUser.isVotingAbleFlg()) {
+			if (fakeArtistUser.isVotingAbleFlg()) {
 				endFlg = false;
 			}
 			if (fakeArtistUser.getVotingCount() > maxVoting) {
@@ -185,10 +198,26 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 		if (endFlg) {
 			gameTime = FakeArtistConst.TIME_END;
 			// 処刑とする。
+			int sameNoCount = 0;
+			endMessage = "エセ芸術家の勝利！";
 			for (User user : userList) {
 				FakeArtistUser fakeArtistUser = (FakeArtistUser) user;
+				fakeArtistUser.setDrawFlg(true);
 				if (fakeArtistUser.getVotingCount() == maxVoting) {
 					fakeArtistUser.setPunishmentFlg(true);
+					if (fakeArtistUser.getRollNo() == FakeArtistConst.ROLL_FAKE) {
+						endMessage = "エセ芸術家は何がテーマか当てよう！";
+					}
+					sameNoCount++;
+				}
+			}
+
+			if (rurleNo == 0 && sameNoCount > 1) {
+				// 処刑なし
+				endMessage = "同票のため、エセ芸術家の勝利！";
+				for (User user : userList) {
+					FakeArtistUser fakeArtistUser = (FakeArtistUser) user;
+					fakeArtistUser.setPunishmentFlg(false);
 				}
 			}
 		}

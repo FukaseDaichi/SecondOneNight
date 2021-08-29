@@ -40,7 +40,7 @@ public class FakeArtistController {
 				// err処理
 				throw new Exception();
 			}
-			ArtDataStroke data = new ArtDataStroke(socketInfo.getObj(), socketInfo.getUserName());
+			ArtDataStroke data = new ArtDataStroke(socketInfo.getObj());
 
 			room.drawing(data, socketInfo.getUserName());
 			socketInfo.setObj(room);

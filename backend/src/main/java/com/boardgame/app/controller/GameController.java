@@ -62,8 +62,9 @@ public class GameController {
 		String description = "/topic/" + socketInfo.getRoomId();
 		Room room = appInfo.getRoom(socketInfo.getRoomId());
 		if (CommonLogic.isExistRoom(appInfo, simpMessagingTemplate, socketInfo)) {
-			room.joinUser(socketInfo.getUserName());
-			simpMessagingTemplate.convertAndSend(description, new SocketInfo(socketInfo.getStatus(), null, room));
+			room.removeUser((String) socketInfo.getObj());
+			socketInfo.setObj(room);
+			simpMessagingTemplate.convertAndSend(description, socketInfo);
 		}
 
 	}

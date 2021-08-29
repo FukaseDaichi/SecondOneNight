@@ -19,7 +19,7 @@ public class FakeArtistUser extends User {
 
 	public FakeArtistUser() {
 		rollNo = 0;
-		drawFlg = false;
+		drawFlg = true;
 		votingAbleFlg = false;
 		punishmentFlg = false;
 		votingCount = 0;

@@ -12,8 +12,6 @@ public class ArtData implements Serializable {
 
 	private int xparamPotision;
 	private int yparamPotision;
-	private String color;
-	private int lineWidth;
 
 	public ArtData() {
 	}
@@ -21,8 +19,6 @@ public class ArtData implements Serializable {
 	public ArtData(Map<String, Object> map) {
 		xparamPotision = (Integer) map.get("xparamPotision");
 		yparamPotision = (Integer) map.get("yparamPotision");
-		color = (String) map.get("color");
-		lineWidth = (Integer) map.get("lineWidth");
 	}
 
 }

@@ -3,7 +3,6 @@ package com.boardgame.app.constclass.fakeartist;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -52,16 +51,16 @@ public class FakeArtistConst {
 				int lineIndex = 0;
 				while ((str = buffer.readLine()) != null) {
 					if (randNo == lineIndex) {
-						rtnStr = str;
+						rtnStr = str.split(",")[0];
 						break;
 					}
 					lineIndex++;
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
-		} catch (IOException e) {
+
+		} catch (Exception e) {
 			e.printStackTrace();
+			rtnStr = "辛子明太子";
 		}
 
 		return rtnStr;
