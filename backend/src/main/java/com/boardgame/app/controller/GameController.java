@@ -39,7 +39,7 @@ public class GameController {
 
 				} catch (ApplicationException e) {
 					obj = new SocketInfo(e.getStatus(), e.getMessage(), room);
-
+					obj.setUserName(socketInfo.getUserName());
 					simpMessagingTemplate.convertAndSend(description, obj);
 					return;
 				}
@@ -48,8 +48,8 @@ public class GameController {
 				simpMessagingTemplate.convertAndSend(description, obj);
 				return;
 			}
-
-			simpMessagingTemplate.convertAndSend(description, new SocketInfo(socketInfo.getStatus(), null, room));
+			socketInfo.setObj(room);
+			simpMessagingTemplate.convertAndSend(description, socketInfo);
 		} catch (Throwable e) {
 			simpMessagingTemplate.convertAndSend(description,
 					new SocketInfo(HttpsURLConnection.HTTP_NOT_FOUND, "部屋が存在しません。部屋の作成をしてください", null));
@@ -124,6 +124,14 @@ public class GameController {
 		SocketInfo rtnObj = new SocketInfo(socketInfo.getStatus(), null, room.getUserList());
 
 		simpMessagingTemplate.convertAndSend(description, rtnObj);
+	}
+
+	@MessageMapping("game-action")
+	public void gameAction(SocketInfo socketInfo) throws Exception {
+		String description = "/topic/" + socketInfo.getRoomId();
+		if (CommonLogic.isExistRoom(appInfo, simpMessagingTemplate, socketInfo)) {
+			simpMessagingTemplate.convertAndSend(description, socketInfo);
+		}
 	}
 
 }
