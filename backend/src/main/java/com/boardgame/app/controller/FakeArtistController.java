@@ -1,5 +1,7 @@
 package com.boardgame.app.controller;
 
+import java.util.List;
+
 import javax.net.ssl.HttpsURLConnection;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,15 @@ public class FakeArtistController {
 
 	@Autowired
 	private ApplicationInfoBeean appInfo;
+
+	@SuppressWarnings("unchecked")
+	@MessageMapping("fakeartist-setpattern")
+	public void setPatternList(SocketInfo socketInfo) {
+		FakeArtistRoom room = (FakeArtistRoom) appInfo.getRoom(socketInfo.getRoomId());
+		CommonLogic.actionHandler(() -> {
+			room.setPatternList((List<Integer>) socketInfo.getObj());
+		}, room, simpMessagingTemplate, socketInfo);
+	}
 
 	@MessageMapping("fakeartist-init")
 	public void fakeartistInit(SocketInfo socketInfo) {

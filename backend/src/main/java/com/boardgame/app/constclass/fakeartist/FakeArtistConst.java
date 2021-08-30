@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class FakeArtistConst {
@@ -29,40 +29,35 @@ public class FakeArtistConst {
 	public static final int TIME_VOTING = 3;
 	public static final int TIME_END = 4;
 
-	public static String getWord() {
-
+	public static String getWord(List<Integer> paternList) {
 		String rtnStr = null;
 		try {
+			List<String> strList = new ArrayList<String>();
 			String path = new File(".").getAbsoluteFile().getParent();
-
-			int lineCount = (int) Files.lines(Paths.get(path + FILE_PATH_WORD)).count();
-
-			Random rand = new Random();
-			Integer randNo = rand.nextInt(lineCount);
-
 			File file = new File(path + FILE_PATH_WORD);
-
 			// 文字コードUTF-8を指定してファイルを読み込む
+
 			try (FileInputStream input = new FileInputStream(file);
 					InputStreamReader stream = new InputStreamReader(input, "UTF-8");
 					BufferedReader buffer = new BufferedReader(stream);) {
 				// ファイルの最終行まで読み込む
 				String str = null;
-				int lineIndex = 0;
 				while ((str = buffer.readLine()) != null) {
-					if (randNo == lineIndex) {
-						rtnStr = str.split(",")[0];
-						break;
+					String[] strArray = str.split(",");
+					if (paternList.contains(Integer.parseInt(strArray[1]))) {
+						strList.add(strArray[0]);
 					}
-					lineIndex++;
 				}
 			}
+
+			Random rand = new Random();
+			Integer randNo = rand.nextInt(strList.size());
+			rtnStr = strList.get(randNo);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			rtnStr = "辛子明太子";
 		}
-
 		return rtnStr;
 	}
 

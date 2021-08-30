@@ -27,6 +27,7 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 	private List<ArtDataStroke> artDataStrokeList;
 	private int rurleNo;
 	private String endMessage;
+	private List<Integer> patternList;
 
 	public FakeArtistRoom() {
 		userList = new ArrayList<User>();
@@ -34,6 +35,8 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 		gameTime = FakeArtistConst.TIME_FIRST;
 		artDataStrokeList = new ArrayList<ArtDataStroke>();
 		maxUserSize = 16;
+		patternList = new ArrayList<Integer>();
+		patternList.add(5);
 		rurleNo = 0;
 	}
 
@@ -66,11 +69,16 @@ public class FakeArtistRoom extends ChatRoom implements LimitTimeInterface {
 			throw new ApplicationException(SystemConst.ERR_MSG_ALLVIEW_STATUS_CODE, "参加者が少ないため開始できません");
 		}
 
+		// 役職設定確認
+		if (patternList.isEmpty()) {
+			throw new ApplicationException(SystemConst.ERR_MSG_OWNVIEW_STATUS_CODE, "テーマの種類を設定してください。");
+		}
+
 		turn = 0;
 		endMessage = null;
 		gameTime = FakeArtistConst.TIME_ART;
 		artDataStrokeList = new ArrayList<ArtDataStroke>();
-		theme = FakeArtistConst.getWord();
+		theme = FakeArtistConst.getWord(patternList);
 
 		// ユーザ設定
 		Collections.shuffle(userList);
