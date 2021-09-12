@@ -61,4 +61,11 @@ public class FakeArtistConst {
 		return rtnStr;
 	}
 
+	public static void main(String[] args) {
+		List<Integer> tmp = new ArrayList<Integer>();
+		tmp.add(1);
+		tmp.add(3);
+		System.out.println(getWord(tmp));
+	}
+
 }
