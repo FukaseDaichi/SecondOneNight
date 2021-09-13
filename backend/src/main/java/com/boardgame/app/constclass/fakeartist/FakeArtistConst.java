@@ -43,9 +43,15 @@ public class FakeArtistConst {
 				// ファイルの最終行まで読み込む
 				String str = null;
 				while ((str = buffer.readLine()) != null) {
-					String[] strArray = str.split(",");
-					if (paternList.contains(Integer.parseInt(strArray[1]))) {
-						strList.add(strArray[0]);
+					try {
+						String[] strArray = str.split(",");
+						if (paternList.contains(Integer.parseInt(strArray[0]))) {
+							strList.add(strArray[1]);
+						}
+
+					} catch (NumberFormatException | IndexOutOfBoundsException e) {
+						System.out.println("Err:" + str);
+						continue;
 					}
 				}
 			}
