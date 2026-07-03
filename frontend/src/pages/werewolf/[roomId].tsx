@@ -11,7 +11,7 @@ import ChatComponent from '../../components/chatcomponent';
 import UserInfo from '../../components/werewolf/userInfo';
 import styles from '../../styles/components/werewolf/room.module.scss';
 import Router from 'next/router';
-import Start from '../../components/timebomb/start';
+import Start from '../../components/common/Start';
 import RollCard from '../../components/werewolf/rollcard';
 import ModalRollCard from '../../components/werewolf/modalrollcard';
 import RollInfo from '../../components/werewolf/rollinfo';

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import styles from '../../styles/components/hideout/headinfo.module.scss';
+import styles from '../../../styles/components/hideout/headinfo.module.scss';
 
 type HeadInfoProps = {
     userList: Array<any>;

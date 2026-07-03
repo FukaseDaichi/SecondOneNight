@@ -11,7 +11,7 @@ import ChatComponent from '../../components/chatcomponent';
 import styles from '../../styles/components/decrypt/room.module.scss';
 import Router from 'next/router';
 
-import Start from '../../components/timebomb/start';
+import Start from '../../components/common/Start';
 import TeamDataInfo from '../../components/decrypt/teamDataInfo';
 import { useGameSocket } from '../../lib/stomp/useGameSocket';
 import ConnectionStatus from '../../components/common/ConnectionStatus';

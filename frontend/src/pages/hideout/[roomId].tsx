@@ -5,17 +5,18 @@ import Layout from '../../components/layout';
 import Head from 'next/head';
 import Chatmessage from '../../components/message/chatmessage';
 import ChatComponent from '../../components/chatcomponent';
-import BuildCard from '../../components/hideout/buildcard';
-import UserInfo from '../../components/hideout/userInfo';
-import RushTurn from '../../components/hideout/rushturn';
+import BuildCard from '../../features/hideout/components/buildcard';
+import UserInfo from '../../features/hideout/components/userInfo';
+import RushTurn from '../../features/hideout/components/rushturn';
 import styles from '../../styles/components/hideout/room.module.scss';
-import HideoutModal from '../../components/modal/hideoutmodal';
-import HideoutHeadInfo from '../../components/hideout/hideoutheadinfo';
-import GameInfo from '../../components/hideout/gameinfo';
+import HideoutHeadInfo from '../../features/hideout/components/hideoutheadinfo';
+import GameInfo from '../../features/hideout/components/gameinfo';
 import Router from 'next/router';
-import Start from '../../components/timebomb/start';
+import Start from '../../components/common/Start';
 import Socialbtn from '../../components/button/sosialbtn';
 import ConnectionStatus from '../../components/common/ConnectionStatus';
+import RoomInForm from '../../components/common/RoomInForm';
+import WinnerModals from '../../features/hideout/components/WinnerModals';
 import { useHideoutRoom } from '../../features/hideout/useHideoutRoom';
 
 export default function HideoutRoom() {
@@ -90,39 +91,13 @@ export default function HideoutRoom() {
                 }
             })}
             <ConnectionStatus status={status} />
-            <div className={`${styles.roominbtn} ${entered ? styles.in : ''}`}>
-                <p>
-                    <label htmlFor="username">Name</label>
-                </p>
-                <input
-                    disabled={!connected}
-                    type="text"
-                    id="username"
-                    maxLength={20}
-                    onKeyPress={(e) => {
-                        if (e.key == 'Enter') {
-                            e.preventDefault();
-                            const usernameDom: HTMLInputElement =
-                                document.getElementById(
-                                    'username'
-                                ) as HTMLInputElement;
-                            roomIn(usernameDom.value);
-                        }
-                    }}
-                />
-                <button
-                    disabled={!connected}
-                    onClick={() => {
-                        const usernameDom: HTMLInputElement =
-                            document.getElementById(
-                                'username'
-                            ) as HTMLInputElement;
-                        roomIn(usernameDom.value);
-                    }}
-                >
-                    Room IN
-                </button>
-            </div>
+            <RoomInForm
+                connected={connected}
+                entered={entered}
+                onRoomIn={roomIn}
+                className={styles.roominbtn}
+                enteredClassName={styles.in}
+            />
             {/* フィールド情報 */}
             {state.firldBuilding && (
                 <div className={styles.firldBuild}>
@@ -162,37 +137,13 @@ export default function HideoutRoom() {
                     endFnc={closeRushArea}
                 />
             )}
-            {!state.rushAreaFlg && state.terroristWinFlg && (
-                <HideoutModal
-                    type={'seven'}
-                    endFnc={() => {
-                        setTimeout(() => {
-                            dismissTerroristWin();
-                        }, 3000);
-                    }}
-                >
-                    <div className={styles.result}>
-                        <img
-                            src="/images/hideout/terroristwin.png"
-                            alt="結果"
-                        />
-                    </div>
-                </HideoutModal>
-            )}
-            {!state.rushAreaFlg && state.swatWinFlg && (
-                <HideoutModal
-                    type={'five'}
-                    endFnc={() => {
-                        setTimeout(() => {
-                            dismissSwatWin();
-                        }, 3000);
-                    }}
-                >
-                    <div className={styles.result}>
-                        <img src="/images/hideout/swatwin.png" alt="結果" />
-                    </div>
-                </HideoutModal>
-            )}
+            <WinnerModals
+                rushAreaFlg={state.rushAreaFlg}
+                terroristWinFlg={state.terroristWinFlg}
+                swatWinFlg={state.swatWinFlg}
+                dismissTerroristWin={dismissTerroristWin}
+                dismissSwatWin={dismissSwatWin}
+            />
             <div className={styles.btnarea}>
                 <button
                     onClick={() => {

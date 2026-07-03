@@ -1,9 +1,9 @@
 import React from 'react';
-import styles from '../../styles/components/hideout/userinfo.module.scss';
+import styles from '../../../styles/components/hideout/userinfo.module.scss';
 import { useState } from 'react';
-import HoloCard from '../../components/card/holoCard';
+import HoloCard from '../../../components/card/holoCard';
 import HideoutIcon from './hideouticon';
-import BuildCard from '../../components/hideout/buildcard';
+import BuildCard from './buildcard';
 
 // ハイドアウト用
 

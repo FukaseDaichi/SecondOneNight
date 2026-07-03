@@ -11,7 +11,7 @@ import ChatComponent from '../../components/chatcomponent';
 import styles from '../../styles/components/fakeartist/room.module.scss';
 import Router from 'next/router';
 
-import Start from '../../components/timebomb/start';
+import Start from '../../components/common/Start';
 import Canvas from '../../components/fakeartist/canvas';
 import { ArtDataStroke, FakeArtistUser } from '../../type/fakeartist';
 import FakeartistUserInfo from '../../components/fakeartist/fakeartistuserInfo';

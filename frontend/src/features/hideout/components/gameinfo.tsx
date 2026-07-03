@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import styles from '../../styles/components/hideout/gameinfo.module.scss';
+import styles from '../../../styles/components/hideout/gameinfo.module.scss';
 
 type GameInfoProps = {
     buildingCardList: Array<any>;

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import styles from '../../styles/components/hideout/buildcard.module.scss';
-import { SystemConst } from '../../const/next.config';
+import styles from '../../../styles/components/hideout/buildcard.module.scss';
+import { SystemConst } from '../../../const/next.config';
 import { useEffect, useState } from 'react';
 
 const getBuildImgUrl = (cardType: number) => {

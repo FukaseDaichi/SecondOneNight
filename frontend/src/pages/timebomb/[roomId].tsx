@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { SystemConst } from '../../const/next.config';
 import Layout from '../../components/layout';
-import Start from '../../components/timebomb/start';
+import Start from '../../components/common/Start';
 import { useEffect, useState, useCallback } from 'react';
 import { RoomUserInfo, TimeBombUser, LeadCards, SocketInfo } from '../../type';
 import UserInfo from '../../components/timebomb/userInfo';

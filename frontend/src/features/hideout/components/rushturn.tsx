@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import styles from '../../styles/components/hideout/rushturn.module.scss';
+import styles from '../../../styles/components/hideout/rushturn.module.scss';
 import { useEffect } from 'react';
-import HoloCard from '../card/holoCard';
-import { SystemConst } from '../../const/next.config';
-import Loadingdod from '../../components/text/loadingdod';
+import HoloCard from '../../../components/card/holoCard';
+import { SystemConst } from '../../../const/next.config';
+import Loadingdod from '../../../components/text/loadingdod';
 
 const getMemberImgUrl = (cardType: number) => {
     let url = null;
