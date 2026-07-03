@@ -737,11 +737,29 @@ git commit -m "react-stompを削除しStage 2検証結果を記録"
 
 ## 検証記録
 
-(Task 8 実行時に記入)
+### Task 8(2026-07-04)— Stage 2 完了検証
 
-- react-stomp 参照残存: なし / あれば列挙
-- useGameSocket テスト: X件 PASS
-- 全5ゲーム本番接続: 各ゲームの結果
-- 再接続インジケータ動作: 結果
-- 意図的な挙動差分: 接続インジケータの追加のみ(他はなし)
-- 次ステージへの申し送り(Stage 3: 受信ハンドラの reducer 化)
+- **react-stomp 参照残存: なし**(`grep -rn "react-stomp|SockJsClient|clientObj|.sendMessage" src` が 0 件)。`react-stomp` を依存から削除済み
+- **テスト: 11件 PASS**(useGameSocket 8件 + next.config 3件)
+- **lint: error 0**(warning 65 は既存の exhaustive-deps 等、新規なし)/ **build: 成功**(Node 22系→現在は brew 由来 node 26、フラグ不要)
+- **全5ゲーム本番接続(Heroku、Next 15 dev、useGameSocket 経由)**:
+
+| ゲーム | topic | 接続 | 送受信 | コンソールエラー |
+|---|---|---|---|---|
+| timebomb | `/topic/{roomId}/timebomb` | ✅ | ✅ 入室往復(名前表示)確認 | なし |
+| werewolf | `/topic/{roomId}` | ✅ | ✅ /info 発行 | なし |
+| hideout | `/topic/{roomId}` | ✅ | ✅ /info 発行 | なし |
+| decrypt | `/topic/{roomId}` | ✅ | ✅ /info 発行・描画 | なし |
+| fakeartist | `/topic/{roomId}` | ✅ | ✅ /info 発行 | なし |
+
+- **接続インジケータ**: 接続中は非表示(誤表示なし)を確認。表示ロジック(`reconnecting`/`disconnected` のみ表示)は Task 2 で検証済み
+- **再接続**: ユニットテストで status 遷移(`onWebSocketClose`→`reconnecting`)・`reconnectDelay: 5000`・再購読時の旧 subscription 破棄を検証済み。**ライブの強制切断ドリルはヘッドレス環境では未実施**(SockJS が内部で WebSocket 参照を保持するため介入不可)。実ネットワーク断での自動復帰は手動確認推奨
+- **意図的な挙動差分**: 接続インジケータの追加のみ(他はなし)
+
+**判定: Stage 2 完了。** react-stomp を排除し、全5ゲームが型付き共通フック `useGameSocket` 経由で本番バックエンドと送受信できる。
+
+### 既知の残課題(後続ステージへ)
+- 受信ハンドラ(`receve`/`getMessage` の status switch)の reducer 化 → **Stage 3**
+- `useGameSocket` の Minor(enabled=false 時に status が disconnected に戻らない/status 遷移の直接テスト補完)→ Stage 3 で余裕があれば
+- sass @import 非推奨警告、App Router 移行、命名統一等 → Stage 4
+- ライブ再接続ドリル(実ネットワーク断)は手動確認
