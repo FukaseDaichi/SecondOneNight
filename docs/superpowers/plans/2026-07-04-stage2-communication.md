@@ -763,3 +763,5 @@ git commit -m "react-stompを削除しStage 2検証結果を記録"
 - `useGameSocket` の Minor(enabled=false 時に status が disconnected に戻らない/status 遷移の直接テスト補完)→ Stage 3 で余裕があれば
 - sass @import 非推奨警告、App Router 移行、命名統一等 → Stage 4
 - ライブ再接続ドリル(実ネットワーク断)は手動確認
+- 送信経路の try/catch 非対称(timebomb changeLimitTme/changeSecretFlg)→ Stage 3 の送信整理で統一検討(挙動維持のため現状は据え置き)
+- ConnectionStatus の z-index:9999 がモーダルと重なり得る点は目視確認推奨(一時バナーのみ・低リスク)
