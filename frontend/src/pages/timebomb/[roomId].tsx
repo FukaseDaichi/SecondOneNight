@@ -3,8 +3,7 @@ import { useRouter } from 'next/router';
 import { SystemConst } from '../../const/next.config';
 import Layout from '../../components/layout';
 import Start from '../../components/common/Start';
-import { useEffect, useState, useCallback } from 'react';
-import { RoomUserInfo, TimeBombUser, LeadCards, SocketInfo } from '../../type';
+import { TimeBombUser, LeadCards } from '../../type';
 import UserInfo from '../../components/timebomb/userInfo';
 import Modal from '../../components/modal';
 import Chatmessage from '../../components/message/chatmessage';
@@ -14,272 +13,44 @@ import CountdownClock from '../../components/countdownclock';
 import Router from 'next/router';
 import Head from 'next/head';
 import Socialbtn from '../../components/button/sosialbtn';
-import { useGameSocket } from '../../lib/stomp/useGameSocket';
 import ConnectionStatus from '../../components/common/ConnectionStatus';
+import { useTimebombRoom } from '../../features/timebomb/useTimebombRoom';
 
 export default function Room() {
     // roomId取得
     const router = useRouter();
     const { roomId } = router.query;
 
-    const { connected, status, send } = useGameSocket({
-        topic: `/topic/${roomId}/timebomb`,
-        onMessage: (msg) => receve(msg),
-        enabled: !!roomId,
-    });
+    const {
+        state,
+        connected,
+        status,
+        entered,
+        roomIn,
+        start,
+        play,
+        changeIcon,
+        limittimeDone,
+        changeLimitTme,
+        changeSecretFlg,
+    } = useTimebombRoom(roomId as string | undefined);
 
-    // react hooks state
-    const [playerName, setPlayerName] = useState('');
-    const [timeBombUserList, setTimeBombUserList] = useState([]);
-    const [leadCardsList, setLeadCardsList] = useState([]);
-    const [startFlg, setStartFlg] = useState(false);
-
-    // メッセージ用データセット
-    const [messageList, setMessageList] = useState([]);
-
-    // ラウンドメッセージ用データセット
-    const [round, setRound] = useState(0);
-    const [roundMessageFlg, setRoundMessageFlg] = useState(false);
-
-    // ゲーム内情報
-    const [turn, setTurn] = useState(0);
-    const [releaseNo, setReleaseNo] = useState(0);
-    const [limitTime, setLimitTime] = useState(0);
-    const [secretFlg, setSecretFlg] = useState(false);
-
-    // 勝敗表示用
-    const [endFlg, setEndFlg] = useState(false);
-    const [bommerFlg, setBommerFlg] = useState(false);
-    const [policeFlg, setPoliceFlg] = useState(false);
-
-    // フラグの監視
-    useEffect(() => {
-        if (startFlg) {
-            window.setTimeout(() => {
-                setStartFlg(false);
-            }, 4000);
-        }
-
-        if (roundMessageFlg) {
-            window.setTimeout(() => {
-                document.querySelector('body').classList.remove('modal_active');
-                setRoundMessageFlg(false);
-            }, 5000);
-        }
-    }, [startFlg, roundMessageFlg]);
-
-    const coneect = (url: string, msg: RoomUserInfo) => {
-        try {
-            send(url, msg);
-        } catch (e) {
-            setMessageList(
-                messageList.concat('通信エラー。再度試してください')
-            );
-        }
-    };
-    // ルーム入室
-    const roomIn = (msg: RoomUserInfo) => {
-        const url = '/app/roomin';
-        setPlayerName(msg.userName);
-        coneect(url, msg);
-    };
-
-    // 初回入室時
-    useEffect(() => {
-        const userArray = timeBombUserList.filter((element) => {
-            return element.userName === playerName;
-        });
-
-        if (userArray.length > 0) {
-            const btnDom = document.querySelector('.' + styles.roominbtn);
-            if (btnDom && btnDom.classList.contains(styles.in)) {
-                return;
-            }
-            if (btnDom) {
-                btnDom.classList.add(styles.in);
-            }
-        }
-    }, [playerName, timeBombUserList.length]);
-
-    // ゲームスタート
-    const start = (msg: RoomUserInfo) => {
-        const url = '/app/start';
-        coneect(url, msg);
-    };
-
-    // メッセージ取得
-    const receve = (msg) => {
-        // エラーケース
-        if (msg.status) {
-            switch (msg.status) {
-                case 200:
-                    setMessageList(messageList.concat(msg.message));
-                    setData(msg.obj);
-                    return;
-                case 201:
-                    // アイコン変更時
-                    setTimeBombUserList(msg.obj);
-                    return;
-                case 404:
-                    setMessageList(messageList.concat(msg.message));
-                    return;
-
-                case 800:
-                    setSecretFlg(msg.obj);
-                    return;
-
-                case 900:
-                    // 制限時間変更
-                    setLimitTime(msg.obj);
-                    return;
-
-                default:
-                    setMessageList(messageList.concat(msg.message));
-                    return;
-            }
-        }
-
-        // 解除メッセージ判定
-        if (releaseNo < msg.releaseNo) {
-            setMessageList(messageList.concat('解除に成功'));
-        }
-
-        // データ設定
-        setData(msg);
-
-        // 開始判定
-        if (msg.turn === 1) {
-            // データリセット
-            document.querySelector('body').classList.remove('modal_active');
-            scrollTo(0, 0);
-            setBommerFlg(false);
-            setPoliceFlg(false);
-            setStartFlg(true);
-        }
-
-        // 勝敗判定
-        if (msg.winnerTeam > 0) {
-            switch (msg.winnerTeam) {
-                case 1:
-                    scrollTo(0, 0);
-                    setPoliceFlg(true);
-                    setEndFlg(true);
-                    return;
-                case 2:
-                    scrollTo(0, 0);
-                    setBommerFlg(true);
-                    setEndFlg(true);
-                    return;
-            }
-        }
-    };
-
-    // データセット
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const setData: any = (room) => {
-        setTimeBombUserList(room.userList);
-        setTurn(room.turn);
-        setReleaseNo(room.releaseNo);
-        setEndFlg(false);
-        setLimitTime(room.limitTime);
-        setSecretFlg(room.secretFlg);
-
-        if (room.leadCardsList) {
-            setLeadCardsList(room.leadCardsList);
-        }
-        if (round != room.round && room.winnerTeam === 0) {
-            setRound(room.round);
-            if (room.round > 1) {
-                scrollTo(0, 0);
-                setRoundMessageFlg(true);
-            }
-        }
-    };
-
-    // ゲームプレイ
-    const play = (cardIndex: number) => {
-        const url = '/app/play';
-        const data: RoomUserInfo = {
-            action: 'play',
-            roomId: roomId as string,
-            userName: playerName,
-            cardIndex: cardIndex,
-            winTeam: 0,
-        };
-        coneect(url, data);
-    };
-
-    // アイコン変更
-    const changeIcon = useCallback(
-        (iconUrl: string) => {
-            const url = '/app/changeIcon';
-            const usrInfo: RoomUserInfo = {
-                action: iconUrl,
-                roomId: roomId as string,
-                userName: playerName,
-                cardIndex: 0,
-                winTeam: 0,
-            };
-            coneect(url, usrInfo);
-        },
-        [playerName]
-    );
-
-    const limittimeDone = useCallback(
-        (pturn: number) => {
-            let turnFlg = false;
-            timeBombUserList.forEach((value: TimeBombUser) => {
-                if (value.userName === playerName && value.turnFlg) {
-                    turnFlg = true;
-                }
-            });
-
-            if (turnFlg) {
-                const url = '/app/timebomb-limittime';
-                const info: SocketInfo = {
-                    status: 600,
-                    roomId: roomId as string,
-                    userName: playerName,
-                    message: null,
-                    obj: pturn,
-                };
-                try {
-                    send(url, info);
-                } catch (e) {
-                    // 処理なし
-                }
-            }
-        },
-        [timeBombUserList]
-    );
-
-    // 制限時間変更
-    const changeLimitTme = (time: number) => {
-        const url = '/app/timebomb-setlimittime';
-        const info: SocketInfo = {
-            status: 900,
-            roomId: roomId as string,
-            userName: playerName,
-            message: null,
-            obj: time,
-        };
-
-        send(url, info);
-    };
-
-    // シークレットモード変更
-    const changeSecretFlg = () => {
-        const url = '/app/timebomb-changesecret';
-        const info: SocketInfo = {
-            status: 800,
-            roomId: roomId as string,
-            userName: playerName,
-            message: null,
-            obj: null,
-        };
-
-        send(url, info);
-    };
+    const {
+        playerName,
+        timeBombUserList,
+        leadCardsList,
+        startFlg,
+        messageList,
+        round,
+        roundMessageFlg,
+        turn,
+        releaseNo,
+        limitTime,
+        secretFlg,
+        endFlg,
+        bommerFlg,
+        policeFlg,
+    } = state;
 
     return (
         <Layout home={false}>
@@ -353,7 +124,11 @@ export default function Room() {
             <ConnectionStatus status={status} />
 
             {turn < 1 && (
-                <div className={styles.roominbtn}>
+                <div
+                    className={`${styles.roominbtn} ${
+                        entered ? styles.in : ''
+                    }`}
+                >
                     <p>
                         <label htmlFor="username">Name</label>
                     </p>
