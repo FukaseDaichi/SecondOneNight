@@ -10,6 +10,8 @@
 
 **スコープ注記:** 設計書(`docs/superpowers/specs/2026-07-03-frontend-modernization-design.md`)の Stage 1 のみを扱う。Stage 2(通信層)・Stage 3(構造リファクタ)・Stage 4(仕上げ)は各ステージ開始時に別の計画書を作成する(前ステージ完了後のコードに依存するため)。
 
+**モノレポ統合済み(2026-07-03):** フロントエンドは `frontend/` 配下に移動した。本計画中のフロントエンド関連の相対パス(`src/...`、`package.json`、`.npmrc`、`next.config.mjs`、`eslint.config.mjs`、`.env.local.example` 等)はすべて `frontend/` 配下を指す。**bash コマンドは `frontend/` をカレントディレクトリにして実行すること。** ただし `docs/...` で始まるパスのみリポジトリルート基準(frontend/ からは `../docs/...`)。
+
 ## Global Constraints
 
 - 作業ブランチ: `refactor/frontend-modernization`。master へ直接コミットしない。push / PR 作成はユーザーの指示があるまで行わない
@@ -511,7 +513,7 @@ Expected: 全て成功(lint は error 0)
 このファイルの上記チェックリストを更新し、意図的な挙動差分(あれば)を本計画書末尾の「検証記録」節に追記してコミットする:
 
 ```bash
-git add docs/superpowers/plans/2026-07-03-stage1-foundation-upgrade.md
+git add ../docs/superpowers/plans/2026-07-03-stage1-foundation-upgrade.md
 git commit -m "Stage 1 検証結果を記録"
 ```
 
