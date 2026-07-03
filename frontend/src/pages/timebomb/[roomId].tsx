@@ -1,6 +1,5 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import SockJsClient from 'react-stomp';
 import { SystemConst } from '../../const/next.config';
 import Layout from '../../components/layout';
 import Start from '../../components/timebomb/start';
@@ -15,20 +14,21 @@ import CountdownClock from '../../components/countdownclock';
 import Router from 'next/router';
 import Head from 'next/head';
 import Socialbtn from '../../components/button/sosialbtn';
-
-// 接続切れ
-const disconnect = () => {
-    console.log('接続が切れました');
-};
+import { useGameSocket } from '../../lib/stomp/useGameSocket';
+import ConnectionStatus from '../../components/common/ConnectionStatus';
 
 export default function Room() {
     // roomId取得
     const router = useRouter();
     const { roomId } = router.query;
 
+    const { connected, status, send } = useGameSocket({
+        topic: `/topic/${roomId}/timebomb`,
+        onMessage: (msg) => receve(msg),
+        enabled: !!roomId,
+    });
+
     // react hooks state
-    const [clientObj, setClientObj] = useState(null);
-    const [isConnected, setIsConnected] = useState(false);
     const [playerName, setPlayerName] = useState('');
     const [timeBombUserList, setTimeBombUserList] = useState([]);
     const [leadCardsList, setLeadCardsList] = useState([]);
@@ -70,7 +70,7 @@ export default function Room() {
 
     const coneect = (url: string, msg: RoomUserInfo) => {
         try {
-            clientObj.sendMessage(url, JSON.stringify(msg));
+            send(url, msg);
         } catch (e) {
             setMessageList(
                 messageList.concat('通信エラー。再度試してください')
@@ -222,7 +222,7 @@ export default function Room() {
             };
             coneect(url, usrInfo);
         },
-        [isConnected, playerName]
+        [playerName]
     );
 
     const limittimeDone = useCallback(
@@ -244,7 +244,7 @@ export default function Room() {
                     obj: pturn,
                 };
                 try {
-                    clientObj.sendMessage(url, JSON.stringify(info));
+                    send(url, info);
                 } catch (e) {
                     // 処理なし
                 }
@@ -264,7 +264,7 @@ export default function Room() {
             obj: time,
         };
 
-        clientObj.sendMessage(url, JSON.stringify(info));
+        send(url, info);
     };
 
     // シークレットモード変更
@@ -278,7 +278,7 @@ export default function Room() {
             obj: null,
         };
 
-        clientObj.sendMessage(url, JSON.stringify(info));
+        send(url, info);
     };
 
     return (
@@ -350,22 +350,7 @@ export default function Room() {
                 }
             })}
 
-            <SockJsClient
-                url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
-                topics={['/topic/' + roomId + '/timebomb']}
-                ref={(client) => {
-                    setClientObj(client);
-                }}
-                onMessage={(msg) => {
-                    // デバッグ用
-                    // console.log(msg);
-                    receve(msg);
-                }}
-                onConnect={() => {
-                    setIsConnected(true);
-                }}
-                onDisconnect={disconnect}
-            />
+            <ConnectionStatus status={status} />
 
             {turn < 1 && (
                 <div className={styles.roominbtn}>
@@ -373,7 +358,7 @@ export default function Room() {
                         <label htmlFor="username">Name</label>
                     </p>
                     <input
-                        disabled={!isConnected}
+                        disabled={!connected}
                         type="text"
                         id="username"
                         maxLength={20}
@@ -400,7 +385,7 @@ export default function Room() {
                         }}
                     />
                     <button
-                        disabled={!isConnected}
+                        disabled={!connected}
                         onClick={() => {
                             const usernameDom: HTMLInputElement =
                                 document.getElementById(
