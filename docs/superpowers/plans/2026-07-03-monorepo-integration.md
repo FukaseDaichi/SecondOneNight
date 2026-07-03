@@ -465,8 +465,16 @@ git merge origin/master   # PRマージ(スカッシュ等)の形態によって
 
 ## 検証記録
 
-(Task 6 / Task 7 実行時に記入)
+### Task 6(2026-07-03)
 
-- 履歴検証:
-- バックエンドローカルビルド:
-- カットオーバー結果:
+- **履歴検証: OK**
+  - `git log --oneline -- backend | tail` で BoardGame の初期コミット `71e0e5d firstcommit` まで辿れる(全88コミット分の履歴を保持)
+  - `git log --follow --oneline frontend/src/pages/index.tsx` でフロント初期コミット `d917867 fitst commit` まで辿れる
+  - 統合コミット列: `13da0b7`(backend統合)→ `f80f80d`(frontend移動)→ `75053db`(ルートドキュメント)→ `5efe24c`(Stage1計画更新)
+- **バックエンドローカルビルド: スキップ**(ローカルに JDK 未インストール。計画通り Heroku ビルド(Task 7)で検証する)
+- **構造確認: OK** トップレベルは `CLAUDE.md README.md backend docs frontend` のみ、作業ツリーはクリーン。`frontend/` にフロント一式、`backend/` に pom.xml / mvnw / .mvn / system.properties / src 等が揃う
+- **判定: カットオーバー(Task 7)へ進んでよい**
+
+### Task 7
+
+- カットオーバー結果: (実行時に記入)
