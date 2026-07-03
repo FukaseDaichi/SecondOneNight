@@ -130,4 +130,16 @@ describe('useGameSocket', () => {
         unmount();
         expect(inst.deactivate).toHaveBeenCalled();
     });
+
+    it('enabled が true→false になると status は disconnected に戻る', () => {
+        const { result, rerender } = renderHook(
+            ({ enabled }) =>
+                useGameSocket({ topic: '/topic/x', onMessage: () => {}, enabled }),
+            { initialProps: { enabled: true } }
+        );
+        act(() => MockClient.instances[0]._open());
+        expect(result.current.status).toBe('connected');
+        rerender({ enabled: false });
+        expect(result.current.status).toBe('disconnected');
+    });
 });
