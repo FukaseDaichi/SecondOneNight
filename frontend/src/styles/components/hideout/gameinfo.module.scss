@@ -1,0 +1,55 @@
+@import '../../variables';
+
+div.gameinfo {
+    position: absolute;
+    display: flex;
+    align-items: center;
+
+    > div {
+        display: flex;
+        align-items: center;
+        margin-left: 50px;
+        font-size: 3rem;
+        color: #4e4e4e;
+        @include mq(md) {
+            margin-top: 20px;
+            margin-left: 10px;
+            font-size: 1.5rem;
+        }
+
+        span {
+            font-size: 4rem;
+            @include mq(md) {
+                font-size: 2rem;
+            }
+        }
+
+        div.card {
+            width: 90px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 5px 4px 10px 3px rgba(0, 0, 0, 0.6);
+
+            @include mq(md) {
+                width: 75px;
+            }
+
+            img {
+                width: 100%;
+            }
+        }
+        div.data {
+            margin-left: 10px;
+            font-family: 'Patrick Hand SC', cursive;
+            @include mq(md) {
+                margin-left: 5px;
+            }
+        }
+    }
+
+    > div:nth-child(2) {
+        @include mq(md) {
+            margin-left: 30px;
+        }
+    }
+}

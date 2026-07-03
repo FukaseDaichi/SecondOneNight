@@ -1,0 +1,39 @@
+.rollcard {
+    font-family: 'APJapanesefont', sans-seri;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 16px 11px 22px -3px rgba(0, 0, 0, 0.6);
+    cursor: pointer;
+    transition: all 0.1s;
+
+    &:hover {
+        box-shadow: 22px 24px 22px -3px rgba(0, 0, 0, 0.6);
+        transform: scale(1.1, 1.1);
+    }
+
+    div.imgdiv {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        text-align: center;
+
+        span.rollname {
+            position: absolute;
+            display: block;
+            bottom: -3px;
+            width: 100%;
+            text-align: center;
+            margin: 0 auto;
+            color: white;
+            text-shadow:
+                1px 1px 0 #000,
+                -1px 1px 0 #000,
+                1px -1px 0 #000,
+                -1px -1px 0 #000;
+            letter-spacing: -0.2rem;
+            white-space: nowrap;
+        }
+    }
+}

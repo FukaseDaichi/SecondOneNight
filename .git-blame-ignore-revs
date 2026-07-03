@@ -1,0 +1,7 @@
+# git blame で無視するコミット(ロジック変更を伴わない大量整形など)
+#
+# 有効化(ローカル): git config blame.ignoreRevsFile .git-blame-ignore-revs
+# GitHub の blame ビューはこのファイルを自動で認識します。
+
+# ESLint 9(flat config)/ Prettier 3 移行に伴う scss/ts の一括整形(挙動不変)
+5f57e451bc5ccd68573e1f08fd21d5f70d2aef54

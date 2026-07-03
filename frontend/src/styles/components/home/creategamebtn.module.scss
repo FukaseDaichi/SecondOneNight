@@ -1,0 +1,157 @@
+@import '../../variables';
+@import '../../font';
+
+@keyframes jello-vertical {
+    0% {
+        transform: scale3d(1, 1, 1);
+    }
+    30% {
+        transform: scale3d(0.75, 1.25, 1);
+    }
+    40% {
+        transform: scale3d(1.25, 0.75, 1);
+    }
+    50% {
+        transform: scale3d(0.85, 1.15, 1);
+    }
+    65% {
+        transform: scale3d(1.05, 0.95, 1);
+    }
+    75% {
+        transform: scale3d(0.95, 1.05, 1);
+    }
+    100% {
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+@keyframes rotate-in-2-cw {
+    0% {
+        transform: rotate(-45deg);
+        opacity: 0;
+    }
+    100% {
+        transform: rotate(0);
+        opacity: 1;
+    }
+}
+@keyframes rotate-in-2-ccw {
+    0% {
+        transform: rotate(45deg);
+        opacity: 0;
+    }
+    100% {
+        transform: rotate(0);
+        opacity: 1;
+    }
+}
+
+@keyframes text-focus-in {
+    0% {
+        filter: blur(12px);
+        opacity: 0;
+    }
+    100% {
+        filter: blur(0);
+        opacity: 1;
+    }
+}
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+div.game {
+    position: relative;
+    cursor: pointer;
+    box-shadow: 10px 10px 16px -6px rgba(0, 0, 0, 0.6);
+    transition: all 0.1s;
+    &:hover {
+        transform: scale(1.05);
+    }
+    &.clicked {
+        animation: jello-vertical 0.9s both;
+    }
+
+    > div.img {
+        img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+    }
+    > div.url {
+        font-size: 0.5rem;
+        position: absolute;
+        top: 0;
+    }
+
+    > div.discription {
+        position: absolute;
+        width: 100%;
+        min-height: 130px;
+        bottom: 0;
+        padding: 15px;
+        font-size: 0.9rem;
+        background-color: rgba(255, 255, 255, 0.6);
+        animation: text-focus-in 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
+        > h1 {
+            font-size: 1.5rem;
+            font-family: 'APJapanesefont_short', 'APJapanesefont', sans-seri;
+        }
+
+        div.spinner {
+            user-select: none;
+            margin: 0 auto;
+            text-align: center;
+            > div {
+                display: inline-block;
+                width: 50px;
+                height: 50px;
+                border: 3px solid rgba(210, 179, 86, 0.9);
+                border-radius: 50%;
+                border-top-color: #fff;
+                animation: spin 1s ease-in-out infinite;
+            }
+        }
+
+        div {
+            > div.btn {
+                margin: 20px 0px;
+                display: flex;
+                justify-content: space-around;
+                font-family:
+                    'APJapanesefont_short', 'APJapanesefont', sans-seri;
+
+                > div {
+                    width: 100px;
+                    text-align: center;
+                    font-size: 1.3rem;
+                    background-color: #d2b356;
+                    color: white;
+                    box-shadow: 10px 10px 16px -6px rgba(0, 0, 0, 0.6);
+
+                    &:active {
+                        transform: scale(0.9);
+                    }
+
+                    &:nth-child(1) {
+                        animation: rotate-in-2-cw 0.5s
+                            cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+                    }
+
+                    &:nth-child(2) {
+                        animation: rotate-in-2-ccw 0.5s
+                            cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+                    }
+
+                    &.clicked {
+                        animation: jello-vertical 0.9s both;
+                        background-color: #6fc182;
+                        color: white;
+                    }
+                }
+            }
+        }
+    }
+}

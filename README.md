@@ -1,38 +1,15 @@
-# セットアップ
+# BoardGame
 
-## クローン
+ブラウザで遊べるオンラインボードゲーム集(セカンドワンナイト人狼 / タイムボム / ハイドアウト / エセ芸術家ニューヨークへ行く / ディクリプト)。
 
-npx create-next-app boardgamefront --ts --use-npm --example "https://github.com/FukaseDaichi/BoardGameFront/tree/develop"
+- 本番サイト: https://board-game-three.vercel.app
 
-## 各種モジュール
+## 構成
 
--   npx browserslist@latest --update-db
--   npm install --save react-stomp
--   npm i sass
--   npm install interactjs
--   npm install react-color --save
--   npm install react-share
--   npm install react-tsparticles
+| ディレクトリ | 内容 | デプロイ先 |
+| --- | --- | --- |
+| [frontend/](frontend/) | Next.js フロントエンド | Vercel |
+| [backend/](backend/) | Spring Boot バックエンド | Heroku |
+| [docs/](docs/) | 設計書・実装計画 | - |
 
-## TypeScript と ESLint のインストール
-
--   npm i --save-dev eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin
--   npx tsc --init
--   npx eslint --init
-
--   npm install --save-dev prettier
--   npm install --save-dev eslint-config-prettier
-
-## react の最新化
-
--   npm install react@latest react-dom@latest
--   npm i next @latest
--   npm i typescript@latest
-
-## 追跡
-
-    git remote add origin https://FukaseDaichi@github.com/FukaseDaichi/BoardGameFront.git
-
-## 実行
-
-    npm run dev
+開発環境のセットアップ・デプロイ構成の詳細は [CLAUDE.md](CLAUDE.md) を参照。

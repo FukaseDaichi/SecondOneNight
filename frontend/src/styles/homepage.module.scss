@@ -1,0 +1,137 @@
+@import './variables';
+@import './font';
+
+// 後ろのアニメーション調整用
+@mixin before($index: 1) {
+    position: relative;
+    z-index: $index;
+}
+
+main.home {
+    max-width: 60rem;
+    padding: 0 1rem;
+    margin: 3rem auto 6rem;
+
+    section.mainsection {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        > div.main-content {
+            @include before();
+            width: 400px;
+            @include mq(md) {
+                width: 260px;
+            }
+
+            > h3 {
+                font-size: 1rem;
+                margin: 0;
+                color: #ccc;
+            }
+            > h1 {
+                font-family:
+                    'APJapanesefont_short', 'APJapanesefont', sans-seri;
+                color: #111;
+                line-height: 0.7;
+                font-size: 2.5rem;
+            }
+            > h2 {
+                margin-top: 20px;
+                padding-right: 20px;
+                font-weight: 200;
+                font-size: 0.9rem;
+                color: #111;
+                @include mq(md) {
+                    font-size: 0.9rem;
+                }
+
+                > a {
+                    color: #d2b356;
+                }
+            }
+
+            &::before {
+                background: #d2b356;
+                content: '';
+                display: block;
+                width: 30px;
+                height: 5px;
+                margin-bottom: 30px;
+            }
+
+            &::after {
+                background: #d2b356;
+                content: '';
+                display: block;
+                width: 30px;
+                height: 5px;
+                margin-top: 30px;
+            }
+        }
+        > div.main-img {
+            width: calc(100% - 260px);
+            user-select: none;
+            > div {
+                overflow: hidden;
+                height: 600px;
+                position: relative;
+                > img {
+                    width: 100%;
+                    height: 600px;
+                    object-fit: cover;
+                }
+            }
+        }
+    }
+
+    section.game {
+        @include before();
+
+        &::after {
+            background: #d2b356;
+            content: '';
+            display: block;
+            width: 30px;
+            height: 5px;
+        }
+        div.sub-title {
+            h3 {
+                font-size: 1rem;
+                margin: 0;
+                color: #ccc;
+            }
+            h2 {
+                margin-top: -5px;
+                color: #111;
+                font-weight: 500;
+                font-size: 2.5rem;
+                font-family:
+                    'APJapanesefont_short', 'APJapanesefont', sans-seri;
+            }
+
+            &::after {
+                background: #d2b356;
+                content: '';
+                display: block;
+                width: 30px;
+                height: 5px;
+            }
+        }
+
+        div.gamelist {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+
+            > div {
+                width: 280px;
+                margin: 10px 10px 30px 10px;
+            }
+        }
+    }
+
+    .beforeobj {
+        @include before();
+    }
+}

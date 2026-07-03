@@ -1,0 +1,142 @@
+@import '../../variables';
+
+div.headerinfo {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 9;
+    @keyframes checked-anim {
+        50% {
+            width: 100vw;
+            min-height: 50vh;
+        }
+        100% {
+            width: 100vw;
+            min-height: 50vh;
+            height: auto;
+            border-radius: 0;
+        }
+    }
+    @keyframes not-checked-anim {
+        0% {
+            width: 3000px;
+            height: 50vh;
+        }
+    }
+
+    #menu {
+        div.hidden {
+            display: none;
+        }
+        div.view {
+            display: block;
+        }
+    }
+
+    #trigger,
+    #burger,
+    #burger:before,
+    #burger:after {
+        position: absolute;
+        top: 25px;
+        left: 25px;
+        background: white;
+        width: 30px;
+        height: 5px;
+        transition: 0.2s ease;
+        cursor: pointer;
+        z-index: 1;
+    }
+    #trigger {
+        height: 25px;
+        background: none;
+    }
+    #burger:before {
+        content: ' ';
+        top: 10px;
+        left: 0;
+    }
+    #burger:after {
+        content: ' ';
+        top: 20px;
+        left: 0;
+    }
+    #menu-toggle:checked + #trigger + #burger {
+        top: 35px;
+        transform: rotate(180deg);
+        transition: transform 0.2s ease;
+    }
+
+    #menu-toggle:checked + #trigger + #burger:before {
+        width: 20px;
+        top: -2px;
+        left: 18px;
+        transform: rotate(45deg) translateX(-5px);
+        transition: transform 0.1s ease;
+    }
+    #menu-toggle:checked + #trigger + #burger:after {
+        width: 20px;
+        top: 2px;
+        left: 18px;
+        transform: rotate(-45deg) translateX(-5px);
+        transition: transform 0.1s ease;
+    }
+    #menu {
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        width: 90px;
+        height: 70px;
+        background-color: #a8ca9e;
+        border-bottom-right-radius: 100%;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
+        animation: not-checked-anim 0.1s both;
+        transition: 0.1s;
+    }
+    #menu-toggle:checked + #trigger + #burger + #menu {
+        animation: checked-anim 0.3s ease both;
+    }
+    #menu-toggle:checked + #trigger ~ #menu {
+        div.hidden {
+            display: block;
+            color: white;
+            font-family: 'Patrick Hand SC', cursive;
+            font-size: 5rem;
+            padding-top: 40px;
+            padding-left: 10%;
+
+            line-height: 1;
+            span {
+                font-size: 8rem;
+            }
+
+            @include mq(md) {
+                font-size: 2.5rem;
+                span {
+                    font-size: 4rem;
+                }
+            }
+            p {
+                animation: fadein 0.4s both;
+            }
+            @keyframes fadein {
+                0% {
+                    opacity: 0;
+                }
+                50% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+        }
+        div.view {
+            display: none;
+        }
+    }
+    [type='checkbox']:not(:checked),
+    [type='checkbox']:checked {
+        display: none;
+    }
+}
