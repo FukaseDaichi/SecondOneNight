@@ -7,7 +7,7 @@ type WerewolfSetProps = {
     changeFnc: (Array) => void;
 };
 
-export default function WerewolfSet(props: WerewolfSetProps): JSX.Element {
+export default function WerewolfSet(props: WerewolfSetProps) {
     const viewFlg = Data[props.userSize] && Data[props.userSize].length > 0;
 
     return (

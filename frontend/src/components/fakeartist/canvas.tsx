@@ -15,7 +15,7 @@ type CanvasProps = {
     theme: string;
 };
 
-const Canvas = (props: CanvasProps): JSX.Element => {
+const Canvas = (props: CanvasProps) => {
     const [isDrag, setIsDrag] = useState(false);
     const [color, setColor] = useState('#010101');
     const [lineWidth, setLineWidth] = useState<number>(3);

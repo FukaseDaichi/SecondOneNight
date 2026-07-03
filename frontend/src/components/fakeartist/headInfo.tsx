@@ -2,11 +2,11 @@ import React from 'react';
 import styles from '../../styles/components/fakeartist/headInfo.module.scss';
 
 type HeadInfoProps = {
-    children: JSX.Element;
+    children: React.JSX.Element;
     bgc: string;
 };
 
-export default function HeaderInfo(props: HeadInfoProps): JSX.Element {
+export default function HeaderInfo(props: HeadInfoProps) {
     return (
         <div className={styles.headerinfo}>
             <input

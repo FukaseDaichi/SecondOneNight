@@ -24,7 +24,7 @@ const disconnect = () => {
     console.log('接続が切れました');
 };
 
-export default function HideoutRoom(): JSX.Element {
+export default function HideoutRoom() {
     // roomId取得
     const router = useRouter();
     const { roomId } = router.query;

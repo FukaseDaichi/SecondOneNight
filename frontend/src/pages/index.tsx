@@ -14,7 +14,7 @@ const scrollEvent = () => {
     mainImgDom.style.marginTop = margin + 'px';
 };
 
-export default function Homepage(): JSX.Element {
+export default function Homepage() {
     // 初回実行
     useEffect(() => {
         window.addEventListener('scroll', scrollEvent);

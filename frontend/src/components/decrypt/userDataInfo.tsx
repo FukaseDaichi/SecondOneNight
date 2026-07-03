@@ -6,7 +6,7 @@ type UserDataInfoProps = {
     decryptUser: DecryptUser;
 };
 
-export default function UserDataInfo(props: UserDataInfoProps): JSX.Element {
+export default function UserDataInfo(props: UserDataInfoProps) {
     return (
         <div className={styles.userdatainfo}>{props.decryptUser.userName}</div>
     );

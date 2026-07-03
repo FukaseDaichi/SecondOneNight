@@ -7,7 +7,7 @@ type HeadInfoProps = {
     memberCardList: Array<any>;
 };
 
-export default function HideoutHeadInfo(props: HeadInfoProps): JSX.Element {
+export default function HideoutHeadInfo(props: HeadInfoProps) {
     const terroristRollNum: number = props.userList.filter((element) => {
         return element.userRoleNo === 2;
     }).length;

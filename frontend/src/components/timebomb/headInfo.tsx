@@ -48,7 +48,7 @@ const getBommer = (userSize: number) => {
     }
 };
 
-export default function Modal(props: HeadInfoProps): JSX.Element {
+export default function Modal(props: HeadInfoProps) {
     return (
         <div className={styles.headerinfo}>
             <input type="checkbox" id={styles['menu-toggle']} />

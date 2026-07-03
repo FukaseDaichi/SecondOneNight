@@ -8,7 +8,7 @@ type RadiochipsProps = {
     onChangeFnc: () => void;
     id: string;
 };
-export default function RadioChips(props: RadiochipsProps): JSX.Element {
+export default function RadioChips(props: RadiochipsProps) {
     return (
         <div className={styles.checkboxarea}>
             <div className={styles.checkbox}>

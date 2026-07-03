@@ -121,7 +121,7 @@ const drawPersonCanvas = (
     }
 };
 
-export default function FakeArtistRoom(): JSX.Element {
+export default function FakeArtistRoom() {
     // roomId取得
     const router = useRouter();
     const { roomId } = router.query;

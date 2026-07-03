@@ -9,7 +9,7 @@ type HoloCardProps = {
     rareFlg: boolean;
 };
 
-export default function HoloCard(props: HoloCardProps): JSX.Element {
+export default function HoloCard(props: HoloCardProps) {
     const cardStyle = {
         backgroundImage: `url(${props.imgUrl})`,
         width: `${props.width}px`,

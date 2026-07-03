@@ -7,7 +7,7 @@ interface Props {
     value: string;
 }
 
-export default function LinkButton(props: Props): JSX.Element {
+export default function LinkButton(props: Props) {
     return (
         <Link href={props.href} passHref>
             <button onClick={props.clickFnk}>{props.value}</button>

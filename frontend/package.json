@@ -10,20 +10,20 @@
   },
   "dependencies": {
     "gray-matter": "^4.0.2",
-    "interactjs": "^1.10.11",
-    "next": "^11.0.1",
-    "react": "^17.0.2",
+    "interactjs": "^1.10.27",
+    "next": "^15.5.20",
+    "react": "^19.2.7",
     "react-color": "^2.19.3",
-    "react-dom": "^17.0.2",
+    "react-dom": "^19.2.7",
     "react-share": "^4.4.0",
     "react-stomp": "^5.1.0",
     "react-tsparticles": "^1.39.0",
-    "sass": "^1.38.0"
+    "sass": "^1.101.0"
   },
   "devDependencies": {
-    "@types/node": "^14.14.37",
-    "@types/react": "^17.0.3",
-    "@types/react-dom": "^17.0.3",
+    "@types/node": "^22.20.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^4.29.3",
     "@typescript-eslint/parser": "^4.29.3",
     "eslint": "^7.32.0",
@@ -31,7 +31,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-react": "^7.24.0",
     "prettier": "^2.3.2",
-    "typescript": "^4.3.5",
+    "typescript": "^5.9.3",
     "vitest": "^3.2.6"
   }
 }

@@ -29,7 +29,7 @@ const view = () => {
     document.querySelector('body').classList.add('modal_active_overflow_view');
 };
 
-export default function ModalRollCard(props: ModalRollCardProps): JSX.Element {
+export default function ModalRollCard(props: ModalRollCardProps) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const rollStyle = {
         border: `3px solid ${

@@ -6,7 +6,7 @@ https://codepen.io/AbhiPatel18/pen/NBgZVK
 import React from 'react';
 import styles from '../styles/components/house.module.scss';
 
-export default function House(): JSX.Element {
+export default function House() {
     return (
         <div className={styles.house}>
             <div className={styles.container}>

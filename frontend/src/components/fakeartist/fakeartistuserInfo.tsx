@@ -23,7 +23,7 @@ type FakeartistUserInfoProps = {
 
 export default function FakeartistUserInfo(
     props: FakeartistUserInfoProps
-): JSX.Element {
+) {
     const ownFlg = props.user.userName === props.playerData.userName;
     const tebanFlg = props.gameTime === 1 && props.user.drawFlg;
     return (

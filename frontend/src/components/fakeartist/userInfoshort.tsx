@@ -14,7 +14,7 @@ type UserInfoShortProps = {
     mouseout: () => void;
 };
 
-export default function UserInfoShort(props: UserInfoShortProps): JSX.Element {
+export default function UserInfoShort(props: UserInfoShortProps) {
     const tebanFlg = props.gameTime === 1 && props.user.drawFlg;
     const unviewFlg = props.gameTime === 1 && !props.user.drawFlg;
     const ownFlg = props.user.userName === props.playerData.userName;

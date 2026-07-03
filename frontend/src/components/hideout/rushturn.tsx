@@ -49,7 +49,7 @@ type RushTurnProps = {
     endFnc: () => void;
 };
 
-export default function RushTrun(props: RushTurnProps): JSX.Element {
+export default function RushTrun(props: RushTurnProps) {
     let userIndex = 0;
     props.userList.forEach((value, index) => {
         if (value.userName === props.playerName) {

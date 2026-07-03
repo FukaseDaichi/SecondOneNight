@@ -22,7 +22,7 @@ type ModalProps = {
     type: string;
 };
 
-export default function Modal(props: ModalProps): JSX.Element {
+export default function Modal(props: ModalProps) {
     const [viewType, setViewType] = useState(props.type);
     useEffect(() => {
         if (viewType) {

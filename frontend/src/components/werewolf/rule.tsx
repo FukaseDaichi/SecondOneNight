@@ -5,7 +5,7 @@ type RuleProps = {
     endFnc: () => void;
 };
 
-export default function Rule(props: RuleProps): JSX.Element {
+export default function Rule(props: RuleProps) {
     return (
         <div className={styles.rule} onClick={props.endFnc}>
             <div>

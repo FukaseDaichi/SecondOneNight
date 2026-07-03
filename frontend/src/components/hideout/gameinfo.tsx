@@ -7,7 +7,7 @@ type GameInfoProps = {
     memberCardList: Array<any>;
 };
 
-export default function GameInfo(props: GameInfoProps): JSX.Element {
+export default function GameInfo(props: GameInfoProps) {
     let hideout = 0;
     let hideoutSize = 0;
 

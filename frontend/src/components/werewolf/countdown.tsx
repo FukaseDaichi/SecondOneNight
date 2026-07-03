@@ -7,7 +7,7 @@ type CountdownProps = {
     limitDone: () => void;
 };
 
-export default function Countdown(props: CountdownProps): JSX.Element {
+export default function Countdown(props: CountdownProps) {
     const [limitTime, setLimitTime] = useState(props.timeLimit);
     const [timer, setTimer] = useState(false);
 

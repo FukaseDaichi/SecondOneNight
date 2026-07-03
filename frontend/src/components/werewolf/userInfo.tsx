@@ -31,7 +31,7 @@ type UserInfoProps = {
     setModalOwnFlg: (boolean) => void;
 };
 
-export default function UserInfo(props: UserInfoProps): JSX.Element {
+export default function UserInfo(props: UserInfoProps) {
     const [infoFlg, setInfoFlg] = useState(false);
 
     const divStyles = {

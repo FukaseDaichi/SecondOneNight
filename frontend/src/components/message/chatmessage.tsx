@@ -6,7 +6,7 @@ type ChatMessageProps = {
     type: string;
 };
 
-export default function ChatMessage(props: ChatMessageProps): JSX.Element {
+export default function ChatMessage(props: ChatMessageProps) {
     return (
         <div className={styles.chatmessage}>
             <div className="container">

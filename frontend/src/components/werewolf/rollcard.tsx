@@ -27,7 +27,7 @@ type RollCardProps = {
     setModalOwnFlg: (boolean) => void;
 };
 
-export default function RollCard(props: RollCardProps): JSX.Element {
+export default function RollCard(props: RollCardProps) {
     const rollStyle = {
         width: props.size + 'px',
         height: props.size + 'px',

@@ -7,7 +7,7 @@ type AnimeButtonProps = {
     viewFlg: boolean;
     animeClass: string;
 };
-export default function AnimationBtn(props: AnimeButtonProps): JSX.Element {
+export default function AnimationBtn(props: AnimeButtonProps) {
     const viewCass: string = props.viewFlg ? '' : styles.non;
 
     return (

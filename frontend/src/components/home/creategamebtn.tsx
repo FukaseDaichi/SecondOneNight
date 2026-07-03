@@ -17,7 +17,7 @@ const addCleckedStyle = (dom: HTMLElement) => {
     }
 };
 
-export default function CreateGameBtn(props: CreateGameBtnProps): JSX.Element {
+export default function CreateGameBtn(props: CreateGameBtnProps) {
     const [createFlg, setCreateFlg] = useState(false);
     const [roomId, setRoomId] = useState('');
 

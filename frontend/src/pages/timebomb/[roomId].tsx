@@ -21,7 +21,7 @@ const disconnect = () => {
     console.log('接続が切れました');
 };
 
-export default function Room(): JSX.Element {
+export default function Room() {
     // roomId取得
     const router = useRouter();
     const { roomId } = router.query;

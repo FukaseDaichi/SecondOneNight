@@ -6,7 +6,7 @@ type CirclebtnProps = {
     onClickFnc: () => void;
     size: number;
 };
-export default function AnimationBtn(props: CirclebtnProps): JSX.Element {
+export default function AnimationBtn(props: CirclebtnProps) {
     const btnstyle = {
         width: props.size + 'px',
         height: props.size + 'px',

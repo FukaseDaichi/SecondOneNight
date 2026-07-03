@@ -11,7 +11,7 @@ type RollInfoProps = {
     setModalOwnFlg: (boolean) => void;
 };
 
-export default function RollInfo(props: RollInfoProps): JSX.Element {
+export default function RollInfo(props: RollInfoProps) {
     const rollNoList: Array<number> = [];
     return (
         <>

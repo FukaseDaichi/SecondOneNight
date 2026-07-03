@@ -10,7 +10,7 @@ type CountdownClockProps = {
 
 export default function CountdownClock(
     props: CountdownClockProps
-): JSX.Element {
+) {
     const [limitTime, setLimitTime] = useState(props.timeLimit);
     const [timer, setTimer] = useState(false);
     const [turn, setTurn] = useState(props.turn);

@@ -9,7 +9,7 @@ type ResultProps = {
     endFnc: () => void;
 };
 
-export default function Result(props: ResultProps): JSX.Element {
+export default function Result(props: ResultProps) {
     return (
         <div className={styles.result} onClick={props.endFnc}>
             <div>

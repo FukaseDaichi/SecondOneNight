@@ -79,7 +79,7 @@ type UserInfoProps = {
     startFlg: boolean;
 };
 
-export default function UserInfo(userInfoProps: UserInfoProps): JSX.Element {
+export default function UserInfo(userInfoProps: UserInfoProps) {
     const [infoFlg, setInfoFlg] = useState(false);
 
     const releaseCount: number = useMemo(

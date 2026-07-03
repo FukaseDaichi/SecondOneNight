@@ -16,7 +16,7 @@ type IconProps = {
     changeIcon: (src: string) => void;
 };
 
-export default function Icon(props: IconProps): JSX.Element {
+export default function Icon(props: IconProps) {
     const iconNum = 6;
     const [iconList, setIconList] = useState([]);
     useEffect(() => {

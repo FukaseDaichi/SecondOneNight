@@ -6,7 +6,7 @@ type PulsingButtonProps = {
     onClickFnc: () => void;
     viewFlg: boolean;
 };
-export default function PulsingButton(props: PulsingButtonProps): JSX.Element {
+export default function PulsingButton(props: PulsingButtonProps) {
     const viewCass: string = props.viewFlg && styles.non_view;
     return (
         <div

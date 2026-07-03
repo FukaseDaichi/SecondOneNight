@@ -17,7 +17,7 @@ type HideoutModalProps = {
     endFnc: () => void;
 };
 
-export default function HideoutModal(props: HideoutModalProps): JSX.Element {
+export default function HideoutModal(props: HideoutModalProps) {
     const modalClick = () => {
         document.querySelector('body').classList.remove('modal_active');
         document

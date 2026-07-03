@@ -20,7 +20,7 @@ const disconnect = () => {
     console.log('接続が切れました');
 };
 
-export default function DecryptRoom(): JSX.Element {
+export default function DecryptRoom() {
     // roomId取得
     const router = useRouter();
     const { roomId } = router.query;

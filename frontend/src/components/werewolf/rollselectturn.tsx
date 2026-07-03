@@ -40,7 +40,7 @@ type RollSelectTurnProps = {
 
 export default function RollSelectTurn(
     props: RollSelectTurnProps
-): JSX.Element {
+) {
     const [turn, setTurn] = useState(0);
 
     if (turn !== props.turn) {

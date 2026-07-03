@@ -1,15 +1,10 @@
 import React from 'react';
+import type { AppProps } from 'next/app';
 import '../styles/bootstrap.min.css';
 import '../styles/global.scss';
 import { useEffect } from 'react';
 
-interface Props {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Component: any;
-    pageProps: unknown;
-}
-
-export default function App(props: Props): JSX.Element {
+export default function App(props: AppProps) {
     useEffect(() => {
         document.querySelector('body').setAttribute('ontouchstart', '');
     });

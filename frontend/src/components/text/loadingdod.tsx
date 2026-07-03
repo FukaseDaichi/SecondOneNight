@@ -5,7 +5,7 @@ type LoadingdodProps = {
     color: string;
 };
 
-export default function Loadingdod(props: LoadingdodProps): JSX.Element {
+export default function Loadingdod(props: LoadingdodProps) {
     return (
         <span className={styles.loadingdod}>
             <span style={{ color: props.color }}>●</span>

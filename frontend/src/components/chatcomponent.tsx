@@ -16,7 +16,7 @@ type ChatComponentProps = {
     chat: (message: string) => void;
 };
 
-export default function ChatComponent(props: ChatComponentProps): JSX.Element {
+export default function ChatComponent(props: ChatComponentProps) {
     // メッセージ送信
     const sendMessage = () => {
         const messageDom = document.getElementById(

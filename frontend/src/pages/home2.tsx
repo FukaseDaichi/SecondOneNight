@@ -22,7 +22,7 @@ const copyText = () => {
     btnDom.innerText = 'COPYED!';
 };
 
-export default function CreateRoom(): JSX.Element {
+export default function CreateRoom() {
     const [createFlg, setCreateFlg] = useState(false);
     const [gameName, setGameName] = useState('');
     const [roomId, setRoomId] = useState('');

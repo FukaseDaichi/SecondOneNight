@@ -21,7 +21,7 @@ const copyText = () => {
     btnDom.innerText = 'COPYED!';
 };
 
-export default function CreateRoomWerewolf(): JSX.Element {
+export default function CreateRoomWerewolf() {
     const [createFlg, setCreateFlg] = useState(false);
     const [roomId, setRoomId] = useState('');
 

@@ -71,7 +71,7 @@ const cunter = (rollNo: number, plusFlg: boolean) => {
     }
 };
 
-export default function WerewolfRoom(): JSX.Element {
+export default function WerewolfRoom() {
     // roomId取得
     const router = useRouter();
     const { roomId } = router.query;

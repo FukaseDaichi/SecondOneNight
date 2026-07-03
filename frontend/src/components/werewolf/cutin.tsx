@@ -5,7 +5,7 @@ type CutInProps = {
     rollNo: number;
 };
 
-export default function CutIn(props: CutInProps): JSX.Element {
+export default function CutIn(props: CutInProps) {
     return (
         <div className={styles.cutin}>
             <div>

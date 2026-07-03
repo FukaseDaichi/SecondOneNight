@@ -10,7 +10,7 @@ interface Props {
     home?: boolean;
 }
 
-export default function Layout(props: Props): JSX.Element {
+export default function Layout(props: Props) {
     return (
         <div className={styles.container}>
             <Head>

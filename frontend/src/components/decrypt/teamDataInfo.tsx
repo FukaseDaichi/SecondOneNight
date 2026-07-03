@@ -17,7 +17,7 @@ type TeamDataProps = {
     modeChange: (modeNo: number) => void;
 };
 
-export default function TeamDataInfo(props: TeamDataProps): JSX.Element {
+export default function TeamDataInfo(props: TeamDataProps) {
     return (
         <div className={styles.teamdatainfo}>
             <div className={styles.teamdata}>

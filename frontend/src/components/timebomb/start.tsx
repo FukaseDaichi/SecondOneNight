@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '../../styles/components/timebomb/start.module.scss';
 
-export default function Start(): JSX.Element {
+export default function Start() {
     return (
         <div className={styles.start}>
             <div className={`${styles.background} ${styles.background0}`}></div>

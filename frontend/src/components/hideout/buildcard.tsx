@@ -36,7 +36,7 @@ type BuildingCardProps = {
     wait: (no: number) => void;
 };
 
-export default function BuildCard(props: BuildingCardProps): JSX.Element {
+export default function BuildCard(props: BuildingCardProps) {
     const [waitSize, setWaitSize] = useState(0);
     if (waitSize !== props.waitUserIndexList.length) {
         setWaitSize(props.waitUserIndexList.length);
