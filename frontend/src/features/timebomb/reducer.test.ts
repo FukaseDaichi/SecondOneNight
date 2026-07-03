@@ -169,6 +169,19 @@ describe('timebombReducer: room オブジェクト直渡し形式', () => {
         });
         expect(s.leadCardsList).toEqual(existingLeadCards);
     });
+
+    it('解除成功とラウンド進行が同時発生: 解除メッセージ追加・round更新・roundMessageFlg立ち上げが全て反映され勝敗フラグは立たない', () => {
+        const before = { ...initialTimebombState, round: 1, releaseNo: 1 };
+        const s = timebombReducer(before, {
+            type: 'message',
+            payload: serverRoom({ releaseNo: 2, round: 2, winnerTeam: 0 }),
+        });
+        expect(s.messageList[s.messageList.length - 1]).toBe('解除に成功');
+        expect(s.round).toBe(2);
+        expect(s.roundMessageFlg).toBe(true);
+        expect(s.bommerFlg).toBe(false);
+        expect(s.policeFlg).toBe(false);
+    });
 });
 
 describe('timebombReducer: ローカルアクション', () => {
@@ -185,5 +198,11 @@ describe('timebombReducer: ローカルアクション', () => {
 
         const afterDismissRound = timebombReducer(started, { type: 'dismissRoundMessage' });
         expect(afterDismissRound.roundMessageFlg).toBe(false);
+    });
+
+    it('未知の action type では state が同一参照のまま変化しない', () => {
+        // @ts-expect-error 型で表現されない未知の action type を敢えて渡す
+        const s = timebombReducer(initialTimebombState, { type: 'unknown' });
+        expect(s).toBe(initialTimebombState);
     });
 });

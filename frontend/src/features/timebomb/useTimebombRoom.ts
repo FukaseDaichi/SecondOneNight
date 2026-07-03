@@ -151,6 +151,15 @@ export function useTimebombRoom(roomId: string | undefined) {
         }
     }, [state.roundMessageFlg, dismissRoundMessage]);
 
+    // roundMessageFlg 立ち上がり時: ラウンド進行(2周目以降)の瞬間に先頭へスクロール(現行 setData 内の同期 scrollTo(0, 0))
+    const prevRoundMessageFlgRef = useRef(state.roundMessageFlg);
+    useEffect(() => {
+        if (state.roundMessageFlg && !prevRoundMessageFlgRef.current) {
+            scrollTo(0, 0);
+        }
+        prevRoundMessageFlgRef.current = state.roundMessageFlg;
+    }, [state.roundMessageFlg]);
+
     // startFlg 立ち上がり時: modal_active を外して先頭へスクロール(現行 msg.turn===1 時の処理)
     const prevStartFlgRef = useRef(state.startFlg);
     useEffect(() => {
