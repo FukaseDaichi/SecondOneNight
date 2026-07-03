@@ -21,9 +21,7 @@ type FakeartistUserInfoProps = {
     roomRemove: (userName: string) => void;
 };
 
-export default function FakeartistUserInfo(
-    props: FakeartistUserInfoProps
-) {
+export default function FakeartistUserInfo(props: FakeartistUserInfoProps) {
     const ownFlg = props.user.userName === props.playerData.userName;
     const tebanFlg = props.gameTime === 1 && props.user.drawFlg;
     return (

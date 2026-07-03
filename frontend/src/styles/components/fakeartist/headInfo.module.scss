@@ -4,12 +4,23 @@
     0%,
     100% {
         /* 明るく光るよう影を重ねる */
-        box-shadow: 0 0 10px #ffc, 0 0 20px #ffc, 0 0 30px #ff9, 0 0 40px #ff6,
-            0 0 70px #fc6, 0 0 80px #f99, 0 0 100px #ff96, 0 0 150px #ff96;
+        box-shadow:
+            0 0 10px #ffc,
+            0 0 20px #ffc,
+            0 0 30px #ff9,
+            0 0 40px #ff6,
+            0 0 70px #fc6,
+            0 0 80px #f99,
+            0 0 100px #ff96,
+            0 0 150px #ff96;
     }
     50% {
         /* 淡く光るよう影を重ねる */
-        box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ffc, 0 0 40px #ff9;
+        box-shadow:
+            0 0 10px #fff,
+            0 0 20px #fff,
+            0 0 30px #ffc,
+            0 0 40px #ff9;
     }
 }
 

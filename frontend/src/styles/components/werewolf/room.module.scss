@@ -96,11 +96,15 @@ div.messagearea {
             font-size: 1.2rem;
             border-radius: 54px;
             background: #f3f3f3;
-            box-shadow: 7px 7px 14px #bebebe, -7px -7px 14px #ffffff;
+            box-shadow:
+                7px 7px 14px #bebebe,
+                -7px -7px 14px #ffffff;
 
             &:active {
                 background: linear-gradient(145deg, #dbdbdb, #ffffff);
-                box-shadow: 7px 7px 14px #bebebe, -7px -7px 14px #ffffff;
+                box-shadow:
+                    7px 7px 14px #bebebe,
+                    -7px -7px 14px #ffffff;
             }
         }
     }
@@ -315,11 +319,14 @@ div.rollselect {
                 border-radius: 50%;
                 text-align: center;
                 background: #ecebeb;
-                box-shadow: 8px 8px 18px #d2d1d1, -8px -8px 18px #ffffff;
+                box-shadow:
+                    8px 8px 18px #d2d1d1,
+                    -8px -8px 18px #ffffff;
 
                 &:active {
                     background: #ecebeb;
-                    box-shadow: inset 8px 8px 18px #d2d1d1,
+                    box-shadow:
+                        inset 8px 8px 18px #d2d1d1,
                         inset -8px -8px 18px #ffffff;
                 }
             }

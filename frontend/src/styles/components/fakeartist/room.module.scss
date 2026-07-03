@@ -207,11 +207,15 @@ div.messagearea {
             font-size: 1.2rem;
             border-radius: 54px;
             background: #f3f3f3;
-            box-shadow: 7px 7px 14px #bebebe, -7px -7px 14px #ffffff;
+            box-shadow:
+                7px 7px 14px #bebebe,
+                -7px -7px 14px #ffffff;
 
             &:active {
                 background: linear-gradient(145deg, #dbdbdb, #ffffff);
-                box-shadow: 7px 7px 14px #bebebe, -7px -7px 14px #ffffff;
+                box-shadow:
+                    7px 7px 14px #bebebe,
+                    -7px -7px 14px #ffffff;
             }
         }
     }

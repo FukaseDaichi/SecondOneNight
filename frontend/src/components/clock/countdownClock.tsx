@@ -7,9 +7,7 @@ type CountdownClockProps = {
     limitDone: () => void;
 };
 
-export default function CountdownClock(
-    props: CountdownClockProps
-) {
+export default function CountdownClock(props: CountdownClockProps) {
     const [limitTime, setLimitTime] = useState(props.timeLimit);
     const [timer, setTimer] = useState(false);
 

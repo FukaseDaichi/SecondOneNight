@@ -1,14 +1,14 @@
-@import "../../variables";
+@import '../../variables';
 
 button.btn {
-  background: none;
-  outline: none;
-  border: rgb(91, 88, 88, 0.8) solid 1px;
-  outline: none;
-  border-radius: 30px;
-  box-shadow: 0px 0px 10px -6px rgba(0, 0, 0, 0.6);
+    background: none;
+    outline: none;
+    border: rgb(91, 88, 88, 0.8) solid 1px;
+    outline: none;
+    border-radius: 30px;
+    box-shadow: 0px 0px 10px -6px rgba(0, 0, 0, 0.6);
 
-  &:active {
-    transform: scale(0.9);
-  }
+    &:active {
+        transform: scale(0.9);
+    }
 }

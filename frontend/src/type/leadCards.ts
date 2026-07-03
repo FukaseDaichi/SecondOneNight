@@ -1,4 +1,4 @@
 export type LeadCards = {
-	cardType: number;
-	openFlg: boolean;
+    cardType: number;
+    openFlg: boolean;
 };

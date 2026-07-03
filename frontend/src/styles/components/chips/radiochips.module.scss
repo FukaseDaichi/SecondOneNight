@@ -26,7 +26,9 @@ div.checkboxarea {
             white-space: nowrap;
             cursor: pointer;
             user-select: none;
-            transition: background-color 0.2s, box-shadow 0.2s;
+            transition:
+                background-color 0.2s,
+                box-shadow 0.2s;
             font-size: 1.4rem;
         }
 

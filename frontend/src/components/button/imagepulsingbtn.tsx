@@ -9,9 +9,7 @@ type PulsingButtonProps = {
     viewFlg: boolean;
 };
 
-export default function ImagePulsingBtn(
-    props: PulsingButtonProps
-) {
+export default function ImagePulsingBtn(props: PulsingButtonProps) {
     const viewCass: string = props.viewFlg && styles.non_view;
 
     const btnStyle = {

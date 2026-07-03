@@ -115,13 +115,17 @@
             &:first-child {
                 opacity: 1;
                 transform: rotateY(0deg);
-                transition: opacity 100ms 150ms, transform 300ms 150ms;
+                transition:
+                    opacity 100ms 150ms,
+                    transform 300ms 150ms;
             }
 
             &:last-child {
                 opacity: 0;
                 transform: rotateY(90deg);
-                transition: opacity 50ms 200ms, transform 300ms;
+                transition:
+                    opacity 50ms 200ms,
+                    transform 300ms;
             }
         }
         img.gray {
@@ -135,12 +139,16 @@
             &:first-child {
                 opacity: 0;
                 transform: rotateY(90deg);
-                transition: opacity 50ms 200ms, transform 300ms;
+                transition:
+                    opacity 50ms 200ms,
+                    transform 300ms;
             }
             &:last-child {
                 opacity: 1;
                 transform: rotateY(0deg);
-                transition: opacity 100ms 150ms, transform 300ms 150ms;
+                transition:
+                    opacity 100ms 150ms,
+                    transform 300ms 150ms;
             }
         }
     }
@@ -277,7 +285,9 @@ div.checkboxarea {
             white-space: nowrap;
             cursor: pointer;
             user-select: none;
-            transition: background-color 0.2s, box-shadow 0.2s;
+            transition:
+                background-color 0.2s,
+                box-shadow 0.2s;
             font-size: 1.4rem;
         }
 

@@ -1,7 +1,7 @@
 export type SocketInfo = {
-	status: number;
-	roomId: string;
-	userName: string;
-	message: string;
-	obj: any;
+    status: number;
+    roomId: string;
+    userName: string;
+    message: string;
+    obj: any;
 };

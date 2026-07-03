@@ -149,30 +149,31 @@ export default function UserInfo(userInfoProps: UserInfoProps) {
                         {userInfoProps.ownFlg && <span>YOU!</span>}
                     </div>
 
-                    {userInfoProps.ownFlg && userInfoProps.user.userRoleNo > 0 && (
-                        <div className={styles.btnarea}>
-                            <div className={styles.btn}>
-                                <input type="checkbox" id="chk1" />
-                                <label
-                                    htmlFor="chk1"
-                                    onClick={() => {
-                                        const checkDom =
-                                            document.getElementById(
-                                                'chk1'
-                                            ) as HTMLInputElement;
-                                        const checkFlg = checkDom.checked;
-                                        setInfoFlg(!checkFlg);
-                                    }}
-                                >
-                                    <div className={styles.hamberger}>
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                    </div>
-                                </label>
+                    {userInfoProps.ownFlg &&
+                        userInfoProps.user.userRoleNo > 0 && (
+                            <div className={styles.btnarea}>
+                                <div className={styles.btn}>
+                                    <input type="checkbox" id="chk1" />
+                                    <label
+                                        htmlFor="chk1"
+                                        onClick={() => {
+                                            const checkDom =
+                                                document.getElementById(
+                                                    'chk1'
+                                                ) as HTMLInputElement;
+                                            const checkFlg = checkDom.checked;
+                                            setInfoFlg(!checkFlg);
+                                        }}
+                                    >
+                                        <div className={styles.hamberger}>
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
+                                        </div>
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
                 </div>
             </div>
             {userInfoProps.user.turnFlg && (

@@ -8,9 +8,7 @@ type CountdownClockProps = {
     limitDone: (pturn: number) => void;
 };
 
-export default function CountdownClock(
-    props: CountdownClockProps
-) {
+export default function CountdownClock(props: CountdownClockProps) {
     const [limitTime, setLimitTime] = useState(props.timeLimit);
     const [timer, setTimer] = useState(false);
     const [turn, setTurn] = useState(props.turn);

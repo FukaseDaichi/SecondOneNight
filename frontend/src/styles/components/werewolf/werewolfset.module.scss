@@ -1,25 +1,25 @@
-@import "../../variables";
+@import '../../variables';
 
 div.werewolfset {
-  margin: 20px 0 20px 0;
-  font-family: "APJapanesefont", sans-seri;
-  text-align: center;
-  line-height: 3;
-  font-size: 1.5rem;
+    margin: 20px 0 20px 0;
+    font-family: 'APJapanesefont', sans-seri;
+    text-align: center;
+    line-height: 3;
+    font-size: 1.5rem;
 
-  &.none {
-    display: none;
-  }
-  select {
-    background: #34495e;
-    flex: 1;
-    padding: 0.5rem 1rem 0.5rem 1rem;
-    color: #fff;
-    cursor: pointer;
-    outline: 0;
-    box-shadow: none;
-    border: 0 !important;
-    background: #696b6c;
-    background-image: none;
-  }
+    &.none {
+        display: none;
+    }
+    select {
+        background: #34495e;
+        flex: 1;
+        padding: 0.5rem 1rem 0.5rem 1rem;
+        color: #fff;
+        cursor: pointer;
+        outline: 0;
+        box-shadow: none;
+        border: 0 !important;
+        background: #696b6c;
+        background-image: none;
+    }
 }

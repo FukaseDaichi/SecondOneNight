@@ -38,9 +38,7 @@ type RollSelectTurnProps = {
     setModalOwnFlg: (boolean) => void;
 };
 
-export default function RollSelectTurn(
-    props: RollSelectTurnProps
-) {
+export default function RollSelectTurn(props: RollSelectTurnProps) {
     const [turn, setTurn] = useState(0);
 
     if (turn !== props.turn) {
