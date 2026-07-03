@@ -651,7 +651,35 @@ git commit -m "react-colorを自作カラーパレットに置換"
 
 ## 検証記録
 
-(Task 6 実行時に記入)
+### Task 6(2026-07-04)— Stage 1 完了検証
 
-- 意図的な挙動差分: なし / あれば列挙
-- 既知の残課題(Stage 2 以降へ): react-stomp の置換(Stage 2)、sass @import 非推奨警告(Stage 4)、README のセットアップ手順更新(Stage 4)
+**Step 1: ビルド・テスト・lint(frontend/ にて)**
+- `npm run build`: 成功(Node v22.21.0、**OpenSSL 回避フラグ無し**、全10ルート静的生成)
+- `npm test`: 3件 PASS
+- `npm run lint`: **error 0** / warning 61(想定内: `no-explicit-any` は Stage 3、`exhaustive-deps` は Stage 3 で対応)
+
+**Step 2: 全5ゲーム動作確認(本番 Heroku 接続、Next 15 dev)**
+
+| ゲーム | ルーム作成(REST) | ページ描画 | STOMP 接続 | コンソールエラー |
+|---|---|---|---|---|
+| timebomb | ✅ 200 | ✅ | ✅ 入力有効化・入室往復も確認 | なし |
+| werewolf | ✅ 200 | ✅ | ✅ /info 発行 | なし |
+| hideout | ✅ 200 | ✅ | ✅ /info 発行 | なし |
+| decrypt | ✅ 200 | ✅ | ✅ /info 発行 | なし |
+| fakeartist | ✅ 200 | ✅ | ✅ /info 発行 | なし |
+
+- トップページ: パーティクル背景(@tsparticles v3)描画・ゲームタイル表示・コンソールエラーなし
+- **react-color(fakeartist の TwitterPicker): React 19 で正常描画**(`.twitter-picker` + 15スウォッチ + 線幅レンジ、エラーなし)→ **Task 7(react-color 置換)は不要と判定しスキップ**
+- Next 11 dev で見られたルームURL直リンク(ハードロード)接続不成立は、**Next 15 化で解消**(ハードロードでも接続確立を確認)
+
+**意図的な挙動差分:** なし(スタック更新のみ。ユーザーから見た挙動は不変)
+
+**判定: Stage 1 完了。**
+
+### 既知の残課題(後続ステージへ)
+- react-stomp の置換 → Stage 2(通信層刷新)
+- sass `@import` / グローバル関数 非推奨警告(Dart Sass 3.0 で削除予定)→ Stage 4
+- dev の `webpack-hmr 404`(Next 15 の Fast Refresh 挙動)→ 実行時・ビルドに影響なし。Stage 4 で調査
+- ESLint warning 61件(`no-explicit-any` 等)→ Stage 3 の型付けで削減
+- README のセットアップ手順更新 → Stage 4
+- `.claude/launch.json` は OpenSSL フラグを除去済み(Next 15 で不要化)

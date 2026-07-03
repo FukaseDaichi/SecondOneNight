@@ -4,7 +4,7 @@
     {
       "name": "frontend-dev",
       "runtimeExecutable": "sh",
-      "runtimeArgs": ["-c", "cd frontend && NODE_OPTIONS=--openssl-legacy-provider npm run dev"],
+      "runtimeArgs": ["-c", "cd frontend && npm run dev"],
       "port": 3000
     }
   ]
