@@ -3,20 +3,16 @@ import { useRouter } from 'next/router';
 import { SystemConst } from '../../const/next.config';
 import Layout from '../../components/layout';
 import Head from 'next/head';
-import Chatmessage from '../../components/message/chatmessage';
 import ChatComponent from '../../components/chatcomponent';
-import BuildCard from '../../features/hideout/components/buildcard';
-import UserInfo from '../../features/hideout/components/userInfo';
-import RushTurn from '../../features/hideout/components/rushturn';
 import styles from '../../styles/components/hideout/room.module.scss';
-import HideoutHeadInfo from '../../features/hideout/components/hideoutheadinfo';
-import GameInfo from '../../features/hideout/components/gameinfo';
 import Router from 'next/router';
 import Start from '../../components/common/Start';
 import Socialbtn from '../../components/button/sosialbtn';
 import ConnectionStatus from '../../components/common/ConnectionStatus';
 import RoomInForm from '../../components/common/RoomInForm';
 import WinnerModals from '../../features/hideout/components/WinnerModals';
+import GameInfoArea from '../../features/hideout/components/GameInfoArea';
+import PlayArea from '../../features/hideout/components/PlayArea';
 import { useHideoutRoom } from '../../features/hideout/useHideoutRoom';
 
 export default function HideoutRoom() {
@@ -71,25 +67,14 @@ export default function HideoutRoom() {
             {/* 開始合図 */}
             {state.startFlg && <Start />}
 
-            {state.turn > 0 && (
-                <HideoutHeadInfo
-                    userList={state.userList}
-                    memberCardList={state.viewMemberCardList}
-                />
-            )}
-            {state.turn > 0 && (
-                <GameInfo
-                    buildingCardList={state.buildingCardList}
-                    memberCardList={state.memberCardList}
-                />
-            )}
-            {state.messageList.map((value, index) => {
-                if (index === state.messageList.length - 1) {
-                    return (
-                        <Chatmessage value={value} type="info" key={index} />
-                    );
-                }
-            })}
+            <GameInfoArea
+                turn={state.turn}
+                userList={state.userList}
+                viewMemberCardList={state.viewMemberCardList}
+                buildingCardList={state.buildingCardList}
+                memberCardList={state.memberCardList}
+                messageList={state.messageList}
+            />
             <ConnectionStatus status={status} />
             <RoomInForm
                 connected={connected}
@@ -98,45 +83,20 @@ export default function HideoutRoom() {
                 className={styles.roominbtn}
                 enteredClassName={styles.in}
             />
-            {/* フィールド情報 */}
-            {state.firldBuilding && (
-                <div className={styles.firldBuild}>
-                    <BuildCard
-                        buildingCard={state.firldBuilding}
-                        userList={state.userList}
-                        wait={wait}
-                        waitUserIndexList={state.waitUserIndexList}
-                        ownFlg={false}
-                    />
-                </div>
-            )}
-            {/* ユーザ情報 */}
-            <div className={styles.userfirld}>
-                {state.userList.map((user, index: number) => {
-                    return (
-                        <UserInfo
-                            key={index}
-                            user={user}
-                            ownFlg={user.userName === state.playerName}
-                            userColor={SystemConst.PLAYER_COLOR_LIST[index]}
-                            changeIcon={changeIcon}
-                            userList={state.userList}
-                            wait={wait}
-                            winnerTeam={state.winnerTeam}
-                            turn={state.turn}
-                        />
-                    );
-                })}
-            </div>
-            {state.rushAreaFlg && (
-                <RushTurn
-                    userList={state.userList}
-                    playerName={state.playerName}
-                    rush={rush}
-                    memberFirldList={state.memberFirldList}
-                    endFnc={closeRushArea}
-                />
-            )}
+            <PlayArea
+                firldBuilding={state.firldBuilding}
+                userList={state.userList}
+                wait={wait}
+                waitUserIndexList={state.waitUserIndexList}
+                playerName={state.playerName}
+                winnerTeam={state.winnerTeam}
+                turn={state.turn}
+                changeIcon={changeIcon}
+                rushAreaFlg={state.rushAreaFlg}
+                memberFirldList={state.memberFirldList}
+                rush={rush}
+                closeRushArea={closeRushArea}
+            />
             <WinnerModals
                 rushAreaFlg={state.rushAreaFlg}
                 terroristWinFlg={state.terroristWinFlg}

@@ -2,7 +2,7 @@ import React from 'react';
 import styles from '../../../styles/components/hideout/userinfo.module.scss';
 import { useState } from 'react';
 import HoloCard from '../../../components/card/holoCard';
-import HideoutIcon from './hideouticon';
+import HideoutIcon from '../../../components/common/HideoutIcon';
 import BuildCard from './buildcard';
 
 // ハイドアウト用

@@ -2,7 +2,7 @@
 import React from 'react';
 import styles from '../../styles/components/werewolf/userinfo.module.scss';
 import { useState } from 'react';
-import HideoutIcon from '../../features/hideout/components/hideouticon';
+import HideoutIcon from '../common/HideoutIcon';
 import { WerewolfUser } from '../../type/werewolf';
 import RollCard from './rollcard';
 import CircleBtn from '../button/circlebtn';
