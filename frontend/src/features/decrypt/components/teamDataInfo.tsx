@@ -1,8 +1,8 @@
 import React from 'react';
-import styles from '../../styles/components/decrypt/teamdata.module.scss';
-import { DecryptUser, TeamData } from '../../type/decrypt';
+import styles from '../../../styles/components/decrypt/teamdata.module.scss';
+import { DecryptUser, TeamData } from '../../../type/decrypt';
 import UserDataInfo from './userDataInfo';
-import SmallBtn from '../button/smallbtn';
+import SmallBtn from '../../../components/button/smallbtn';
 
 type TeamDataProps = {
     userList: Array<DecryptUser>;

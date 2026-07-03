@@ -6,15 +6,16 @@ import Head from 'next/head';
 import Chatmessage from '../../components/message/chatmessage';
 import ChatComponent from '../../components/chatcomponent';
 import styles from '../../styles/components/decrypt/room.module.scss';
-import Router from 'next/router';
 
 import Start from '../../components/common/Start';
-import TeamDataInfo from '../../components/decrypt/teamDataInfo';
+import TeamDataInfo from '../../features/decrypt/components/teamDataInfo';
+import GameButtons from '../../features/decrypt/components/GameButtons';
 import type {
     DecryptUser as LegacyDecryptUser,
     TeamData,
 } from '../../type/decrypt';
 import ConnectionStatus from '../../components/common/ConnectionStatus';
+import RoomInForm from '../../components/common/RoomInForm';
 import { useDecryptRoom } from '../../features/decrypt/useDecryptRoom';
 
 export default function DecryptRoom() {
@@ -24,6 +25,7 @@ export default function DecryptRoom() {
 
     const {
         state,
+        connected,
         status,
         entered,
         roomIn,
@@ -89,38 +91,13 @@ export default function DecryptRoom() {
             })}
 
             <ConnectionStatus status={status} />
-            <div className={`${styles.roominbtn} ${entered ? styles.in : ''}`}>
-                <p>
-                    <label htmlFor="username">Name</label>
-                </p>
-                <input
-                    type="text"
-                    id="username"
-                    maxLength={20}
-                    onKeyPress={(e) => {
-                        // enterkey event
-                        if (e.key == 'Enter') {
-                            e.preventDefault();
-                            const usernameDom: HTMLInputElement =
-                                document.getElementById(
-                                    'username'
-                                ) as HTMLInputElement;
-                            roomIn(usernameDom.value);
-                        }
-                    }}
-                />
-                <button
-                    onClick={() => {
-                        const usernameDom: HTMLInputElement =
-                            document.getElementById(
-                                'username'
-                            ) as HTMLInputElement;
-                        roomIn(usernameDom.value);
-                    }}
-                >
-                    Room IN
-                </button>
-            </div>
+            <RoomInForm
+                connected={connected}
+                entered={entered}
+                onRoomIn={roomIn}
+                className={styles.roominbtn}
+                enteredClassName={styles.in}
+            />
 
             {/* チームデータ */}
             {state.playerData && (
@@ -140,20 +117,11 @@ export default function DecryptRoom() {
                 />
             )}
 
-            <div className={styles.btnarea}>
-                <button
-                    onClick={() => {
-                        Router.push('/');
-                    }}
-                >
-                    HOME
-                </button>
-                <button onClick={init}>
-                    {state.turn > 0 && state.turn < 4
-                        ? 'GAME RESET'
-                        : 'GAME START'}
-                </button>
-            </div>
+            <GameButtons
+                className={styles.btnarea}
+                turn={state.turn}
+                init={init}
+            />
 
             {/* チャットのやり取り（機能OFF） */}
             {false && (
