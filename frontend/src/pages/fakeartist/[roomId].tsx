@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import { useRouter } from 'next/router';
-import SockJsClient from 'react-stomp';
 import { SystemConst } from '../../const/next.config';
 import Layout from '../../components/layout';
 import Head from 'next/head';
@@ -24,11 +23,8 @@ import RadioChips from '../../components/chips/radiochips';
 import HeaderInfo from '../../components/fakeartist/headInfo';
 import CountdownClock from '../../components/clock/countdownClock';
 import Socialbtn from '../../components/button/sosialbtn';
-
-// 接続切れ
-const disconnect = () => {
-    console.log('接続が切れました');
-};
+import { useGameSocket } from '../../lib/stomp/useGameSocket';
+import ConnectionStatus from '../../components/common/ConnectionStatus';
 
 // sleeep
 const sleep = (msec: number) => {
@@ -126,8 +122,12 @@ export default function FakeArtistRoom() {
     const router = useRouter();
     const { roomId } = router.query;
 
-    const [clientObj, setClientObj] = useState(null);
-    const [isConnected, setIsConnected] = useState(false);
+    const { connected, status, send } = useGameSocket({
+        topic: `/topic/${roomId}`,
+        onMessage: (msg) => getMessage(msg),
+        enabled: !!roomId,
+    });
+
     const [messageList, setMessageList] = useState([]);
     const [chatList, setChatList] = useState([]);
 
@@ -235,7 +235,7 @@ export default function FakeArtistRoom() {
             };
             conect(url, soketInfo);
         },
-        [clientObj, playerName]
+        [playerName]
     );
 
     // チャット
@@ -337,7 +337,7 @@ export default function FakeArtistRoom() {
 
     const conect = (url: string, soketInfo: SocketInfo) => {
         try {
-            clientObj.sendMessage(url, JSON.stringify(soketInfo));
+            send(url, soketInfo);
         } catch (e) {
             setMessageList(
                 messageList.concat('通信エラー。再度試してください')
@@ -842,26 +842,13 @@ export default function FakeArtistRoom() {
                 </div>
             )}
 
-            <SockJsClient
-                url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
-                topics={['/topic/' + roomId]}
-                ref={(client) => {
-                    setClientObj(client);
-                }}
-                onMessage={(msg) => {
-                    getMessage(msg);
-                }}
-                onConnect={() => {
-                    setIsConnected(true);
-                }}
-                onDisconnect={disconnect}
-            />
+            <ConnectionStatus status={status} />
             <div className={styles.roominbtn}>
                 <p>
                     <label htmlFor="username">Name</label>
                 </p>
                 <input
-                    disabled={!isConnected}
+                    disabled={!connected}
                     type="text"
                     id="username"
                     maxLength={20}
@@ -878,7 +865,7 @@ export default function FakeArtistRoom() {
                     }}
                 />
                 <button
-                    disabled={!isConnected}
+                    disabled={!connected}
                     onClick={() => {
                         const usernameDom: HTMLInputElement =
                             document.getElementById(
