@@ -67,6 +67,7 @@ export default function Room() {
                 }
             `}</style>
             <Head>
+                <meta name="robots" content="noindex, nofollow" />
                 <meta
                     property="og:image"
                     content={

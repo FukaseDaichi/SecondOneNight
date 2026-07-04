@@ -50,6 +50,7 @@ export default function HideoutRoom() {
                 }
             `}</style>
             <Head>
+                <meta name="robots" content="noindex, nofollow" />
                 <meta
                     property="og:image"
                     content={

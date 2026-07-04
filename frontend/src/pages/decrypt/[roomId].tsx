@@ -64,6 +64,7 @@ export default function DecryptRoom() {
                 `}
             </style>
             <Head>
+                <meta name="robots" content="noindex, nofollow" />
                 <meta
                     property="og:image"
                     content={
