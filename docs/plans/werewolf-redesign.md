@@ -2,7 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** werewolf のゲーム画面を LP のデザインシステム(docs/design.md)に揃えて刷新し、6桁ルームコード入室・退出/キック・カスタムアイコンアップロードを追加する。
+**Goal:** werewolf のゲーム画面を LP のデザインシステム(docs/design.md)に揃えて刷新し、6桁ルームコード入室・退出/キック・カスタムアイコンアップロードを追加する。完了後に LP 刷新(旧 lp-redesign.md)と合わせて1つの PR として master へ出す。
+
+## 旧 lp-redesign.md との統合について
+
+トップページLP刷新(旧 `docs/plans/lp-redesign.md`)は本ブランチ(`feature/lp-redesign`)で**実装・docs 更新まで完了済み**(LP部品・/secret・hero画像・architecture/frontend.md 反映を確認済み)。未了だった「最終動作確認 → 完了報告 → PR」は本計画の Task 9 に統合した。**master へのマージと本番リリースは本計画の全タスク完了後に一括で行う**。
 
 **Architecture:** デザインは `styles/tokens.scss`(新設)を正として turn 連動のフェーズ背景・入室カード・ルールモーダル・スタート演出を SCSS modules で再実装する。機能追加は既存契約を最大限再利用し、新規契約は「ルームコード解決 REST(`GET roombycode/{code}`)」と「werewolf での `game-removeuser` 利用(status 130)」の2点のみ。reducer は純粋関数のまま拡張し、ユニットテストを追加する。
 
@@ -14,7 +18,7 @@
 - **アイコンアップロード**: クライアント側で 96px 正方形 JPEG に縮小して Data URL 化し、既存 `game-changeIcon`(status 650)で送信。サーバー・ストレージ変更なし
 - **退出**: 待機中(turn 0)とゲーム終了後(turn 4)のみ。自分の退出ボタン + 他プレイヤーのカードからの退出操作(いずれも確認ダイアログ付き)。既存 `game-removeuser` を status 130 で使用。自分が userList から消えたらトップへリダイレクト
 - **デザイン**: docs/design.md を正とする。背景は turn 連動(待機/議論=朝の顔、役職選択=夜の顔、結果=勝利陣営色)。入室フォームは中央カード型、ルールモーダルはタイポ階層+セクション再構成、スタート演出は「夜が訪れる」テーマの文字アニメーション
-- **進め方**: フェーズ分けした1プラン。Task 1〜9 を順に実施し、区切りごとに PR 分割可能(Task 1-4 デザイン / Task 5-6 ルームコード / Task 7-8 機能 / Task 9 docs)
+- **進め方**: フェーズ分けした1プラン。Task 1〜9 を順に `feature/lp-redesign` 上で実施(新ブランチは作らない)。PR は LP 刷新と合わせて最後に1本
 
 ## Global Constraints
 
@@ -31,25 +35,26 @@
 
 ---
 
-### Task 0: 作業ブランチ作成
+### Task 0: 計画書の整理(ブランチはそのまま)
 
-**Files:** なし(git 操作のみ)
+**Files:**
 
-- [ ] **Step 1: ブランチ作成**
+- Delete: `docs/plans/lp-redesign.md`(本計画に統合済み)
 
-LP 刷新(`feature/lp-redesign`)のデザイントークンに依存するため、そこから分岐する(LP が master にマージ済みなら master から)。
+- [ ] **Step 1: 現在のブランチを確認**
 
 ```bash
 cd /Users/fukasedaichi/git/BoardGameFront
-git checkout feature/lp-redesign && git pull
-git checkout -b feature/werewolf-redesign
+git branch --show-current   # feature/lp-redesign であること
+git status                  # 計画書以外に未コミット変更が無いこと
 ```
 
-- [ ] **Step 2: 計画書をコミット**
+- [ ] **Step 2: 旧計画書を削除し、統合計画書をコミット**
 
 ```bash
+git rm docs/plans/lp-redesign.md
 git add docs/plans/werewolf-redesign.md
-git commit -m "セカンドワンナイト人狼リデザインの実装計画を追加"
+git commit -m "LP刷新計画をwerewolfリデザイン計画に統合"
 ```
 
 ---
@@ -2003,7 +2008,7 @@ cd /Users/fukasedaichi/git/BoardGameFront/backend && ./mvnw test
 
 Expected: すべて成功
 
-- [ ] **Step 3: 総合動作確認(本番相当)**
+- [ ] **Step 3: 総合動作確認(本番相当。LP刷新分もここで最終確認)**
 
 ローカルバックエンド + フロント dev で3タブ通しプレイ:
 
@@ -2012,7 +2017,12 @@ Expected: すべて成功
 3. 写真アイコン設定 → 全タブ反映
 4. 役職設定 → GAME START(夜の訪れ演出 → 背景が夜面へ)→ 役職選択 → 議論(背景が朝面へ)→ 投票 → 結果(勝利陣営色)
 5. 遊び方モーダルの表示
-6. モバイル幅(375px)で横スクロールが無いこと
+6. モバイル幅(375px)で横スクロールが無いこと(トップLP・ゲーム画面とも)
+
+LP 刷新(旧計画)の未了確認分:
+
+7. トップLPの表示(ヒーロー文字アニメ・落ち葉・reveal)と「今すぐ遊ぶ」からの入室動線
+8. `/secret` からタイムボムのルーム作成 → 2タブで入室できること。`noindex, nofollow` メタが出力されていること。トップから /secret へのリンクが無いこと
 
 - [ ] **Step 4: コミット + 完了報告**
 
@@ -2022,4 +2032,8 @@ git add docs
 git commit -m "ルームコード・退出・アイコンの契約変更をドキュメントに反映"
 ```
 
-検証結果をまとめてユーザーに報告し、PR 作成の指示を待つ(**push / PR はユーザー指示があるまで行わない**)。バックエンドは Heroku デプロイが必要な旨も報告に含める(ルームコード機能はデプロイまで本番で動かない)。マージ後にこの計画書を削除し、要点を必要に応じて docs/roadmap.md に記録する。
+検証結果をまとめてユーザーに報告し、PR 作成の指示を待つ(**push / PR はユーザー指示があるまで行わない**)。リリースは LP 刷新 + werewolf リデザインを合わせた **1本の PR(feature/lp-redesign → master)**。報告には以下を含める:
+
+- master マージで Vercel が自動デプロイされる(フロント)
+- バックエンドは Heroku ダッシュボードからのデプロイが別途必要(ルームコード機能はデプロイまで本番で動かない。**フロントより先にバックエンドをデプロイする**と、あいことば入室が 404 になる期間を作らない)
+- マージ後にこの計画書を削除し、要点を必要に応じて docs/roadmap.md に記録する
