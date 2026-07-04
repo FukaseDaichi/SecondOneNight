@@ -17,27 +17,39 @@ frontend/src/
   lib/stomp/
     useGameSocket.ts     # 共通 STOMP 接続フック(全ゲーム共用)★テスト対象
     types.ts             # ConnectionStatus / GameSocket 型
+  lib/imageToIconDataUrl.ts # アップロード画像をアイコン用 JPEG Data URL に変換
   components/
     common/              # 2ゲーム以上で使う共通 UI(RoomInForm / ConnectionStatus / Start / Countdown 等)
     home/                # /secret 専用の部品(creategamebtn.tsx 等)
-    lp/                  # トップページ(LP)専用の部品(useReveal / Reveal / LeafFall / RoomCreateCta)
+    lp/                  # トップページ(LP)専用の部品(useReveal / Reveal / LeafFall / RoomCreateCta / RoomJoinByCode)
     ...                  # レイアウト・チャット・モーダル等の汎用部品
   pages/index.tsx        # トップページ = セカンドワンナイト人狼(werewolf)専用 LP
   pages/secret/index.tsx # 非公開のゲーム一覧(timebomb / hideout / fakeartist。noindex,nofollow)
   pages/<game>/[roomId].tsx  # 薄い入り口(roomId 取得 → use<Game>Room 呼び出し → レイアウト組み立て)
-  styles/lp.module.scss      # トップページ(LP)専用スタイル
+  styles/tokens.scss         # デザイントークンの source of truth
+  styles/lp.module.scss      # トップページ(LP)専用スタイル(tokens を @use)
   styles/secret.module.scss  # /secret 専用スタイル
-  styles/components/<game>/  # scss モジュール(Stage 4 まで移動しない)
+  styles/components/<game>/  # scss モジュール(werewolf 新規/刷新分は tokens を @use)
   const/next.config.ts   # システム定数(接続先ホスト等。NEXT_PUBLIC_AP_HOST で上書き可)
   type/                  # ゲーム横断の型(SocketInfo 等)
 ```
 
 - ゲーム間で共有するのは `SocketInfo` 型と `useGameSocket` のみ。reducer・型はゲームごとに独立させ、ゲーム間の差異を無理に抽象化しない(共通化の判断は Stage 4 以降)
+- デザイントークンは `styles/tokens.scss` を正とし、`styles/lp.module.scss` と werewolf の `background.module.scss` / `entry.module.scss` / `rule.module.scss` / `start.module.scss` が `@use` する
 
 ## ページ構成
 
-- **トップページ(`pages/index.tsx`)**: セカンドワンナイト人狼(werewolf)専用の LP。部品は `components/lp/`、スタイルは `styles/lp.module.scss`。ヒーローと下部 CTA の `RoomCreateCta` が `GET {AP_HOST}createroom/werewolf` で werewolf のルームを作成し、そのまま入室させる。ヒーロー画像は `/images/hero.webp`(jpg フォールバック付き)
+- **トップページ(`pages/index.tsx`)**: セカンドワンナイト人狼(werewolf)専用の LP。部品は `components/lp/`、スタイルは `styles/lp.module.scss`。ヒーローと下部 CTA の `RoomCreateCta` が `GET {AP_HOST}createroom/werewolf` で werewolf のルームを作成し、URL と 6桁のあいことばを表示する。`RoomJoinByCode` は `GET {AP_HOST}roombycode/{roomCode}` で部屋を検索し、見つかった `roomId` へ遷移する。ヒーロー画像は `/images/hero.webp`(jpg フォールバック付き)
 - **`/secret`(`pages/secret/index.tsx`)**: 非公開のゲーム一覧(timebomb / hideout / fakeartist。decrypt は非掲載)。`noindex, nofollow` メタを付与し、トップからはリンクしない。ルーム作成ボタンは `/secret` 専用となった `components/home/creategamebtn.tsx` を使用
+
+### werewolf 固有 UI
+
+| 種別 | 実装 |
+| --- | --- |
+| 入室/招待 | `EntryCard` が未入室時の名前入力、`InvitePanel` が待機中/終了後の URL コピーと `WerewolfState.roomCode` 表示を担当 |
+| 背景/開始演出 | `PhaseBackground` が turn / 勝利陣営に応じて背景を切り替え、`WerewolfStart` が開始 overlay を表示 |
+| ルール表示 | `rule.tsx` + `rule.module.scss` で遊び方モーダルを再構成 |
+| アイコンアップロード | `lib/imageToIconDataUrl.ts` が画像を 96px JPEG Data URL に変換し、werewolf の status `650` で送信 |
 
 ## 状態管理パターン(feature 構造)
 
