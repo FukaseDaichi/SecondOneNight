@@ -2,6 +2,17 @@
 
 Next.js 15 / React 19 / TypeScript 5 のフロントエンド。アーキテクチャの説明は [docs/architecture/frontend.md](../docs/architecture/frontend.md) を参照。
 
+このファイルは `frontend/CLAUDE.md` から参照される。`frontend/` 配下を触る時だけ必要な規約を書く。モノレポ全体のルールは [../AGENTS.md](../AGENTS.md) を参照。
+
+## 参照ドキュメント
+
+| 目的 | 文書 |
+| --- | --- |
+| フロント構造・reducer 方針 | [../docs/architecture/frontend.md](../docs/architecture/frontend.md) |
+| 通信契約 | [../docs/architecture/communication.md](../docs/architecture/communication.md) |
+| ゲーム別 status / state 対応 | [../docs/architecture/games/](../docs/architecture/games/) |
+| モダナイズ進捗 | [../docs/roadmap.md](../docs/roadmap.md) |
+
 ## コマンド(このディレクトリで実行)
 
 ```bash
@@ -40,6 +51,8 @@ src/
 
 - **reducer は純粋に保つ**。副作用(スクロール・タイマー・Audio・canvas・body クラス操作)はフック内の useEffect に分離する
 - **通信内容は変更不可**: 送信 destination / payload / 購読 topic は現状維持(timebomb のみ `/topic/{roomId}/timebomb`、他は `/topic/{roomId}`)
+- `useGameSocket.send` が payload を `JSON.stringify` する。呼び出し側で stringify しない
+- 通信契約や status の意味を変える場合は backend と docs も同じ変更に含める
 - DOM 直接操作(`document.querySelector` 等)・非制御 input は追加しない。state から導出する
 - ファイル移動は `git mv`(履歴維持)
 - Prettier 設定(tabWidth:4 / singleQuote / semi / trailingComma:es5)は変更しない

@@ -2,6 +2,8 @@
 
 オンラインボードゲーム(5ゲーム)のモノレポ。`frontend/`(Next.js / Vercel)と `backend/`(Spring Boot / Heroku)を1リポジトリで管理する。
 
+このファイルはルートの `CLAUDE.md` から参照される。常時読む前提のため、全体像・横断制約・ドキュメント入口だけを書く。`frontend/` / `backend/` 固有のルールは各ディレクトリの `AGENTS.md` に置く。
+
 ## 構成
 
 | ディレクトリ | 内容 | 作業ルール |
@@ -16,8 +18,12 @@
 
 | 文書 | 内容 |
 | --- | --- |
+| [docs/README.md](docs/README.md) | ドキュメント入口・読む順番 |
+| [docs/architecture/overview.md](docs/architecture/overview.md) | モノレポ全体像・実行時フロー |
 | [docs/architecture/frontend.md](docs/architecture/frontend.md) | フロントの現在の実装(feature 構造・reducer パターン・useGameSocket・テスト方針) |
+| [docs/architecture/backend.md](docs/architecture/backend.md) | バックエンドの現在の実装(controller・Room entity・共通処理) |
 | [docs/architecture/communication.md](docs/architecture/communication.md) | フロント・バック間の通信契約の詳細(REST / SockJS / STOMP) |
+| [docs/architecture/games/](docs/architecture/games/) | ゲーム別の状態・通信 status・frontend/backend 対応 |
 | [docs/architecture/deployment.md](docs/architecture/deployment.md) | Vercel / Heroku のデプロイ構成 |
 | [docs/roadmap.md](docs/roadmap.md) | モダナイズのステージ全体像・完了履歴・残課題バックログ |
 | [docs/plans/](docs/plans/) | **進行中・未着手の実装計画のみ**を置く(完了したら roadmap に吸収して削除) |
@@ -57,7 +63,9 @@ cd frontend && npm install && npm run dev  # localhost:3000
 
 ## 横断ルール
 
+- 作業対象が `frontend/` または `backend/` の場合は、そのディレクトリの `AGENTS.md` も読む
 - **バックエンドの API / WebSocket 仕様の互換性を維持する**。契約を変える場合はフロント・バック両方を同時に修正する
+- 通信契約を変える場合は [docs/architecture/communication.md](docs/architecture/communication.md) と該当ゲームの [docs/architecture/games/](docs/architecture/games/) も更新する
 - 意図的な挙動差分(バグ修正・UX 改善)は進行中の計画書の検証記録、なければ PR 説明に記録する
 - master には直接コミットしない(作業ブランチ → PR)。push / PR 作成はユーザーの指示があるまで行わない
 - コミットメッセージは日本語の短文
