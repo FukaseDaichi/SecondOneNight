@@ -11,7 +11,8 @@ import RollInfo from '../../features/werewolf/components/rollinfo';
 import WerewolfSet from '../../features/werewolf/components/werewolfset';
 import Socialbtn from '../../components/button/sosialbtn';
 import ConnectionStatus from '../../components/common/ConnectionStatus';
-import RoomInForm from '../../components/common/RoomInForm';
+import EntryCard from '../../features/werewolf/components/EntryCard';
+import InvitePanel from '../../features/werewolf/components/InvitePanel';
 import TurnMessage from '../../features/werewolf/components/TurnMessage';
 import RollCustomize from '../../features/werewolf/components/RollCustomize';
 import LimitTimeSelector from '../../features/werewolf/components/LimitTimeSelector';
@@ -135,13 +136,14 @@ export default function WerewolfRoom() {
                 }
             })}
             <ConnectionStatus status={status} />
-            <RoomInForm
+            <EntryCard
                 connected={connected}
                 entered={entered}
                 onRoomIn={roomIn}
-                className={styles.roominbtn}
-                enteredClassName={styles.in}
             />
+            {entered && (turn === 0 || turn === 4) && (
+                <InvitePanel roomId={roomId as string} roomCode={null} />
+            )}
             {/* ユーザ情報 */}
             {playerData && (
                 <UserField
