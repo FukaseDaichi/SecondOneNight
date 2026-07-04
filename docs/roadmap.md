@@ -1,6 +1,6 @@
 # ロードマップ — フロントエンド全面モダナイズ
 
-> 状態: Stage 3 進行中(2026-07-04 時点)
+> 状態: Stage 3 完了(2026-07-04 時点)。次は Stage 4(未着手)
 
 フロントエンドを段階的にモダナイズする取り組みの全体像。各ステージ完了時点で「ビルドが通り、本番接続で全5ゲームが動く」状態を保つ。バックエンド(Java)は無変更(API / WebSocket 仕様の互換を維持)。
 
@@ -13,12 +13,8 @@
 | モノレポ統合 | BoardGameFront + BoardGame を1リポジトリに統合(履歴保持) | ✅ 完了(2026-07-03) |
 | Stage 1: 基盤刷新 | Next.js 11→15 / React 17→19 / TS 5 / Vitest 導入 / 接続先の env 化 | ✅ 完了(2026-07-04) |
 | Stage 2: 通信層刷新 | react-stomp → @stomp/stompjs v7 + useGameSocket 共通フック | ✅ 完了(2026-07-04、PR #81) |
-| Stage 3: 構造リファクタ | 5ゲームの reducer 化 + feature 構造分割 + ページ薄型化 | 🔄 進行中([plans/stage3-structure.md](plans/stage3-structure.md)) |
+| Stage 3: 構造リファクタ | 5ゲームの reducer 化 + feature 構造分割 + ページ薄型化 | ✅ 完了(2026-07-04) |
 | Stage 4: 仕上げ | App Router 移行 / TS strict / 命名整理 / 残骸削除 | ⬜ 未着手 |
-
-## Stage 3 の現況(2026-07-04)
-
-Task 1〜12(useGameSocket 修正、全5ゲームの reducer 化 + テスト + feature 分割 + ページ薄型化)は実装済み。残りは **Task 13: Stage 3 完了検証**(旧構造残骸の確認、全チェック、本番接続での全5ゲーム最終確認、検証記録の記入)。
 
 ## Stage 4 の内容(全体設計から)
 
@@ -40,6 +36,7 @@ Task 1〜12(useGameSocket 修正、全5ゲームの reducer 化 + テスト + fe
 - ESLint warning(`no-explicit-any` 等)の削減 — strict 化とセット
 - fakeartist のヘッダチェック操作(`.fakeartistcheck` の DOM 操作)— ヘッダが共通コンポーネントのため Stage 3 では現状維持とした
 - 送信経路の try/catch 非対称(timebomb の changeLimitTme / changeSecretFlg)の統一検討 — 挙動維持のため据え置き中
+- ページ行数の 150 行目標未達(fakeartist 251 / werewolf 240 / timebomb 184)— 受信処理は reducer 化済みで機能問題なし。JSX / フック接続の追加分割は Stage 4 のリファクタ候補
 
 ### 手動確認推奨(未実施)
 
@@ -66,3 +63,16 @@ Task 1〜12(useGameSocket 修正、全5ゲームの reducer 化 + テスト + fe
 - react-stomp を依存から削除し、全5ゲームが `useGameSocket`(@stomp/stompjs v7 + sockjs-client)経由で送受信。仕様は [architecture/frontend.md](architecture/frontend.md) 参照
 - 自動再接続(reconnectDelay 5000)+ 接続インジケータ `ConnectionStatus` を追加(意図的な挙動差分はこれのみ)
 - 申し送り「useGameSocket の enabled=false 時に status が disconnected に戻らない」は Stage 3 Task 1 で修正済み
+
+### Stage 3: 構造リファクタ(2026-07-04)
+
+- 全5ゲーム(hideout / decrypt / timebomb / werewolf / fakeartist)を `features/<game>/` 構造に分割。受信処理を純粋な reducer(+ ユニットテスト)へ集約し、副作用は `use<Game>Room` の useEffect に分離、ページは薄い入口(フック呼び出し + レイアウト)に。詳細は [architecture/frontend.md](architecture/frontend.md)
+- 完了検証: `npm test` 127件全 PASS / `npm run lint` error 0 / `npm run build` 成功。本番 Heroku 2タブでの全5ゲーム手動確認も問題なし
+- 意図的な挙動差分:
+  - reducer 化による stale closure 解消(連続受信でメッセージが欠落しない)
+  - 入室フォームを `entered` 導出に変更(退室でフォームが再表示される)。decrypt の入室フォームに未接続時 disabled を追加し他4ゲームと統一
+  - timebomb のデバッグ用非表示入室ブロック(`false && …`)を削除
+  - werewolf 役職カウンターの DOM 直接操作を state 化(見た目・操作は同一)
+  - 非制御 input(username)を制御 input 化
+  - **アクション拒否時の再配信 obj への防御**(decrypt / fakeartist): バックエンドは `ApplicationException`(デフォルト status=200)で status のみ差し替え `obj` は再設定しないため、room 形状でない obj が届く。`isRoomData` ガードで旧実装の「状態不変」を復元(バックエンド無変更)
+- 手動確認中に発見した既存バグ(Stage 3 とは無関係): ホーム画面パララックスの `#main-img` null 参照 → null ガードを追加して修正
