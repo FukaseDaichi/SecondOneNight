@@ -17,6 +17,7 @@ import RollCustomize from '../../features/werewolf/components/RollCustomize';
 import LimitTimeSelector from '../../features/werewolf/components/LimitTimeSelector';
 import Overlays from '../../features/werewolf/components/Overlays';
 import UserField from '../../features/werewolf/components/UserField';
+import PhaseBackground from '../../features/werewolf/components/PhaseBackground';
 import { useWerewolfRoom } from '../../features/werewolf/useWerewolfRoom';
 
 export default function WerewolfRoom() {
@@ -79,22 +80,7 @@ export default function WerewolfRoom() {
                 {`
                     body {
                         overflow-x: hidden;
-                        background-color: #f3f3f3;
-                    }
-
-                    body:before {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        z-index: -1;
-                        width: 100vw;
-                        height: 100vh;
-                        background: url(/images/werewolf/werewolfbackground.png);
-                        -webkit-background-size: 370px;
-                        background-size: 370px;
-                        background-position: bottom left;
-                        background-repeat: no-repeat;
-                        content: '';
+                        background-color: #effdfe;
                     }
                 `}
             </style>
@@ -110,6 +96,7 @@ export default function WerewolfRoom() {
                 />
                 <title>セカンドワンナイト人狼</title>
             </Head>
+            <PhaseBackground turn={turn} winteamList={winteamList} />
             <Overlays
                 startFlg={startFlg}
                 votingStartFlg={votingStartFlg}

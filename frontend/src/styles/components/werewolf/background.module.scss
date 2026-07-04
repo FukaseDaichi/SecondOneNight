@@ -1,0 +1,74 @@
+@use '../../tokens' as *;
+
+.bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    transition: background 1.6s $ease;
+}
+
+/* 朝の顔(待機・議論) */
+.day {
+    background: radial-gradient(120% 90% at 78% 20%, #f7eff2 0%, $mist 55%);
+}
+
+/* 夜の顔(役職選択) */
+.night {
+    background: radial-gradient(120% 90% at 50% 0%, #1d4550 0%, $night 55%, $night-deep 100%);
+}
+
+/* 結果(勝利陣営色のティント) */
+.resultWolf {
+    background: radial-gradient(120% 90% at 50% 10%, #3a2229 0%, $night 60%, $night-deep 100%);
+}
+.resultVillage {
+    background: radial-gradient(120% 90% at 50% 10%, #16404b 0%, $night 60%, $night-deep 100%);
+}
+.resultThird {
+    background: radial-gradient(120% 90% at 50% 10%, #33283a 0%, $night 60%, $night-deep 100%);
+}
+
+@keyframes bgBreathe {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.07);
+        opacity: 0.85;
+    }
+}
+
+.glowTeal,
+.glowRose {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+.glowTeal {
+    top: -140px;
+    right: -100px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(127, 208, 214, 0.14), transparent 70%);
+    animation: bgBreathe 12s ease-in-out infinite;
+}
+.glowRose {
+    bottom: -160px;
+    left: -120px;
+    width: 460px;
+    height: 460px;
+    background: radial-gradient(circle, rgba(233, 167, 190, 0.12), transparent 70%);
+    animation: bgBreathe 14s ease-in-out 3s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bg,
+    .glowTeal,
+    .glowRose {
+        transition: none;
+        animation: none;
+    }
+}
