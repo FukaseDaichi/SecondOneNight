@@ -14,7 +14,7 @@ const TITLE_MAIN: string[][] = [
 ];
 
 const STATS = [
-    { label: 'PLAYERS', value: '4', unit: '人〜', caption: 'プレイ人数' },
+    { label: 'PLAYERS', value: '３', unit: '人〜', caption: 'プレイ人数' },
     { label: 'TIME', value: '約10', unit: '分', caption: '1プレイの時間' },
     { label: 'SETUP', value: '約1', unit: '分', caption: '準備にかかる時間' },
     { label: 'AGE', value: '10', unit: '歳以上', caption: '対象年齢' },

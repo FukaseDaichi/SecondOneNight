@@ -223,5 +223,5 @@ werewolf のルーム・進行画面を刷新する際の指針。
 
 ### 7.3 実装メモ
 
-- 現状トークンは [lp.module.scss](../frontend/src/styles/lp.module.scss) 冒頭に SCSS 変数として定義されている。ゲーム画面へ適用する段階で共通ファイル(例: `styles/tokens.scss`)へ切り出すこと(本書執筆時点では未実施)
+- デザイントークンは [tokens.scss](../frontend/src/styles/tokens.scss) を正とする。LP と werewolf 画面の SCSS modules は `@use` で参照し、色・フォント・easing を共有する
 - フォントは _document.tsx で全ページ読み込み済みのため、ゲーム画面側で追加の読み込みは不要
