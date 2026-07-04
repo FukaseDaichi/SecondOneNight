@@ -213,7 +213,7 @@ export default function Homepage() {
                                 たった数分の、嘘と推理。配られた札から、なりたい役職を自分で選べる。議論と投票で、この村に潜む人狼を見つけ出せるか──。
                             </p>
                             <div className={styles.chips}>
-                                <span className={styles.chip}>4人〜</span>
+                                <span className={styles.chip}>３人〜</span>
                                 <span className={styles.chip}>
                                     1プレイ 約10分
                                 </span>
