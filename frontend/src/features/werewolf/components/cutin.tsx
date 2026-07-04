@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../styles/components/werewolf/cutin.module.scss';
+import styles from '../../../styles/components/werewolf/cutin.module.scss';
 
 type CutInProps = {
     rollNo: number;

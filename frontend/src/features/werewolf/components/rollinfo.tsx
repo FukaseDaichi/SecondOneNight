@@ -1,7 +1,7 @@
 import React from 'react';
-import styles from '../../styles/components/werewolf/rollinfo.module.scss';
+import styles from '../../../styles/components/werewolf/rollinfo.module.scss';
 import RollCard from './rollcard';
-import { WerewolfRoll, WerewolfUser } from '../../type/werewolf';
+import { WerewolfRoll, WerewolfUser } from '../../../type/werewolf';
 
 type RollInfoProps = {
     rollList: Array<WerewolfRoll>;

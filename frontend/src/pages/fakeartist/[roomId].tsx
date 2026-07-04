@@ -15,7 +15,7 @@ import Start from '../../components/common/Start';
 import Canvas from '../../components/fakeartist/canvas';
 import { ArtDataStroke, FakeArtistUser } from '../../type/fakeartist';
 import FakeartistUserInfo from '../../components/fakeartist/fakeartistuserInfo';
-import Countdown from '../../components/werewolf/countdown';
+import Countdown from '../../components/common/Countdown';
 import Loadingdod from '../../components/text/loadingdod';
 import Modal from '../../components/modal';
 import UserInfoShort from '../../components/fakeartist/userInfoshort';

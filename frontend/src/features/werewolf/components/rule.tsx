@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../styles/components/werewolf/rule.module.scss';
+import styles from '../../../styles/components/werewolf/rule.module.scss';
 
 type RuleProps = {
     endFnc: () => void;

@@ -1,9 +1,9 @@
 import React from 'react';
-import styles from '../../styles/components/werewolf/rollselectturn.module.scss';
+import styles from '../../../styles/components/werewolf/rollselectturn.module.scss';
 import { useEffect, useState } from 'react';
-import AnimationBtn from '../button/animationbtn';
-import Loadingdod from '../../components/text/loadingdod';
-import { WerewolfRoll, WerewolfUser } from '../../type/werewolf';
+import AnimationBtn from '../../../components/button/animationbtn';
+import Loadingdod from '../../../components/text/loadingdod';
+import { WerewolfRoll, WerewolfUser } from '../../../type/werewolf';
 import RollCard from './rollcard';
 import RollInfo from './rollinfo';
 

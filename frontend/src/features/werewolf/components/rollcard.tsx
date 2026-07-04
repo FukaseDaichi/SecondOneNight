@@ -1,7 +1,7 @@
 import React from 'react';
-import styles from '../../styles/components/werewolf/rollcard.module.scss';
-import { WerewolfRoll } from '../../type/werewolf';
-import { SystemConst } from '../../const/next.config';
+import styles from '../../../styles/components/werewolf/rollcard.module.scss';
+import { WerewolfRoll } from '../../../type/werewolf';
+import { SystemConst } from '../../../const/next.config';
 
 const getParam = (
     roll: WerewolfRoll,

@@ -1,8 +1,8 @@
 import React from 'react';
-import styles from '../../styles/components/werewolf/modalrollcard.module.scss';
+import styles from '../../../styles/components/werewolf/modalrollcard.module.scss';
 import { useEffect } from 'react';
-import { WerewolfRoll } from '../../type/werewolf';
-import { SystemConst } from '../../const/next.config';
+import { WerewolfRoll } from '../../../type/werewolf';
+import { SystemConst } from '../../../const/next.config';
 
 const getParam = (
     roll: WerewolfRoll,

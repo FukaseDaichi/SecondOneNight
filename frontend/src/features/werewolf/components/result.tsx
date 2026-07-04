@@ -1,6 +1,6 @@
 import React from 'react';
-import styles from '../../styles/components/werewolf/result.module.scss';
-import { WerewolfUser } from '../../type/werewolf';
+import styles from '../../../styles/components/werewolf/result.module.scss';
+import { WerewolfUser } from '../../../type/werewolf';
 
 type ResultProps = {
     userList: Array<WerewolfUser>;

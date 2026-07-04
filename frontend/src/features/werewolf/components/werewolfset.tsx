@@ -1,6 +1,6 @@
 import React from 'react';
-import styles from '../../styles/components/werewolf/werewolfset.module.scss';
-import Data from '../../const/json/werewolf.json';
+import styles from '../../../styles/components/werewolf/werewolfset.module.scss';
+import Data from '../../../const/json/werewolf.json';
 
 type WerewolfSetProps = {
     userSize: number;

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
-import styles from '../../styles/components/werewolf/userinfo.module.scss';
+import styles from '../../../styles/components/werewolf/userinfo.module.scss';
 import { useState } from 'react';
-import HideoutIcon from '../common/HideoutIcon';
-import { WerewolfUser } from '../../type/werewolf';
+import HideoutIcon from '../../../components/common/HideoutIcon';
+import { WerewolfUser } from '../../../type/werewolf';
 import RollCard from './rollcard';
-import CircleBtn from '../button/circlebtn';
-import WinText from '../text/wintext';
+import CircleBtn from '../../../components/button/circlebtn';
+import WinText from '../../../components/text/wintext';
 
 // 人狼用
 
