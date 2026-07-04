@@ -1,0 +1,159 @@
+@use '../../tokens' as *;
+@use '../../variables' as *;
+
+@keyframes victoryFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* LP の charIn パターン流用(1文字ずつ滲みながら立ち上がる) */
+@keyframes victoryCharIn {
+    0% {
+        opacity: 0;
+        transform: translateY(0.55em);
+        filter: blur(8px);
+    }
+    55% {
+        opacity: 1;
+        filter: blur(0.5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+@keyframes victoryCardUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 14px;
+    animation: victoryFadeIn 0.8s $ease both;
+}
+
+/* 陣営色の背景グラデーション */
+.wolf {
+    background: radial-gradient(
+        120% 90% at 50% 8%,
+        #4a252e 0%,
+        $night 62%,
+        $night-deep 100%
+    );
+}
+.village {
+    background: radial-gradient(
+        120% 90% at 50% 8%,
+        #14505c 0%,
+        $night 62%,
+        $night-deep 100%
+    );
+}
+.third {
+    background: radial-gradient(
+        120% 90% at 50% 8%,
+        #4d3d1e 0%,
+        $night 62%,
+        $night-deep 100%
+    );
+}
+
+.inner {
+    position: relative;
+    z-index: 1;
+    width: min(680px, 100%);
+    margin: auto 0;
+    text-align: center;
+}
+
+.message {
+    margin: 0;
+    font-family: $serif;
+    font-weight: 600;
+    font-size: clamp(2.1rem, 9vw, 4.2rem);
+    letter-spacing: 0.12em;
+    color: $paper;
+    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.45);
+
+    .char {
+        display: inline-block;
+        animation: victoryCharIn 0.9s $ease both;
+    }
+}
+
+.skipHint {
+    margin: 26px 0 0;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: rgba(251, 254, 254, 0.65);
+}
+
+.resultCard {
+    margin: 26px auto 0;
+    width: min(560px, 100%);
+    padding: clamp(18px, 4vw, 30px);
+    border: 1px solid rgba(127, 208, 214, 0.25);
+    border-radius: 18px;
+    background: $paper;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+    animation: victoryCardUp 0.7s $ease both;
+}
+
+.returnBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    margin-top: 18px;
+    padding: 12px 40px;
+    border: none;
+    border-radius: 999px;
+    background: $ink;
+    color: #f2fbfb;
+    font-family: $serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition:
+        transform 0.1s,
+        box-shadow 0.35s,
+        background 0.35s;
+
+    &:hover {
+        background: $ink-deep;
+        box-shadow: 0 0 0 2px rgba(53, 168, 180, 0.55);
+    }
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .overlay,
+    .resultCard,
+    .message .char {
+        animation-duration: 0.01s;
+        animation-delay: 0s !important;
+    }
+}

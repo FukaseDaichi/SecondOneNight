@@ -111,6 +111,11 @@ export default function UserInfo(props: UserInfoProps) {
                         />
                     </div>
                 )}
+                <div className={styles.content}>
+                    <div className={styles.text}>
+                        <label>{props.user.userName}</label>
+                    </div>
+                </div>
                 {props.ownFlg && (
                     <div className={styles.upload}>
                         <label>
@@ -126,11 +131,6 @@ export default function UserInfo(props: UserInfoProps) {
                         )}
                     </div>
                 )}
-                <div className={styles.content}>
-                    <div className={styles.text}>
-                        <label>{props.user.userName}</label>
-                    </div>
-                </div>
             </div>
 
             {props.playerActionName && !props.ownFlg && (

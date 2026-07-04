@@ -1,4 +1,5 @@
 @use '../../variables' as *;
+@use '../../tokens' as *;
 
 $animetiondelay: 2s;
 
@@ -56,10 +57,10 @@ div.main {
     margin: 2.2em 1em 1.5em 1em;
     padding: 1em 1em;
     box-sizing: border-box;
-    background-color: #fff; /* 背景色 */
-    border: 4px solid; /*線の太さ・色*/
-    border-radius: 3em 0.8em 3em 0.7em/0.9em 2em 0.8em 3em;
-    box-shadow: 5px 4px 10px 3px rgb(0 0 0 / 60%);
+    background-color: $paper; /* 背景色 */
+    border: 3px solid; /*線の太さ・色(プレイヤーカラー)*/
+    border-radius: 16px;
+    box-shadow: 0 14px 30px rgba(23, 69, 79, 0.22);
     width: 180px;
 
     @include mq(md) {
@@ -70,15 +71,22 @@ div.main {
 
     span.you {
         position: absolute;
-        font-family: 'APJapanesefont', sans-seri;
-        top: 5px;
-        left: 10px;
-        font-size: 1.2rem;
-        font-weight: 600;
+        top: -12px;
+        left: 8px;
+        padding: 3px 10px;
+        font-family: $serif;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        color: #f2fbfb;
+        background: $teal;
+        border-radius: 999px;
+        z-index: 5;
 
         @include mq(md) {
-            left: 2px;
-            font-size: 1rem;
+            left: 4px;
+            font-size: 9px;
+            padding: 2px 8px;
         }
     }
 
@@ -134,8 +142,8 @@ div.main {
     div.icon {
         position: relative;
         width: 100%;
-        height: 50px;
-        top: -55px;
+        /* アバターをカード上に浮かせつつ、名前・ピルはカード内に収める */
+        margin-top: -55px;
 
         div.win {
             font-family: 'APJapanesefont', sans-seri;
@@ -172,16 +180,19 @@ div.main {
             text-align: center;
             margin-top: 3px;
             div.text {
-                font-family: 'APJapanesefont', sans-seri;
+                /* 名前はカードの見出し(従来比約2倍・Shippori Mincho) */
+                font-family: $serif;
                 white-space: nowrap;
                 overflow: hidden;
+                text-overflow: ellipsis;
                 label {
-                    font-size: 1.2rem;
-                    font-weight: 500;
-                    color: #252525;
+                    font-size: 2.1rem;
+                    font-weight: 600;
+                    letter-spacing: 0.04em;
+                    color: $ink;
                     text-shadow: 0 0 1px #ffffff;
                     @include mq(md) {
-                        font-size: 1rem;
+                        font-size: 1.6rem;
                     }
                 }
             }

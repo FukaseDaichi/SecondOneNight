@@ -1,86 +1,55 @@
+@use '../../tokens' as *;
 @use '../../variables' as *;
 
-@keyframes fade-in {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-@keyframes fade-out {
-    0% {
-        opacity: 1;
-    }
-    99% {
-        opacity: 0;
-        z-index: 10;
-    }
-    100% {
-        opacity: 0;
-        z-index: -10;
-    }
-}
-
+/* 結果テーブル(トークン準拠。VictoryOverlay のカード内に埋め込む) */
 div.result {
-    font-family: 'APJapanesefont', sans-seri;
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: fade-in 0.5s cubic-bezier(0.39, 0.575, 0.565, 1) both;
-    > div {
-        position: relative;
+    overflow-x: auto;
+
+    table {
         width: 100%;
-        overflow: hidden;
-        background-color: black;
+        border-collapse: collapse;
+        font-family: $sans;
+        font-size: 13px;
+        color: $ink;
+        font-variant-numeric: tabular-nums;
 
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        @include mq(md) {
+            font-size: 11px;
+        }
 
-        > div {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            max-width: 1000px;
-            overflow: hidden;
-            background-color: black;
+        thead th {
+            padding: 8px 6px;
+            font-family: $serif;
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 0.24em;
+            color: $label;
+            text-align: center;
+            border-bottom: 1px solid rgba(30, 59, 68, 0.25);
+            white-space: nowrap;
+        }
 
-            > table {
-                margin-top: 1rem;
-                @include mq(md) {
-                    font-size: 0.6rem;
-                }
-                > thead {
-                    th {
-                        text-align: center;
+        tbody {
+            tr {
+                border-bottom: 1px solid rgba(30, 59, 68, 0.1);
+
+                &.win {
+                    background: rgba(53, 168, 180, 0.12);
+
+                    td:first-child {
+                        font-weight: 700;
+                        color: $ink-deep;
                     }
                 }
+            }
+            td {
+                padding: 9px 6px;
+                text-align: center;
 
-                > tbody {
-                    tr.win {
-                        background-color: white;
-                        color: #212529;
-                    }
-                    td {
-                        text-align: center;
-
-                        &:nth-child(3) {
-                            text-align: end;
-                        }
-
-                        &:nth-child(4) {
-                            text-align: end;
-                        }
-                    }
+                &:nth-child(3),
+                &:nth-child(4) {
+                    text-align: end;
                 }
             }
         }
