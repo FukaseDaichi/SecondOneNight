@@ -1,4 +1,3 @@
-/* eslint-disable no-irregular-whitespace */
 import React from 'react';
 import { useRouter } from 'next/router';
 import { SystemConst } from '../../const/next.config';

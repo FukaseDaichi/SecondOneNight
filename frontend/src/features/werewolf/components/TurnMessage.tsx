@@ -1,4 +1,3 @@
-/* eslint-disable no-irregular-whitespace */
 import Countdown from '../../../components/common/Countdown';
 import Loadingdod from '../../../components/text/loadingdod';
 import styles from '../../../styles/components/werewolf/room.module.scss';
