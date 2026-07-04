@@ -1,6 +1,6 @@
 import React, { BaseSyntheticEvent } from 'react';
-import styles from '../../styles/components/fakeartist/userinfoshort.module.scss';
-import { FakeArtistUser } from '../../type/fakeartist';
+import styles from '../../../styles/components/fakeartist/userinfoshort.module.scss';
+import { FakeArtistUser } from '../../../type/fakeartist';
 
 type UserInfoShortProps = {
     gameTime: number;

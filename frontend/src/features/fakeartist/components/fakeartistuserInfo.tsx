@@ -1,7 +1,7 @@
 import React from 'react';
-import styles from '../../styles/components/fakeartist/fakeartistuserinfo.module.scss';
-import { FakeArtistUser } from '../../type/fakeartist';
-import CircleBtn from '../button/circlebtn';
+import styles from '../../../styles/components/fakeartist/fakeartistuserinfo.module.scss';
+import { FakeArtistUser } from '../../../type/fakeartist';
+import CircleBtn from '../../../components/button/circlebtn';
 import Icon from './fakeartisticon';
 
 const getIconImgUrl = (userNo: number, userIconUrl: string) => {

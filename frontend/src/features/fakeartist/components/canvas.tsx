@@ -1,8 +1,12 @@
 import React, { useEffect } from 'react';
-import styles from '../../styles/components/fakeartist/canvas.module.scss';
+import styles from '../../../styles/components/fakeartist/canvas.module.scss';
 import { useState } from 'react';
 import { TwitterPicker } from 'react-color';
-import { ArtData, ArtDataStroke, FakeArtistUser } from '../../type/fakeartist';
+import {
+    ArtData,
+    ArtDataStroke,
+    FakeArtistUser,
+} from '../../../type/fakeartist';
 
 // ポジション
 const lastPosition = { x: null, y: null };

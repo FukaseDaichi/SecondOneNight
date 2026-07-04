@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../styles/components/fakeartist/headInfo.module.scss';
+import styles from '../../../styles/components/fakeartist/headInfo.module.scss';
 
 type HeadInfoProps = {
     children: React.JSX.Element;

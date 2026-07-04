@@ -1,7 +1,7 @@
 import React from 'react';
-import styles from '../../styles/components/fakeartist/fakeartisticon.module.scss';
+import styles from '../../../styles/components/fakeartist/fakeartisticon.module.scss';
 import { useState, useEffect } from 'react';
-import { SystemConst } from '../../const/next.config';
+import { SystemConst } from '../../../const/next.config';
 
 const shuffle = ([...array], sliceNum: number) => {
     for (let i = array.length - 1; i >= 0; i--) {
