@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import { useRouter } from 'next/router';
 import { SystemConst } from '../../const/next.config';
 import Layout from '../../components/layout';
 import Head from 'next/head';
-import { SocketInfo } from '../../type';
-import { useEffect, useState, useCallback } from 'react';
 import Chatmessage from '../../components/message/chatmessage';
 import ChatComponent from '../../components/chatcomponent';
 import styles from '../../styles/components/fakeartist/room.module.scss';
@@ -13,7 +10,7 @@ import Router from 'next/router';
 
 import Start from '../../components/common/Start';
 import Canvas from '../../components/fakeartist/canvas';
-import { ArtDataStroke, FakeArtistUser } from '../../type/fakeartist';
+import { FakeArtistUser } from '../../type/fakeartist';
 import FakeartistUserInfo from '../../components/fakeartist/fakeartistuserInfo';
 import Countdown from '../../components/common/Countdown';
 import Loadingdod from '../../components/text/loadingdod';
@@ -23,572 +20,50 @@ import RadioChips from '../../components/chips/radiochips';
 import HeaderInfo from '../../components/fakeartist/headInfo';
 import CountdownClock from '../../components/clock/countdownClock';
 import Socialbtn from '../../components/button/sosialbtn';
-import { useGameSocket } from '../../lib/stomp/useGameSocket';
 import ConnectionStatus from '../../components/common/ConnectionStatus';
-
-// sleeep
-const sleep = (msec: number) => {
-    return new Promise((resolve) => setTimeout(resolve, msec));
-};
-
-// お絵描きコールバック
-const callBackDraw = (artDataStroke: ArtDataStroke) => {
-    const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
-    if (!canvas) {
-        return;
-    }
-    const context = canvas.getContext('2d');
-
-    context.beginPath();
-
-    for (let i = 0; i < artDataStroke.artDataList.length - 1; i++) {
-        context.lineCap = 'round'; // 丸みを帯びた線にする
-        context.lineJoin = 'round'; // 丸みを帯びた線にする
-        context.lineWidth = artDataStroke.lineWidth; // 線の太さ
-        context.strokeStyle = artDataStroke.color; // 線の色
-
-        context.moveTo(
-            artDataStroke.artDataList[i].xparamPotision,
-            artDataStroke.artDataList[i].yparamPotision
-        );
-        context.lineTo(
-            artDataStroke.artDataList[i + 1].xparamPotision,
-            artDataStroke.artDataList[i + 1].yparamPotision
-        );
-        context.stroke();
-    }
-
-    context.closePath();
-};
-
-// canvas上に書いた絵を全部消す
-const clear = () => {
-    const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
-    if (!canvas) {
-        return;
-    }
-    const context = canvas.getContext('2d');
-    context.clearRect(0, 0, canvas.width, canvas.height);
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const drawCanvas = (artDataStrokeArray: Array<any>) => {
-    artDataStrokeArray.forEach((obj) => {
-        callBackDraw(obj);
-    });
-};
-
-// セカンドキャンパスの描画
-const drawPersonCanvas = (
-    artDataStrokeArray: Array<ArtDataStroke>,
-    userName: string
-) => {
-    const canvas: HTMLCanvasElement =
-        document.querySelector('#person-draw-area');
-    if (!canvas) {
-        return;
-    }
-    const context = canvas.getContext('2d');
-
-    //既存削除
-    context.clearRect(0, 0, canvas.width, canvas.height);
-
-    for (const artDataStroke of artDataStrokeArray) {
-        if (artDataStroke.name === userName) {
-            context.beginPath();
-            for (let i = 0; i < artDataStroke.artDataList.length - 1; i++) {
-                context.lineCap = 'round'; // 丸みを帯びた線にする
-                context.lineJoin = 'round'; // 丸みを帯びた線にする
-                context.lineWidth = artDataStroke.lineWidth; // 線の太さ
-                context.strokeStyle = artDataStroke.color; // 線の色
-
-                context.moveTo(
-                    artDataStroke.artDataList[i].xparamPotision,
-                    artDataStroke.artDataList[i].yparamPotision
-                );
-                context.lineTo(
-                    artDataStroke.artDataList[i + 1].xparamPotision,
-                    artDataStroke.artDataList[i + 1].yparamPotision
-                );
-                context.stroke();
-            }
-            context.closePath();
-        }
-    }
-};
+import { useFakeartistRoom } from '../../features/fakeartist/useFakeartistRoom';
 
 export default function FakeArtistRoom() {
     // roomId取得
     const router = useRouter();
     const { roomId } = router.query;
 
-    const { connected, status, send } = useGameSocket({
-        topic: `/topic/${roomId}`,
-        onMessage: (msg) => getMessage(msg),
-        enabled: !!roomId,
-    });
+    const {
+        state,
+        connected,
+        status,
+        entered,
+        roomIn,
+        roomRemove,
+        changeRadio,
+        changeIcon,
+        chat,
+        init,
+        draw,
+        vote,
+        changeLimitTime,
+        limittimeDone,
+        personCanpasMouseDown,
+        personCanpasMouseUp,
+    } = useFakeartistRoom(roomId as string | undefined);
 
-    const [messageList, setMessageList] = useState([]);
-    const [chatList, setChatList] = useState([]);
-
-    // gamedata
-    const [userList, setUserLst] = useState([]);
-    const [gameTime, setGameTime] = useState(0);
-    const [turn, setTurn] = useState(0);
-    const [limitTime, setLimitTime] = useState(0);
-    const [theme, setTheme] = useState('');
-    const [artDataStrokeList, setArtDataStrokeList] = useState([]);
-    const [endMessage, setEndMessage] = useState('');
-    const [patternList, setPatternList] = useState([]);
-
-    // userInfo
-    const [playerName, setPlayerName] = useState(null);
-    const [playerData, setPlayerData] = useState<FakeArtistUser>(null);
-
-    // view
-    const [startFlg, setStartFlg] = useState(false);
-    const [disscuttionStartFlg, setDisscuttionStartFlg] = useState(false);
-    const [votingStartFlg, setVotingStartFlg] = useState(false);
-    const [personCanvasZindex, setPersonCanvasZindex] = useState(-1);
-    const [endFlg, setEndFlg] = useState(false);
-
-    // 個人描画削除
-    const personCanpasMouseUp = useCallback(() => {
-        setPersonCanvasZindex(-1);
-    }, [gameTime]);
-
-    const personCanpasMouseDown = useCallback(
-        (userName: string) => {
-            setPersonCanvasZindex(1);
-            drawPersonCanvas(artDataStrokeList, userName);
-        },
-        [artDataStrokeList]
-    );
-
-    // ルーム入室
-    const roomIn = (userName: string) => {
-        if (userName === '') {
-            return;
-        }
-        const url = '/app/game-roomin';
-        const soketInfo: SocketInfo = {
-            status: 100,
-            roomId: roomId as string,
-            userName: userName,
-            message: null,
-            obj: null,
-        };
-
-        setPlayerName(userName);
-        conect(url, soketInfo);
-    };
-
-    // テーマ変更
-    const changeRadio = useCallback(
-        (patternNo: number) => {
-            let dataList = [];
-            if (patternList.includes(patternNo)) {
-                dataList = patternList.filter((no) => no !== patternNo);
-            } else {
-                dataList = [...patternList, patternNo];
-            }
-            const url = '/app/fakeartist-setpattern';
-
-            const soketInfo: SocketInfo = {
-                status: 160,
-                roomId: roomId as string,
-                userName: playerName,
-                message: null,
-                obj: dataList,
-            };
-            conect(url, soketInfo);
-        },
-        [playerName, patternList]
-    );
-
-    // ルーム退出
-    const roomRemove = (userName: string) => {
-        if (userName === '') {
-            return;
-        }
-        const url = '/app/game-removeuser';
-        const soketInfo: SocketInfo = {
-            status: 150,
-            roomId: roomId as string,
-            userName: userName,
-            message: null,
-            obj: userName,
-        };
-        conect(url, soketInfo);
-    };
-
-    // アイコン変更
-    const changeIcon = useCallback(
-        (iconUrl: string) => {
-            const url = '/app/game-changeIcon';
-            const soketInfo: SocketInfo = {
-                status: 650,
-                roomId: roomId as string,
-                userName: playerName,
-                message: null,
-                obj: iconUrl,
-            };
-            conect(url, soketInfo);
-        },
-        [playerName]
-    );
-
-    // チャット
-    const chat = useCallback(
-        (message: string) => {
-            if (playerData) {
-                const url = '/app/game-chat';
-                const soketInfo: SocketInfo = {
-                    status: 101,
-                    roomId: roomId as string,
-                    userName: playerName,
-                    message: message,
-                    obj: null,
-                };
-                conect(url, soketInfo);
-                setMessageList(messageList.concat(message));
-            }
-        },
-        [playerName, messageList]
-    );
-
-    // ゲーム開始
-    const init = useCallback(() => {
-        const url = '/app/fakeartist-init';
-        const soketInfo: SocketInfo = {
-            status: 300,
-            roomId: roomId as string,
-            userName: playerName,
-            message: null,
-            obj: null,
-        };
-        conect(url, soketInfo);
-    }, [playerName]);
-
-    // お絵描き
-    const draw = useCallback(
-        (artDataStroke: ArtDataStroke) => {
-            artDataStroke.name = playerName;
-            const url = '/app/fakeartist-drawing';
-            const soketInfo: SocketInfo = {
-                status: 450,
-                roomId: roomId as string,
-                userName: playerName,
-                message: null,
-                obj: artDataStroke,
-            };
-            conect(url, soketInfo);
-        },
-        [playerName]
-    );
-
-    // 投票
-    const vote = useCallback(
-        (targetUsername: string) => {
-            const url = '/app/fakeartist-voting';
-            console.log(gameTime);
-            const soketInfo: SocketInfo = {
-                status: 500,
-                roomId: roomId as string,
-                userName: playerName,
-                message: null,
-                obj: targetUsername,
-            };
-            conect(url, soketInfo);
-        },
-        [playerName]
-    );
-
-    // 制限時間変更
-    const changeLimitTime = useCallback(
-        (time: number) => {
-            const url = '/app/game-setlimittime';
-            const soketInfo: SocketInfo = {
-                status: 550,
-                roomId: roomId as string,
-                userName: null,
-                message: null,
-                obj: time,
-            };
-            conect(url, soketInfo);
-        },
-        [playerName]
-    );
-
-    // 議論制限時間超過
-    const limittimeDone = useCallback(() => {
-        if (gameTime === 2) {
-            const url = '/app/game-dooverLimit';
-            const soketInfo: SocketInfo = {
-                status: 600,
-                roomId: roomId as string,
-                userName: null,
-                message: null,
-                obj: turn,
-            };
-            conect(url, soketInfo);
-        }
-    }, [gameTime]);
-
-    const conect = (url: string, soketInfo: SocketInfo) => {
-        try {
-            send(url, soketInfo);
-        } catch (e) {
-            setMessageList(
-                messageList.concat('通信エラー。再度試してください')
-            );
-        }
-    };
-
-    const getMessage = (socketInfo: SocketInfo) => {
-        // デバッグ用
-        //onsole.log(socketInfo);
-
-        switch (socketInfo.status) {
-            case 100: // ルーム入室
-                dataSet(socketInfo.obj);
-
-                // 初回入室時
-                if (socketInfo.userName === playerName) {
-                    // 既存キャンパスの反映
-                    drawCanvas(socketInfo.obj.artDataStrokeList);
-                }
-                break;
-
-            case 101: {
-                // チャット
-                setChatList(socketInfo.obj);
-                const messageFirld = document.getElementById('chat-firld');
-                messageFirld.scrollTop = messageFirld.scrollHeight;
-                break;
-            }
-
-            case 150: // ルーム退出
-                dataSet(socketInfo.obj);
-                if (playerName === socketInfo.userName) {
-                    setPlayerData(null);
-                    const btnDom = document.querySelector(
-                        '.' + styles.roominbtn
-                    );
-                    if (btnDom.classList.contains(styles.in)) {
-                        btnDom.classList.remove(styles.in);
-                    }
-                }
-                break;
-
-            case 160: //テーマ変更
-                setPatternList(socketInfo.obj.patternList);
-                break;
-
-            case 200: // 同一ユーザ入室(再入室)
-                dataSet(socketInfo.obj);
-                setMessageList(() => messageList.concat(socketInfo.message));
-
-                // 初回入室時
-                if (socketInfo.userName === playerName) {
-                    // 既存キャンパスの反映
-                    drawCanvas(socketInfo.obj.artDataStrokeList);
-                }
-                break;
-
-            case 300: // ゲーム開始
-                // ゲームスタート
-                setStartFlg(true);
-                // キャンパス初期化
-                dataSet(socketInfo.obj);
-
-                // 画面描画リセット
-                clear();
-                setPersonCanvasZindex(-1);
-                setDisscuttionStartFlg(false);
-                setVotingStartFlg(false);
-                setEndFlg(false);
-
-                break;
-
-            case 404: // 例外
-                setMessageList(messageList.concat(socketInfo.message));
-                break;
-
-            case 450: {
-                // お絵描き
-
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const drawData: Array<any> = socketInfo.obj.artDataStrokeList;
-
-                // 別の人の絵を反映
-                if (socketInfo.userName !== playerName) {
-                    callBackDraw(drawData[drawData.length - 1]);
-                }
-
-                // エンドフラグがある場合反映
-                if (drawData[drawData.length - 1].endFlg) {
-                    dataSet(socketInfo.obj);
-                    setArtDataStrokeList(drawData);
-                }
-                break;
-            }
-            case 451: // お絵描き（通常）
-                break;
-
-            case 500: {
-                // 投票
-                dataSet(socketInfo.obj);
-
-                if (socketInfo.obj.gameTime == 4) {
-                    //終了時、画面にメッセージ表示
-                    if (document.documentElement.clientWidth < 769) {
-                        window.setTimeout(() => {
-                            setEndFlg(true);
-                        }, 3000);
-                    }
-                }
-                break;
-            }
-            case 550: // 制限時間変更
-                setLimitTime(socketInfo.obj);
-                break;
-
-            case 600: // 制限時間超過
-                dataSet(socketInfo.obj);
-                break;
-
-            case 650: // アイコン変更
-                setUserLst(socketInfo.obj);
-                break;
-
-            case 998: // エラーメッセージ表示(個人)
-                if (socketInfo.userName === playerName) {
-                    setMessageList(messageList.concat(socketInfo.message));
-                }
-                break;
-
-            case 999: // エラーメッセージ表示(全員)
-                setMessageList(messageList.concat(socketInfo.message));
-                break;
-
-            default:
-                console.log(socketInfo);
-        }
-    };
-
-    // データセット
-    const dataSet = (obj) => {
-        setUserLst(obj.userList);
-        setTurn(obj.turn);
-        setGameTime(obj.gameTime);
-        setTheme(obj.theme);
-        setEndMessage(obj.endMessage);
-        setPatternList(obj.patternList);
-        setLimitTime(obj.limitTime);
-    };
-
-    // ゲーム監視
-    useEffect(() => {
-        if (gameTime === 2) {
-            setDisscuttionStartFlg(true);
-        } else if (gameTime === 3) {
-            setVotingStartFlg(true);
-        }
-    }, [gameTime]);
-
-    // スタートフラグの監視
-    useEffect(() => {
-        if (startFlg) {
-            const headerDom = document.querySelector(
-                '.fakeartistcheck'
-            ) as HTMLInputElement;
-            if (headerDom) {
-                headerDom.checked = false;
-            }
-
-            scrollTo(0, 0);
-            window.setTimeout(() => {
-                setStartFlg(false);
-                clear();
-
-                if (document.documentElement.clientWidth < 769) {
-                    window.setTimeout(() => {
-                        const headerDomCheck = document.querySelector(
-                            '.fakeartistcheck'
-                        ) as HTMLInputElement;
-                        if (headerDomCheck) {
-                            headerDomCheck.checked = true;
-                        }
-                    }, 500);
-                }
-            }, 4000);
-        }
-    }, [startFlg]);
-
-    // 議論開始フラグの監視
-    useEffect(() => {
-        if (disscuttionStartFlg) {
-            window.setTimeout(() => {
-                setDisscuttionStartFlg(false);
-            }, 3500);
-        }
-    }, [disscuttionStartFlg]);
-
-    // 投票フラグの監視
-    useEffect(() => {
-        if (votingStartFlg) {
-            // ヘッダーをオフ
-            const headerDom = document.querySelector(
-                '.fakeartistcheck'
-            ) as HTMLInputElement;
-            if (headerDom) {
-                headerDom.checked = false;
-            }
-
-            window.setTimeout(() => {
-                setVotingStartFlg(false);
-            }, 3500);
-        }
-    }, [votingStartFlg]);
-
-    // 終了フラグの監視
-    useEffect(() => {
-        if (endFlg) {
-            window.setTimeout(() => {
-                setEndFlg(false);
-            }, 3500);
-        }
-    }, [endFlg]);
-
-    // 入室時
-    useEffect(() => {
-        const userArray = userList.filter((element) => {
-            return element.userName === playerName;
-        });
-        if (userArray.length > 0) {
-            const btnDom = document.querySelector('.' + styles.roominbtn);
-            if (btnDom.classList.contains(styles.in)) {
-                return;
-            }
-            btnDom.classList.add(styles.in);
-
-            // アイコン初期設定
-            if (userArray[0].userIconUrl === null) {
-                changeIcon('/images/icon/icon' + userArray[0].userNo + '.jpg');
-            }
-        }
-    }, [userList.length, playerName]);
-
-    // プレイヤーデータ設定
-    useEffect(() => {
-        const filterNameArray = userList.filter((element) => {
-            return element.userName === playerName;
-        });
-        if (filterNameArray.length > 0) {
-            setPlayerData(filterNameArray[0]);
-        }
-    }, [userList, playerName]);
+    const {
+        playerData,
+        userList,
+        gameTime,
+        turn,
+        limitTime,
+        theme,
+        endMessage,
+        patternList,
+        messageList,
+        chatList,
+        startFlg,
+        disscuttionStartFlg,
+        votingStartFlg,
+        endFlg,
+        personCanvasZindex,
+    } = state;
 
     return (
         <Layout home={false}>
@@ -843,7 +318,7 @@ export default function FakeArtistRoom() {
             )}
 
             <ConnectionStatus status={status} />
-            <div className={styles.roominbtn}>
+            <div className={`${styles.roominbtn} ${entered ? styles.in : ''}`}>
                 <p>
                     <label htmlFor="username">Name</label>
                 </p>
