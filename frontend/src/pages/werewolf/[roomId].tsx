@@ -73,6 +73,7 @@ export default function WerewolfRoom() {
         resultFlg,
         ruleFlg,
         winMessage,
+        roomCode,
     } = state;
 
     return (
@@ -142,7 +143,7 @@ export default function WerewolfRoom() {
                 onRoomIn={roomIn}
             />
             {entered && (turn === 0 || turn === 4) && (
-                <InvitePanel roomId={roomId as string} roomCode={null} />
+                <InvitePanel roomId={roomId as string} roomCode={roomCode} />
             )}
             {/* ユーザ情報 */}
             {playerData && (

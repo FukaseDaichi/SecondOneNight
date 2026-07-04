@@ -5,6 +5,7 @@ import styles from '../styles/lp.module.scss';
 import Reveal from '../components/lp/Reveal';
 import LeafFall from '../components/lp/LeafFall';
 import RoomCreateCta from '../components/lp/RoomCreateCta';
+import RoomJoinByCode from '../components/lp/RoomJoinByCode';
 
 const TITLE_SUB = ['セ', 'カ', 'ン', 'ド'];
 const TITLE_MAIN: string[][] = [
@@ -220,6 +221,7 @@ export default function Homepage() {
                             </div>
                             <div className={styles.heroCta}>
                                 <RoomCreateCta />
+                                <RoomJoinByCode />
                             </div>
                         </div>
                         <div className={styles.heroArt}>
@@ -421,6 +423,7 @@ export default function Homepage() {
                         </Reveal>
                         <Reveal delay="0.24s">
                             <RoomCreateCta invert />
+                            <RoomJoinByCode invert />
                         </Reveal>
                     </div>
                 </section>

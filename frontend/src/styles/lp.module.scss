@@ -290,6 +290,104 @@
         color: #ffd7da;
     }
 }
+.roomCtaCode {
+    font-family: $serif;
+    font-size: 1.5em;
+    letter-spacing: 0.24em;
+    color: $ink;
+}
+.roomCtaInvert .roomCtaCode {
+    color: #fdfefe;
+}
+
+/* ---------- コード入室 ---------- */
+.joinCode {
+    margin-top: 18px;
+
+    label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        color: $text-sub;
+    }
+}
+.joinCodeRow {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+
+    input {
+        width: 9.5em;
+        padding: 10px 14px;
+        border: 1px solid rgba(30, 59, 68, 0.3);
+        border-radius: 999px;
+        font-family: $serif;
+        font-size: 16px;
+        letter-spacing: 0.3em;
+        color: $ink;
+        background: rgba(255, 255, 255, 0.8);
+
+        &:focus {
+            outline: none;
+            border-color: $teal;
+        }
+    }
+    button {
+        padding: 10px 22px;
+        border: 1px solid rgba(30, 59, 68, 0.35);
+        border-radius: 999px;
+        background: transparent;
+        font-size: 12.5px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        color: $ink;
+        cursor: pointer;
+        transition:
+            background 0.3s,
+            border-color 0.3s;
+
+        &:hover {
+            background: rgba(53, 168, 180, 0.1);
+            border-color: rgba(53, 168, 180, 0.7);
+        }
+        &:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+    }
+}
+.joinCodeError {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: $rose-deep;
+}
+.joinCodeInvert {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    label {
+        color: rgba(255, 255, 255, 0.85);
+    }
+    .joinCodeRow input {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.5);
+        color: #fdfefe;
+    }
+    .joinCodeRow button {
+        border-color: rgba(255, 255, 255, 0.55);
+        color: #fdfefe;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+    }
+    .joinCodeError {
+        color: #ffd7da;
+    }
+}
 
 /* ---------- ヒーロー ---------- */
 .hero {

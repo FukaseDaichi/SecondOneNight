@@ -13,6 +13,7 @@ export const initialWerewolfState: WerewolfState = {
     staticRollList: [],
     rollList: [],
     npcuser: null,
+    roomCode: null,
     limitTime: 0,
     rollInfoList: [],
     counterMap: {},
@@ -52,6 +53,7 @@ const dataSet = (state: WerewolfState, obj: any): WerewolfState => {
         staticRollList: obj.staticRollList,
         rollList: obj.rollList,
         npcuser: obj.npcuser,
+        roomCode: obj.roomCode ?? state.roomCode,
     };
     const own = obj.userList.filter(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

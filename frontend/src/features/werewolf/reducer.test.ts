@@ -46,6 +46,14 @@ describe('werewolfReducer: サーバメッセージ', () => {
         }
     );
 
+    it('status 100 で roomCode を取り込む', () => {
+        const s = werewolfReducer(initialWerewolfState, {
+            type: 'message',
+            payload: msg(100, serverObj({ roomCode: '123456' })),
+        });
+        expect(s.roomCode).toBe('123456');
+    });
+
     it('status 150(役職設定)で dataSet + counterMap + rollInfoList が反映され limitTime は据え置かれる', () => {
         const before = { ...initialWerewolfState, limitTime: 300 };
         const s = werewolfReducer(before, {

@@ -13,6 +13,7 @@ type RoomCreateCtaProps = {
 export default function RoomCreateCta({ invert = false }: RoomCreateCtaProps) {
     const [status, setStatus] = useState<Status>('idle');
     const [roomId, setRoomId] = useState('');
+    const [roomCode, setRoomCode] = useState('');
     const [copied, setCopied] = useState(false);
 
     const roomUrl = roomId
@@ -32,6 +33,7 @@ export default function RoomCreateCta({ invert = false }: RoomCreateCtaProps) {
             if (!res.ok) throw new Error();
             const resJson = await res.json();
             setRoomId(resJson.roomId);
+            setRoomCode(resJson.roomCode ?? '');
             setStatus('ready');
         } catch {
             setStatus('error');
@@ -57,6 +59,15 @@ export default function RoomCreateCta({ invert = false }: RoomCreateCtaProps) {
                 <p className={styles.roomCtaNote}>
                     部屋ができました。URLを参加者に伝えて入室してください。
                 </p>
+                {roomCode && (
+                    <p className={styles.roomCtaNote}>
+                        あいことば{' '}
+                        <strong className={styles.roomCtaCode}>
+                            {roomCode}
+                        </strong>
+                        (トップページの「あいことばで入室」から入れます)
+                    </p>
+                )}
                 <p className={styles.roomCtaUrl}>{roomUrl}</p>
                 <div className={styles.roomCtaActions}>
                     <button

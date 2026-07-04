@@ -14,6 +14,7 @@ export type WerewolfState = {
     staticRollList: WerewolfRoll[];
     rollList: WerewolfRoll[];
     npcuser: WerewolfUser | null;
+    roomCode: string | null;
     // gamedata(dataSet 外で受信)
     limitTime: number;
     rollInfoList: WerewolfRoll[];
