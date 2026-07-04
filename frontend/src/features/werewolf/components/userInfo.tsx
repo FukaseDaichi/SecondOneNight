@@ -7,6 +7,7 @@ import { WerewolfUser } from '../../../type/werewolf';
 import RollCard from './rollcard';
 import CircleBtn from '../../../components/button/circlebtn';
 import WinText from '../../../components/text/wintext';
+import { imageToIconDataUrl } from '../../../lib/imageToIconDataUrl';
 
 // 人狼用
 
@@ -34,6 +35,28 @@ type UserInfoProps = {
 
 export default function UserInfo(props: UserInfoProps) {
     const [infoFlg, setInfoFlg] = useState(false);
+    const [iconError, setIconError] = useState<string | null>(null);
+
+    const handleIconFile = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const file = e.target.files?.[0];
+        e.target.value = '';
+        if (!file) {
+            return;
+        }
+        try {
+            const dataUrl = await imageToIconDataUrl(file);
+            setIconError(null);
+            props.changeIcon(dataUrl);
+        } catch (err) {
+            setIconError(
+                err instanceof Error
+                    ? err.message
+                    : '画像を変換できませんでした'
+            );
+        }
+    };
 
     const divStyles = {
         borderColor: props.userColor,
@@ -86,6 +109,21 @@ export default function UserInfo(props: UserInfoProps) {
                             )}
                             alt="アイコン"
                         />
+                    </div>
+                )}
+                {props.ownFlg && (
+                    <div className={styles.upload}>
+                        <label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleIconFile}
+                            />
+                            写真をアイコンに
+                        </label>
+                        {iconError && (
+                            <p className={styles.uploaderror}>{iconError}</p>
+                        )}
                     </div>
                 )}
                 <div className={styles.content}>

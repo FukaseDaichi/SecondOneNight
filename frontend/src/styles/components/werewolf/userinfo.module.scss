@@ -102,6 +102,35 @@ div.main {
         }
     }
 
+    .upload {
+        margin-top: 4px;
+        text-align: center;
+
+        label {
+            display: inline-block;
+            padding: 3px 10px;
+            border: 1px solid rgba(53, 168, 180, 0.5);
+            border-radius: 999px;
+            font-size: 9.5px;
+            letter-spacing: 0.08em;
+            color: #2e6d77;
+            background: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+
+            &:hover {
+                background: rgba(53, 168, 180, 0.12);
+            }
+        }
+        input {
+            display: none;
+        }
+    }
+    .uploaderror {
+        margin: 4px 0 0;
+        font-size: 9.5px;
+        color: #c4646e;
+    }
+
     div.icon {
         position: relative;
         width: 100%;
