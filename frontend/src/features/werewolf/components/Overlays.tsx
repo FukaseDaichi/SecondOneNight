@@ -1,4 +1,4 @@
-import Start from '../../../components/common/Start';
+import WerewolfStart from './WerewolfStart';
 import Modal from '../../../components/modal';
 import CutIn from './cutin';
 import CircleBtn from '../../../components/button/circlebtn';
@@ -57,7 +57,7 @@ export default function Overlays({
     return (
         <>
             {/* 開始合図 */}
-            {startFlg && <Start />}
+            {startFlg && <WerewolfStart />}
             {/* 投票時間 */}
             {votingStartFlg && (
                 <Modal type="one">

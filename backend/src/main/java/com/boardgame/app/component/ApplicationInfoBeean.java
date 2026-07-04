@@ -3,6 +3,7 @@ package com.boardgame.app.component;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -52,6 +53,20 @@ public class ApplicationInfoBeean implements Serializable {
 		return UUID.randomUUID().toString();
 	}
 
+	public String createRoomCode() {
+
+		Random rand = new Random();
+
+		for (int i = 0; i < 100; i++) {
+			String code = String.format("%06d", rand.nextInt(1000000));
+
+			if (getRoomByCode(code) == null) {
+				return code;
+			}
+		}
+		return String.format("%06d", rand.nextInt(1000000));
+	}
+
 	public Room getRoom(String roomId) {
 
 		if (roomList == null) {
@@ -59,6 +74,15 @@ public class ApplicationInfoBeean implements Serializable {
 		}
 
 		return roomList.stream().filter(o -> o.getRoomId().equals(roomId)).findAny().orElse(null);
+	}
+
+	public Room getRoomByCode(String roomCode) {
+
+		if (roomList == null || roomCode == null) {
+			return null;
+		}
+
+		return roomList.stream().filter(o -> roomCode.equals(o.getRoomCode())).findAny().orElse(null);
 	}
 
 }

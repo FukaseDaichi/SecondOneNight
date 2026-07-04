@@ -14,6 +14,7 @@
 | バックエンドの構造を確認する | [architecture/backend.md](architecture/backend.md) |
 | ゲーム別の状態・通信・実装対応を確認する | [architecture/games/README.md](architecture/games/README.md) |
 | デプロイ構成を確認する | [architecture/deployment.md](architecture/deployment.md) |
+| セカンドワンナイト人狼のデザインシステムを確認する | [design.md](design.md) |
 | モダナイズの進捗・残課題を確認する | [roadmap.md](roadmap.md) |
 | 進行中の作業計画を確認する | [plans/](plans/) |
 

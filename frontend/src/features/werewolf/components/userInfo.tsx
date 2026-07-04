@@ -7,6 +7,7 @@ import { WerewolfUser } from '../../../type/werewolf';
 import RollCard from './rollcard';
 import CircleBtn from '../../../components/button/circlebtn';
 import WinText from '../../../components/text/wintext';
+import { imageToIconDataUrl } from '../../../lib/imageToIconDataUrl';
 
 // 人狼用
 
@@ -29,10 +30,33 @@ type UserInfoProps = {
     playerActionName: string;
     winteamList: Array<number>;
     setModalOwnFlg: (boolean) => void;
+    removeUser?: (userName: string) => void;
 };
 
 export default function UserInfo(props: UserInfoProps) {
     const [infoFlg, setInfoFlg] = useState(false);
+    const [iconError, setIconError] = useState<string | null>(null);
+
+    const handleIconFile = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const file = e.target.files?.[0];
+        e.target.value = '';
+        if (!file) {
+            return;
+        }
+        try {
+            const dataUrl = await imageToIconDataUrl(file);
+            setIconError(null);
+            props.changeIcon(dataUrl);
+        } catch (err) {
+            setIconError(
+                err instanceof Error
+                    ? err.message
+                    : '画像を変換できませんでした'
+            );
+        }
+    };
 
     const divStyles = {
         borderColor: props.userColor,
@@ -42,6 +66,25 @@ export default function UserInfo(props: UserInfoProps) {
     return (
         <div className={`${styles.main}`} style={divStyles}>
             {props.ownFlg && <span className={styles.you}>YOU</span>}
+            {props.removeUser &&
+                !props.ownFlg &&
+                (props.turn === 0 || props.turn === 4) && (
+                    <button
+                        className={styles.kick}
+                        aria-label={`${props.user.userName}を退出させる`}
+                        onClick={() => {
+                            if (
+                                window.confirm(
+                                    `「${props.user.userName}」を退出させますか?`
+                                )
+                            ) {
+                                props.removeUser?.(props.user.userName);
+                            }
+                        }}
+                    >
+                        ✕
+                    </button>
+                )}
             <div className={styles.icon}>
                 {props.user.roll &&
                     props.winteamList.includes(props.user.roll.teamNo) && (
@@ -66,6 +109,21 @@ export default function UserInfo(props: UserInfoProps) {
                             )}
                             alt="アイコン"
                         />
+                    </div>
+                )}
+                {props.ownFlg && (
+                    <div className={styles.upload}>
+                        <label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleIconFile}
+                            />
+                            写真をアイコンに
+                        </label>
+                        {iconError && (
+                            <p className={styles.uploaderror}>{iconError}</p>
+                        )}
                     </div>
                 )}
                 <div className={styles.content}>

@@ -60,7 +60,7 @@ export default function CreateGameBtn(props: CreateGameBtnProps) {
                     '#' + props.gameId + '_url'
                 ) as HTMLElement;
                 roomUrlDom.innerText =
-                    location.href + game + '/' + resJson.roomId;
+                    location.origin + '/' + game + '/' + resJson.roomId;
                 setCreateFlg(true);
             })
             .catch((err) => {

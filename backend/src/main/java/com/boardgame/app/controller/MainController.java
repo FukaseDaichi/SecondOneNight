@@ -1,8 +1,10 @@
 package com.boardgame.app.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,8 +45,20 @@ public class MainController {
 		Room room = new WerewolfRoom();
 		room.setRoomId(roomId);
 		room.setRoomType(WereWolfConst.ROOM_TYPE);
+		room.setRoomCode(appInfo.createRoomCode());
 		appInfo.addRoom(room);
 		return room;
+	}
+
+	@CrossOrigin
+	@RequestMapping(value = { "/roombycode/{roomCode}" })
+	public ResponseEntity<Room> getRoomByCode(@PathVariable String roomCode) {
+		Room room = appInfo.getRoomByCode(roomCode);
+
+		if (room == null) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(room);
 	}
 
 	@CrossOrigin

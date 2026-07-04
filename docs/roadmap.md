@@ -76,3 +76,13 @@
   - 非制御 input(username)を制御 input 化
   - **アクション拒否時の再配信 obj への防御**(decrypt / fakeartist): バックエンドは `ApplicationException`(デフォルト status=200)で status のみ差し替え `obj` は再設定しないため、room 形状でない obj が届く。`isRoomData` ガードで旧実装の「状態不変」を復元(バックエンド無変更)
 - 手動確認中に発見した既存バグ(Stage 3 とは無関係): ホーム画面パララックスの `#main-img` null 参照 → null ガードを追加して修正
+
+### LP + werewolf リデザイン / ルームコード・退出・アイコン(2026-07-05)
+
+- トップページを werewolf 専用 LP として刷新し、`RoomCreateCta` / `RoomJoinByCode` によるルーム作成・6桁あいことば入室を追加。プレイ人数表示は実装の開始条件に合わせて `３人〜` に統一
+- werewolf 画面に `styles/tokens.scss` ベースのデザイントークン、turn 連動の `PhaseBackground`、中央入室カード `EntryCard`、招待パネル `InvitePanel`、ルールモーダル刷新、夜の開始演出 `WerewolfStart` を導入
+- バックエンドは werewolf ルーム作成時に `roomCode` を採番し、`GET /roombycode/{roomCode}` で Room を検索可能にした。Room JSON には共通フィールドとして `roomCode` を追加
+- werewolf に待機中/終了後の退出・キックを追加し、既存 `/app/game-removeuser` を status `130` で利用。自分が `userList` から消えた場合はトップへ戻る
+- 写真アップロードを 96px JPEG Data URL に縮小し、既存 `/app/game-changeIcon` status `650` で送信するカスタムアイコン機能を追加
+- 完了検証: `npm test` 131件全 PASS / `npm run lint` error 0 / `.next` を削除したクリーン状態で `npm run build` 成功。dev server で `/` と `/werewolf/test-room` の 200 応答を確認
+- 未実施: ローカル環境に Java Runtime がなく `backend ./mvnw test` は未実行。`backend/mvnw` は実行権限が無いため、検証時は Java 11 環境で権限付与または `sh mvnw test` が必要

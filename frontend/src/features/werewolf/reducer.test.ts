@@ -46,6 +46,44 @@ describe('werewolfReducer: サーバメッセージ', () => {
         }
     );
 
+    it('status 100 で roomCode を取り込む', () => {
+        const s = werewolfReducer(initialWerewolfState, {
+            type: 'message',
+            payload: msg(100, serverObj({ roomCode: '123456' })),
+        });
+        expect(s.roomCode).toBe('123456');
+    });
+
+    it('status 130 でuserListが更新される(退出)', () => {
+        const before = {
+            ...initialWerewolfState,
+            playerName: 'a',
+            userList: [
+                { userName: 'a', userNo: 1 },
+                { userName: 'b', userNo: 2 },
+            ],
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any;
+        const s = werewolfReducer(before, {
+            type: 'message',
+            payload: msg(
+                130,
+                {
+                    userList: [{ userName: 'a', userNo: 1 }],
+                    winteamList: [],
+                    turn: 0,
+                    staticRollList: [],
+                    rollList: [],
+                    npcuser: null,
+                    rollNoList: [],
+                },
+                { userName: 'a' }
+            ),
+        });
+        expect(s.userList).toHaveLength(1);
+        expect(s.userList[0].userName).toBe('a');
+    });
+
     it('status 150(役職設定)で dataSet + counterMap + rollInfoList が反映され limitTime は据え置かれる', () => {
         const before = { ...initialWerewolfState, limitTime: 300 };
         const s = werewolfReducer(before, {

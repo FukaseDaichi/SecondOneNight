@@ -11,12 +11,14 @@ import RollInfo from '../../features/werewolf/components/rollinfo';
 import WerewolfSet from '../../features/werewolf/components/werewolfset';
 import Socialbtn from '../../components/button/sosialbtn';
 import ConnectionStatus from '../../components/common/ConnectionStatus';
-import RoomInForm from '../../components/common/RoomInForm';
+import EntryCard from '../../features/werewolf/components/EntryCard';
+import InvitePanel from '../../features/werewolf/components/InvitePanel';
 import TurnMessage from '../../features/werewolf/components/TurnMessage';
 import RollCustomize from '../../features/werewolf/components/RollCustomize';
 import LimitTimeSelector from '../../features/werewolf/components/LimitTimeSelector';
 import Overlays from '../../features/werewolf/components/Overlays';
 import UserField from '../../features/werewolf/components/UserField';
+import PhaseBackground from '../../features/werewolf/components/PhaseBackground';
 import { useWerewolfRoom } from '../../features/werewolf/useWerewolfRoom';
 
 export default function WerewolfRoom() {
@@ -32,6 +34,8 @@ export default function WerewolfRoom() {
         roomIn,
         chat,
         changeIcon,
+        leaveRoom,
+        removeUser,
         setRoll,
         setRollSet,
         init,
@@ -71,6 +75,7 @@ export default function WerewolfRoom() {
         resultFlg,
         ruleFlg,
         winMessage,
+        roomCode,
     } = state;
 
     return (
@@ -79,32 +84,14 @@ export default function WerewolfRoom() {
                 {`
                     body {
                         overflow-x: hidden;
-                        background-color: #f3f3f3;
-                    }
-
-                    body:before {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        z-index: -1;
-                        width: 100vw;
-                        height: 100vh;
-                        background: url(/images/werewolf/werewolfbackground.png);
-                        -webkit-background-size: 370px;
-                        background-size: 370px;
-                        background-position: bottom left;
-                        background-repeat: no-repeat;
-                        content: '';
+                        background-color: #effdfe;
                     }
                 `}
             </style>
             <Head>
                 <meta
                     property="og:image"
-                    content={
-                        SystemConst.Server.SITE_URL +
-                        '/images/werewolf/werewolfbackground.png'
-                    }
+                    content={SystemConst.Server.SITE_URL + '/images/ogp.jpg'}
                 />
                 <meta property="og:title" content="セカンドワンナイト人狼" />
                 <meta
@@ -113,6 +100,7 @@ export default function WerewolfRoom() {
                 />
                 <title>セカンドワンナイト人狼</title>
             </Head>
+            <PhaseBackground turn={turn} winteamList={winteamList} />
             <Overlays
                 startFlg={startFlg}
                 votingStartFlg={votingStartFlg}
@@ -151,13 +139,14 @@ export default function WerewolfRoom() {
                 }
             })}
             <ConnectionStatus status={status} />
-            <RoomInForm
+            <EntryCard
                 connected={connected}
                 entered={entered}
                 onRoomIn={roomIn}
-                className={styles.roominbtn}
-                enteredClassName={styles.in}
             />
+            {entered && (turn === 0 || turn === 4) && (
+                <InvitePanel roomId={roomId as string} roomCode={roomCode} />
+            )}
             {/* ユーザ情報 */}
             {playerData && (
                 <UserField
@@ -173,6 +162,7 @@ export default function WerewolfRoom() {
                     playerNPCActionName={playerNPCActionName}
                     winteamList={winteamList}
                     setModalOwnFlg={setModalOwnFlg}
+                    removeUser={removeUser}
                 />
             )}
             {/* 役職情報 */}
@@ -215,13 +205,25 @@ export default function WerewolfRoom() {
             )}
 
             <div className={styles.btnarea}>
-                <button
-                    onClick={() => {
-                        Router.push('/');
-                    }}
-                >
-                    HOME
-                </button>
+                {entered && (turn === 0 || turn === 4) ? (
+                    <button
+                        onClick={() => {
+                            if (window.confirm('部屋から退出しますか?')) {
+                                leaveRoom();
+                            }
+                        }}
+                    >
+                        退出
+                    </button>
+                ) : (
+                    <button
+                        onClick={() => {
+                            Router.push('/');
+                        }}
+                    >
+                        HOME
+                    </button>
+                )}
                 <button onClick={init}>
                     {turn > 0 && turn < 4 ? 'GAME RESET' : 'GAME START'}
                 </button>

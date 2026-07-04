@@ -6,12 +6,16 @@
 
 接続先ホスト(`AP_HOST`)はフロントの `src/const/next.config.ts` で定義(デフォルト `https://boardgameap.herokuapp.com/`、`NEXT_PUBLIC_AP_HOST` で上書き可)。
 
-## REST(ルーム作成)
+## REST(ルーム作成 / ルーム検索)
 
-| ゲーム | リクエスト | レスポンス |
+| 用途 | リクエスト | レスポンス |
 |---|---|---|
-| timebomb | `GET {AP_HOST}createroom` | `{ "roomId": string }` |
-| 他4ゲーム | `GET {AP_HOST}createroom/{game}` | 同上 |
+| timebomb ルーム作成 | `GET {AP_HOST}createroom` | Room JSON(`roomCode: null`) |
+| werewolf ルーム作成 | `GET {AP_HOST}createroom/werewolf` | Room JSON(`roomCode`: 6桁の数字文字列) |
+| hideout / decrypt / fakeartist ルーム作成 | `GET {AP_HOST}createroom/{game}` | Room JSON(`roomCode: null`) |
+| ルームコード検索 | `GET {AP_HOST}roombycode/{roomCode}` | 200: Room JSON / 404: 未検出 |
+
+Room JSON は全ゲーム共通の `Room` 基底フィールドとして `roomId`、`roomType`、`roomCode`、`userList` を持つ。`roomCode` は `string | null` で、現在 6桁コードを採番するのは werewolf のみ。
 
 バックエンド実装: `backend/.../controller/MainController.java`(`@RequestMapping` のためメソッド不問だが、フロントは GET で呼ぶ)。
 
@@ -51,6 +55,8 @@ type SocketInfo = {
 - fakeartist: `/app/fakeartist-init` `/app/fakeartist-setpattern` `/app/fakeartist-drawing` `/app/fakeartist-voting`
 
 正確な一覧はバックエンドの `@MessageMapping`(`backend/.../controller/*Controller.java`)が正。フロント側の送信箇所は `frontend/src/features/*/use*Room.ts` に集約されている。
+
+werewolf は退出/キックで `/app/game-removeuser` を status `130` として送る。`obj` は対象 `userName`、バックエンドはそのユーザーを削除した Room 全体を broadcast する。werewolf の `/app/game-changeIcon` は status `650` で、`obj` はプリセットアイコン URL または JPEG Data URL(`data:image/jpeg...`、40,000文字未満)。
 
 ## ゲーム別 status / state 対応
 
