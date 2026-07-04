@@ -13,6 +13,23 @@ class DocumentTsx extends Document {
         return (
             <Html lang="ja">
                 <Head>
+                    <link
+                        rel="preconnect"
+                        href="https://fonts.googleapis.com"
+                    />
+                    <link
+                        rel="preconnect"
+                        href="https://fonts.gstatic.com"
+                        crossOrigin=""
+                    />
+                    <link
+                        rel="stylesheet"
+                        href="https://fonts.googleapis.com/css?family=Patrick+Hand+SC&display=swap"
+                    />
+                    <link
+                        rel="stylesheet"
+                        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap"
+                    />
                     <meta name="mobile-web-app-capable" content="yes" />
                     <meta name="apple-mobile-web-app-capable" content="yes" />
                     <link
