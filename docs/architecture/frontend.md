@@ -1,6 +1,6 @@
 # フロントエンド アーキテクチャ
 
-Next.js 15(Pages Router)/ React 19 / TypeScript 5 / Vitest。5つのリアルタイムボードゲーム(timebomb / werewolf / hideout / decrypt / fakeartist)を提供する。
+Next.js 15(Pages Router)/ React 19 / TypeScript 5 / Vitest。5つのリアルタイムボードゲーム(timebomb / werewolf / hideout / decrypt / fakeartist)を提供する。公開の入口はトップページ(セカンドワンナイト人狼 = werewolf の LP)のみで、他4ゲームは非公開の `/secret` 経由でアクセスする。
 
 この文書は**現在の実装**を説明する。実装を変更したら同じ PR でこの文書を更新すること。今後の変更予定は [../roadmap.md](../roadmap.md) を参照。
 
@@ -19,14 +19,25 @@ frontend/src/
     types.ts             # ConnectionStatus / GameSocket 型
   components/
     common/              # 2ゲーム以上で使う共通 UI(RoomInForm / ConnectionStatus / Start / Countdown 等)
+    home/                # /secret 専用の部品(creategamebtn.tsx 等)
+    lp/                  # トップページ(LP)専用の部品(useReveal / Reveal / LeafFall / RoomCreateCta)
     ...                  # レイアウト・チャット・モーダル等の汎用部品
+  pages/index.tsx        # トップページ = セカンドワンナイト人狼(werewolf)専用 LP
+  pages/secret/index.tsx # 非公開のゲーム一覧(timebomb / hideout / fakeartist。noindex,nofollow)
   pages/<game>/[roomId].tsx  # 薄い入り口(roomId 取得 → use<Game>Room 呼び出し → レイアウト組み立て)
+  styles/lp.module.scss      # トップページ(LP)専用スタイル
+  styles/secret.module.scss  # /secret 専用スタイル
   styles/components/<game>/  # scss モジュール(Stage 4 まで移動しない)
   const/next.config.ts   # システム定数(接続先ホスト等。NEXT_PUBLIC_AP_HOST で上書き可)
   type/                  # ゲーム横断の型(SocketInfo 等)
 ```
 
 - ゲーム間で共有するのは `SocketInfo` 型と `useGameSocket` のみ。reducer・型はゲームごとに独立させ、ゲーム間の差異を無理に抽象化しない(共通化の判断は Stage 4 以降)
+
+## ページ構成
+
+- **トップページ(`pages/index.tsx`)**: セカンドワンナイト人狼(werewolf)専用の LP。部品は `components/lp/`、スタイルは `styles/lp.module.scss`。ヒーローと下部 CTA の `RoomCreateCta` が `GET {AP_HOST}createroom/werewolf` で werewolf のルームを作成し、そのまま入室させる。ヒーロー画像は `/images/hero.webp`(jpg フォールバック付き)
+- **`/secret`(`pages/secret/index.tsx`)**: 非公開のゲーム一覧(timebomb / hideout / fakeartist。decrypt は非掲載)。`noindex, nofollow` メタを付与し、トップからはリンクしない。ルーム作成ボタンは `/secret` 専用となった `components/home/creategamebtn.tsx` を使用
 
 ## 状態管理パターン(feature 構造)
 
