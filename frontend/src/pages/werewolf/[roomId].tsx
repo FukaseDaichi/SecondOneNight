@@ -101,10 +101,7 @@ export default function WerewolfRoom() {
             <Head>
                 <meta
                     property="og:image"
-                    content={
-                        SystemConst.Server.SITE_URL +
-                        '/images/werewolf/werewolfbackground.png'
-                    }
+                    content={SystemConst.Server.SITE_URL + '/images/ogp.png'}
                 />
                 <meta property="og:title" content="セカンドワンナイト人狼" />
                 <meta
