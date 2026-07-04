@@ -45,16 +45,19 @@ type SocketInfo = {
 
 ### 送信宛先(クライアント → サーバ、`/app/*`)
 
-ペイロードは JSON(`useGameSocket.send` が stringify する)。宛先の一覧(2026-07 時点):
+ペイロードは JSON(`useGameSocket.send` が stringify する)。画面から使う送信箇所は `frontend/src/features/*/use*Room.ts` に集約されている。
 
-- 共通系: `/app/roomin` `/app/start` `/app/play` `/app/changeIcon`(timebomb 系)、`/app/game-roomin` `/app/game-chat` `/app/game-changeIcon` `/app/game-removeuser` `/app/game-setlimittime` `/app/game-dooverLimit`(werewolf 等の共通コントローラ)
-- timebomb: `/app/timebomb-limittime` `/app/timebomb-setlimittime` `/app/timebomb-changesecret`
-- werewolf: `/app/werewolf-init` `/app/werewolf-selectroll` `/app/werewolf-setrollregulation` `/app/werewolf-discussionaction` `/app/werewolf-voting`
-- hideout: `/app/hideout-init` `/app/hideout-wait` `/app/hideout-rush`
-- decrypt: `/app/decrypt-init` `/app/decrypt-choiceteam` `/app/decrypt-createcodeword` `/app/decrypt-handupcreatecode` `/app/decrypt-decryptcode` `/app/decrypt-resetcode` `/app/decrypt-resetteam` `/app/decrypt-modechange`
-- fakeartist: `/app/fakeartist-init` `/app/fakeartist-setpattern` `/app/fakeartist-drawing` `/app/fakeartist-voting`
+| ゲーム | 画面から使う destination |
+| --- | --- |
+| timebomb | `/app/roomin`, `/app/start`, `/app/play`, `/app/changeIcon`, `/app/timebomb-limittime`, `/app/timebomb-setlimittime`, `/app/timebomb-changesecret` |
+| werewolf | `/app/game-roomin`, `/app/game-removeuser`, `/app/game-chat`, `/app/game-changeIcon`, `/app/game-setlimittime`, `/app/game-dooverLimit`, `/app/werewolf-setrollregulation`, `/app/werewolf-init`, `/app/werewolf-selectroll`, `/app/werewolf-discussionaction`, `/app/werewolf-voting` |
+| hideout | `/app/game-roomin`, `/app/game-chat`, `/app/game-changeIcon`, `/app/hideout-init`, `/app/hideout-wait`, `/app/hideout-rush` |
+| decrypt | `/app/game-roomin`, `/app/game-chat`, `/app/game-changeIcon`, `/app/decrypt-resetcode`, `/app/decrypt-resetteam`, `/app/decrypt-choiceteam`, `/app/decrypt-modechange`, `/app/decrypt-init`, `/app/decrypt-handupcreatecode`, `/app/decrypt-createcodeword`, `/app/decrypt-decryptcode` |
+| fakeartist | `/app/game-roomin`, `/app/game-removeuser`, `/app/game-chat`, `/app/game-changeIcon`, `/app/game-setlimittime`, `/app/game-dooverLimit`, `/app/fakeartist-setpattern`, `/app/fakeartist-init`, `/app/fakeartist-drawing`, `/app/fakeartist-voting` |
 
-正確な一覧はバックエンドの `@MessageMapping`(`backend/.../controller/*Controller.java`)が正。フロント側の送信箇所は `frontend/src/features/*/use*Room.ts` に集約されている。
+バックエンドには互換維持・旧実装用として、現在の画面から直接使わない `/app/ping`、`/app/game-action`、`/app/werewolf-changeturn` も残っている。正確な受信口は `backend/src/main/java/com/boardgame/app/controller/*Controller.java` の `@MessageMapping` を正とする。
+
+`useDecryptRoom` には `/app/game-setlimittime` と `/app/game-dooverLimit` の送信関数が残っているが、現在の decrypt 画面はそれらを呼ばない。`DecryptRoom` は `LimitTimeInterface` 未実装のため、利用する場合は backend 側の対応が必要。
 
 werewolf は退出/キックで `/app/game-removeuser` を status `130` として送る。`obj` は対象 `userName`、バックエンドはそのユーザーを削除した Room 全体を broadcast する。werewolf の `/app/game-changeIcon` は status `650` で、`obj` はプリセットアイコン URL または JPEG Data URL(`data:image/jpeg...`、40,000文字未満)。
 

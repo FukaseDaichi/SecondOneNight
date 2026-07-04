@@ -1,8 +1,8 @@
 # セカンドワンナイト人狼 デザインシステム
 
-トップ LP([frontend/src/pages/index.tsx](../frontend/src/pages/index.tsx) / [frontend/src/styles/lp.module.scss](../frontend/src/styles/lp.module.scss))で確立したデザイン言語を体系化した文書。
+トップ LP([frontend/src/pages/index.tsx](../frontend/src/pages/index.tsx) / [frontend/src/styles/lp.module.scss](../frontend/src/styles/lp.module.scss))と werewolf 画面で使っているデザイン言語を体系化した文書。
 
-**適用範囲**: トップ LP と、セカンドワンナイト人狼のゲーム画面(ルーム・進行画面)。今後 werewolf の画面を刷新する際は本書に従う。他4ゲーム(timebomb / hideout / decrypt / fakeartist)は対象外。
+**適用範囲**: トップ LP と、セカンドワンナイト人狼のゲーム画面(ルーム・進行画面)。他4ゲーム(timebomb / hideout / decrypt / fakeartist)は対象外。
 
 **運用**: LP・werewolf 画面のデザインを変えたら同じ PR で本書も更新する(docs/architecture/ と同じ運用)。
 
@@ -201,7 +201,7 @@ line-height: 本文・リード文は **1.9〜2.2**(ゆったり読ませる)。
 
 ## 7. ゲーム画面への適用ガイド
 
-werewolf のルーム・進行画面を刷新する際の指針。
+werewolf のルーム・進行画面で使う指針。
 
 ### 7.1 フェーズと面
 
@@ -220,6 +220,10 @@ werewolf のルーム・進行画面を刷新する際の指針。
 - **見出し**: フェーズ名・役職名は明朝(Shippori Mincho 600)+ 広い letter-spacing。eyebrow(小ラベル)+ タイトルの2段構成を踏襲
 - **エラー・警告**: ライト面 `$rose-deep`、ダーク面 `#ffd7da`
 - **モーション**: フェーズ切替は fadeUp 系のゆっくりした遷移。reduced-motion 対応を忘れない
+- **待機/招待**: `EntryCard` / `InvitePanel` は中央カードとコンパクトな招待カードで構成する。roomCode は待機中/終了後だけ目立たせる
+- **背景**: `PhaseBackground` で turn / 勝利陣営に応じてライト面・ダーク面・結果面を切り替える
+- **花びら演出**: `SakuraParticles` は待機中は `ambient`、勝利演出では `celebration` を使う。勝利時は `victoryPalette` で陣営色を指定する
+- **勝利演出**: `VictoryOverlay` で「勝利演出 → 結果表示 → ロビー復帰」を全画面 overlay として出す。結果表は overlay 内に収め、招待カードと重ねない
 
 ### 7.3 実装メモ
 

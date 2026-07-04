@@ -137,11 +137,10 @@ stateDiagram-v2
 
 - `disscuttionStartFlg` は現行 state 名の綴りを維持している。
 - fakeartist は canvas の副作用が多いため、reducer は描画そのものを行わず sequence 値だけを更新する。
-- `.fakeartistcheck` への DOM 操作が hook に残っている。Stage 4 の残課題。
+- `.fakeartistcheck` への DOM 操作が hook に残っている。future 側の DOM 直接操作整理で扱う。
 - 描画データは 1000 stroke を超えると backend 側で先頭を削る。
 
 ## テスト・確認観点
 
 - `frontend/src/features/fakeartist/reducer.test.ts` で status `100/101/150/160/200/300/450/451/500/550/600/650/998/999`、canvas sequence、ローカル action を検証。
 - 手動確認は3人以上の複数タブで、テーマ選択、開始、描画同期、議論移行、投票、結果、再入室時の再描画、チャット、アイコン変更を確認する。
-

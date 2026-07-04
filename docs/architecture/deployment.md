@@ -1,6 +1,13 @@
 # デプロイ構成
 
-2026-07 に BoardGameFront(フロント)と BoardGame(バック)の2リポジトリを統合したモノレポ。旧 BoardGame リポジトリは GitHub 上でアーカイブ済み(バックエンドの全履歴は `git log backend/` で辿れる)。
+BoardGameFront(フロント)と BoardGame(バック)を統合したモノレポ。旧 BoardGame リポジトリは GitHub 上でアーカイブ済みで、バックエンドの全履歴は `git log backend/` で辿れる。
+
+## リポジトリ運用
+
+- main リポジトリ: 安定版・本番反映用。Vercel / Heroku の本番接続を持つ。
+- future リポジトリ: この作業ツリー。次期 UI、設計整理、モダナイズを進める。main へ昇格する前に frontend / backend の検証を行う。
+
+以下の本番デプロイ設定は main 側で保持する前提。
 
 ## frontend — Vercel
 

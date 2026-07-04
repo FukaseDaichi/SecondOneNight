@@ -34,8 +34,8 @@ frontend/src/
   type/                  # ゲーム横断の型(SocketInfo 等)
 ```
 
-- ゲーム間で共有するのは `SocketInfo` 型と `useGameSocket` のみ。reducer・型はゲームごとに独立させ、ゲーム間の差異を無理に抽象化しない(共通化の判断は Stage 4 以降)
-- デザイントークンは `styles/tokens.scss` を正とし、`styles/lp.module.scss` と werewolf の `background.module.scss` / `entry.module.scss` / `rule.module.scss` / `start.module.scss` が `@use` する
+- ゲーム間で共有するのは `SocketInfo` 型と `useGameSocket` が中心。reducer・型はゲームごとに独立させ、ゲーム間の差異を無理に抽象化しない(共通化の要否は [../roadmap.md](../roadmap.md) で扱う)
+- デザイントークンは `styles/tokens.scss` を正とし、`styles/lp.module.scss` と werewolf の `background.module.scss` / `entry.module.scss` / `result.module.scss` / `room.module.scss` / `rule.module.scss` / `start.module.scss` / `userinfo.module.scss` / `victory.module.scss` が `@use` する
 
 ## ページ構成
 
@@ -50,6 +50,7 @@ frontend/src/
 | 背景/開始演出 | `PhaseBackground` が turn / 勝利陣営に応じて背景を切り替え、`WerewolfStart` が開始 overlay を表示 |
 | ルール表示 | `rule.tsx` + `rule.module.scss` で遊び方モーダルを再構成 |
 | アイコンアップロード | `lib/imageToIconDataUrl.ts` が画像を 96px JPEG Data URL に変換し、werewolf の status `650` で送信 |
+| 勝利/結果演出 | `VictoryOverlay` が「勝利演出 → 結果表示 → ロビー復帰」を担当。表示ロジックは `features/werewolf/victory.ts` に分離し、ユニットテスト対象 |
 
 ## 状態管理パターン(feature 構造)
 
@@ -111,7 +112,7 @@ useGameSocket(opts: {
 
 ## SakuraParticles(共通の花びらパーティクル)
 
-`components/common/SakuraParticles.tsx`。tsparticles(`@tsparticles/react` + `@tsparticles/slim` + wobble / tilt updater)で花びらを舞わせる装飾コンポーネント。werewolf の待機画面(`ambient`)と勝利演出(`celebration`、`palette` で陣営色指定)で使用。
+`components/common/SakuraParticles.tsx`。tsparticles(`@tsparticles/react` + `@tsparticles/slim` + wobble / tilt updater)で花びらを舞わせる装飾コンポーネント。werewolf の待機画面(`ambient`)と `VictoryOverlay` の勝利演出(`celebration`、`palette` で陣営色指定)で使用。
 
 - オプション生成は `sakuraParticlesOptions.ts` の純関数(粒子数・速度など。ユニットテスト対象は粒子数決定)
 - `next/dynamic` の `ssr: false` で読み込むこと(他ページのバンドルに影響させない)
@@ -121,5 +122,6 @@ useGameSocket(opts: {
 
 - **reducer のユニットテスト(主戦場)**: ゲームごとに全 status コード + 全ローカルアクションを網羅する(例: 「status 300 受信 → startFlg が立つ」「未知 status → state 不変」)
 - **useGameSocket のテスト**: `Client` をモックし、接続・購読・送信・status 遷移・再購読を検証
+- **表示ロジックの小さな純粋関数**: Sakura の粒子数、werewolf 勝利演出の phase / palette など、副作用から切り出したロジックを検証
 - フック(`use<Game>Room`)と UI コンポーネントの網羅テストは書かない(方針)
 - 挙動に触れる変更は本番 Heroku 接続で手動確認(ブラウザ2タブで複数プレイヤーをシミュレート)

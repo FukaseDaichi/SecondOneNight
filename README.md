@@ -1,4 +1,4 @@
-# BoardGame
+# BoardGame Future
 
 ブラウザで遊べるオンラインボードゲーム集(セカンドワンナイト人狼 / タイムボム / ハイドアウト / エセ芸術家ニューヨークへ行く / ディクリプト)。
 
@@ -6,7 +6,7 @@
 
 ## このリポジトリについて
 
-`frontend/` と `backend/` を1つにまとめたモノレポです。フロントエンドは Vercel、バックエンドは Heroku で動いています。
+`frontend/` と `backend/` を1つにまとめたモノレポです。この作業ツリーは future 側で、次期 UI、設計整理、モダナイズを進める場所です。安定版・本番反映は main リポジトリ側に分ける前提で運用します。
 
 ゲームごとの画面・状態管理は `frontend/`、ゲーム進行の正本となる Room / User の状態は `backend/` にあります。フロントとバックエンドは REST と SockJS/STOMP で通信します。
 
@@ -16,7 +16,7 @@
 | --- | --- | --- |
 | [frontend/](frontend/) | Next.js フロントエンド | Vercel |
 | [backend/](backend/) | Spring Boot バックエンド | Heroku |
-| [docs/](docs/) | 設計書・実装計画 | - |
+| [docs/](docs/) | 設計書・未完了タスク | - |
 
 ## まず動かす
 
@@ -47,7 +47,12 @@ NEXT_PUBLIC_AP_HOST=http://localhost:8080/
 | 全体構成を知る | [docs/architecture/overview.md](docs/architecture/overview.md) |
 | 通信契約を確認する | [docs/architecture/communication.md](docs/architecture/communication.md) |
 | ゲーム別の状態・通信を見る | [docs/architecture/games/](docs/architecture/games/) |
-| 今後の計画と残課題を見る | [docs/roadmap.md](docs/roadmap.md) |
+| future 側の未完了タスクを見る | [docs/roadmap.md](docs/roadmap.md) |
+
+## リポジトリ運用
+
+- main: 安定版・本番反映用。Vercel / Heroku の本番接続を持つ。
+- future: このリポジトリ。次期 UI やモダナイズを進め、検証後に main へ昇格する。
 
 ## 開発ルール
 
