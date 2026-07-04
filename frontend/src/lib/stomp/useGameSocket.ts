@@ -68,6 +68,7 @@ export function useGameSocket(opts: UseGameSocketOptions): GameSocket {
             clientRef.current = null;
             subRef.current = null;
             client.deactivate();
+            setStatus('disconnected');
         };
     }, [topic, enabled]);
 

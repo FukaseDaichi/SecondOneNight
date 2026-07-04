@@ -1,402 +1,41 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import { useRouter } from 'next/router';
 import { SystemConst } from '../../const/next.config';
 import Layout from '../../components/layout';
 import Head from 'next/head';
-import { SocketInfo } from '../../type';
-import { useEffect, useState, useCallback } from 'react';
 import Chatmessage from '../../components/message/chatmessage';
 import ChatComponent from '../../components/chatcomponent';
 import styles from '../../styles/components/decrypt/room.module.scss';
-import Router from 'next/router';
 
-import Start from '../../components/timebomb/start';
-import TeamDataInfo from '../../components/decrypt/teamDataInfo';
-import { useGameSocket } from '../../lib/stomp/useGameSocket';
+import Start from '../../components/common/Start';
+import TeamDataInfo from '../../features/decrypt/components/teamDataInfo';
+import GameButtons from '../../features/decrypt/components/GameButtons';
+import type {
+    DecryptUser as LegacyDecryptUser,
+    TeamData,
+} from '../../type/decrypt';
 import ConnectionStatus from '../../components/common/ConnectionStatus';
+import RoomInForm from '../../components/common/RoomInForm';
+import { useDecryptRoom } from '../../features/decrypt/useDecryptRoom';
 
 export default function DecryptRoom() {
     // roomId取得
     const router = useRouter();
     const { roomId } = router.query;
 
-    const { status, send } = useGameSocket({
-        topic: `/topic/${roomId}`,
-        onMessage: (msg) => getMessage(msg),
-        enabled: !!roomId,
-    });
-
-    const [messageList, setMessageList] = useState([]);
-    const [chatList, setChatList] = useState([]);
-
-    // gamedata
-    const [userList, setUserLst] = useState([]);
-    const [gameTime, setGameTime] = useState(0);
-    const [turn, setTurn] = useState(0);
-    const [choiceMode, setChoiceMode] = useState(0);
-    const [winnerTeam, setWinnerTeam] = useState(0);
-    const [leftTeam, setLeftTeam] = useState(null);
-    const [rightTeam, setRightTeam] = useState(null);
-
-    // userInfo
-    const [playerName, setPlayerName] = useState(null);
-    const [playerData, setPlayerData] = useState(null);
-
-    // view
-    const [startFlg, setStartFlg] = useState(false);
-
-    // ルーム入室
-    const roomIn = (userName: string) => {
-        if (userName === '') {
-            return;
-        }
-        const url = '/app/game-roomin';
-        const soketInfo: SocketInfo = {
-            status: 100,
-            roomId: roomId as string,
-            userName: userName,
-            message: null,
-            obj: null,
-        };
-
-        setPlayerName(userName);
-        conect(url, soketInfo);
-    };
-
-    // アイコン変更
-    const changeIcon = useCallback(
-        (iconUrl: string) => {
-            const url = '/app/game-changeIcon';
-            const soketInfo: SocketInfo = {
-                status: 650,
-                roomId: roomId as string,
-                userName: playerName,
-                message: null,
-                obj: iconUrl,
-            };
-            conect(url, soketInfo);
-        },
-        [playerName]
-    );
-
-    // チャット
-    const chat = useCallback(
-        (message: string) => {
-            if (playerData) {
-                const url = '/app/game-chat';
-                const soketInfo: SocketInfo = {
-                    status: 101,
-                    roomId: roomId as string,
-                    userName: playerName,
-                    message: message,
-                    obj: null,
-                };
-                conect(url, soketInfo);
-                setMessageList(messageList.concat(message));
-            }
-        },
-        [playerName, messageList]
-    );
-
-    // 暗号リセット
-    const resetCode = useCallback(() => {
-        const url = '/app/decrypt-resetcode';
-
-        const soketInfo: SocketInfo = {
-            status: 110,
-            roomId: roomId as string,
-            userName: playerName,
-            message: null,
-            obj: null,
-        };
-        conect(url, soketInfo);
-    }, [playerName]);
-
-    // チームリセット
-    const resetTeam = useCallback(() => {
-        const url = '/app/decrypt-resetteam';
-
-        const soketInfo: SocketInfo = {
-            status: 120,
-            roomId: roomId as string,
-            userName: playerName,
-            message: null,
-            obj: null,
-        };
-        conect(url, soketInfo);
-    }, [playerName]);
-
-    // チーム選択
-    const choiceTeam = useCallback(
-        (teamNo: number) => {
-            const url = '/app/decrypt-choiceteam';
-
-            const soketInfo: SocketInfo = {
-                status: 130,
-                roomId: roomId as string,
-                userName: playerName,
-                message: null,
-                obj: teamNo,
-            };
-            conect(url, soketInfo);
-        },
-        [playerName]
-    );
-
-    // モードチェンジ
-    const modeChange = useCallback(
-        (modeNo: number) => {
-            const url = '/app/decrypt-modechange';
-
-            const soketInfo: SocketInfo = {
-                status: 140,
-                roomId: roomId as string,
-                userName: playerName,
-                message: null,
-                obj: modeNo,
-            };
-            conect(url, soketInfo);
-        },
-        [playerName]
-    );
-
-    // ゲーム開始
-    const init = () => {
-        const url = '/app/decrypt-init';
-        const soketInfo: SocketInfo = {
-            status: 300,
-            roomId: roomId as string,
-            userName: playerName,
-            message: null,
-            obj: null,
-        };
-        conect(url, soketInfo);
-    };
-
-    // 暗号作成者へ立候補
-    const handupCreatecode = useCallback(() => {
-        const url = '/app/decrypt-handupcreatecode';
-        const soketInfo: SocketInfo = {
-            status: 350,
-            roomId: roomId as string,
-            userName: playerName,
-            message: null,
-            obj: null,
-        };
-        conect(url, soketInfo);
-    }, [playerName]);
-
-    // 暗号作成
-    const createCodeword = useCallback(
-        (wordList: Array<string>) => {
-            const url = '/app/decrypt-createcodeword';
-            const soketInfo: SocketInfo = {
-                status: 370,
-                roomId: roomId as string,
-                userName: playerName,
-                message: null,
-                obj: wordList,
-            };
-            conect(url, soketInfo);
-        },
-        [playerName]
-    );
-
-    // 解読
-    const decryptCode = useCallback(
-        (noList: Array<number>) => {
-            const url = '/app/decrypt-decryptcode';
-
-            const soketInfo: SocketInfo = {
-                status: 500,
-                roomId: roomId as string,
-                userName: playerName,
-                message: null,
-                obj: noList,
-            };
-            conect(url, soketInfo);
-        },
-        [playerName]
-    );
-
-    // 制限時間変更
-    const changeLimitTime = useCallback(
-        (time: number) => {
-            const url = '/app/game-setlimittime';
-            const soketInfo: SocketInfo = {
-                status: 550,
-                roomId: roomId as string,
-                userName: null,
-                message: null,
-                obj: time,
-            };
-            conect(url, soketInfo);
-        },
-        [playerName]
-    );
-
-    // 議論制限時間超過
-    const limittimeDone = useCallback(() => {
-        if (turn === 2) {
-            const url = '/app/game-dooverLimit';
-            const soketInfo: SocketInfo = {
-                status: 600,
-                roomId: roomId as string,
-                userName: null,
-                message: null,
-                obj: turn,
-            };
-            conect(url, soketInfo);
-        }
-    }, [turn]);
-
-    const conect = (url: string, soketInfo: SocketInfo) => {
-        try {
-            send(url, soketInfo);
-        } catch (e) {
-            setMessageList(
-                messageList.concat('通信エラー。再度試してください')
-            );
-        }
-    };
-
-    const getMessage = (socketInfo: SocketInfo) => {
-        // デバッグ用
-        console.log(socketInfo);
-
-        switch (socketInfo.status) {
-            case 100: // ルーム入室
-                dataSet(socketInfo.obj);
-                break;
-
-            case 101: {
-                // チャット
-                setChatList(socketInfo.obj);
-                const messageFirld = document.getElementById('chat-firld');
-                messageFirld.scrollTop = messageFirld.scrollHeight;
-                break;
-            }
-            case 110: // 暗号リセット
-                dataSet(socketInfo.obj);
-                break;
-
-            case 120: // チームリセット
-                dataSet(socketInfo.obj);
-                break;
-
-            case 130: // チーム選択
-                dataSet(socketInfo.obj);
-                break;
-
-            case 140: // モードチェンジ
-                dataSet(socketInfo.obj);
-                break;
-
-            case 200: // 同一ユーザ入室
-                dataSet(socketInfo.obj);
-                setMessageList(() => messageList.concat(socketInfo.message));
-                break;
-
-            case 300: // ゲーム開始
-                // ゲームスタート
-                setStartFlg(true);
-                dataSet(socketInfo.obj);
-                break;
-
-            case 350: // 立候補
-                dataSet(socketInfo.obj);
-                break;
-
-            case 370: // 暗号作成
-                dataSet(socketInfo.obj);
-                break;
-
-            case 404: // 例外
-                setMessageList(messageList.concat(socketInfo.message));
-                break;
-
-            case 500: // 解読
-                dataSet(socketInfo.obj);
-                break;
-
-            case 650: // アイコン変更
-                setUserLst(socketInfo.obj);
-                break;
-
-            case 998: // エラーメッセージ表示(個人)
-                if (socketInfo.userName === playerName) {
-                    setMessageList(messageList.concat(socketInfo.message));
-                }
-                break;
-
-            case 999: // エラーメッセージ表示(全員)
-                setMessageList(messageList.concat(socketInfo.message));
-                break;
-
-            default:
-                console.log(socketInfo);
-        }
-    };
-
-    // データセット
-    const dataSet = (obj) => {
-        setUserLst(obj.userList);
-        setTurn(obj.turn);
-        setGameTime(obj.gameTime);
-        setChoiceMode(obj.choiceMode);
-        setWinnerTeam(obj.winnerTeam);
-        setLeftTeam(obj.leftTeam);
-        setRightTeam(obj.rightTeam);
-    };
-
-    // スタートフラグの監視
-    useEffect(() => {
-        if (startFlg) {
-            scrollTo(0, 0);
-            window.setTimeout(() => {
-                setStartFlg(false);
-            }, 4000);
-        }
-    }, [startFlg]);
-
-    // 勝敗監視
-    useEffect(() => {
-        if (winnerTeam === 0) {
-            // 処理なし
-        } else {
-            // 処理なし
-        }
-    }, [winnerTeam]);
-
-    // 入室時
-    useEffect(() => {
-        const userArray = userList.filter((element) => {
-            return element.userName === playerName;
-        });
-        if (userArray.length > 0) {
-            const btnDom = document.querySelector('.' + styles.roominbtn);
-            if (btnDom.classList.contains(styles.in)) {
-                return;
-            }
-            btnDom.classList.add(styles.in);
-
-            // アイコン初期設定
-            if (userArray[0].userIconUrl === null) {
-                changeIcon('/images/icon/icon' + userArray[0].userNo + '.jpg');
-            }
-        }
-    }, [userList.length, playerName]);
-
-    // プレイヤーデータ設定
-    useEffect(() => {
-        const filterNameArray = userList.filter((element) => {
-            return element.userName === playerName;
-        });
-        if (filterNameArray.length > 0) {
-            setPlayerData(filterNameArray[0]);
-        }
-    }, [userList, playerName]);
+    const {
+        state,
+        connected,
+        status,
+        entered,
+        roomIn,
+        chat,
+        resetCode,
+        resetTeam,
+        choiceTeam,
+        modeChange,
+        init,
+    } = useDecryptRoom(roomId as string | undefined);
 
     return (
         <Layout home={false}>
@@ -440,11 +79,11 @@ export default function DecryptRoom() {
                 <title>ディクリプト</title>
             </Head>
             {/* 開始合図 */}
-            {startFlg && <Start />}
+            {state.startFlg && <Start />}
 
             {/* メッセージエリア */}
-            {messageList.map((value, index) => {
-                if (index === messageList.length - 1) {
+            {state.messageList.map((value, index) => {
+                if (index === state.messageList.length - 1) {
                     return (
                         <Chatmessage value={value} type="info" key={index} />
                     );
@@ -452,48 +91,25 @@ export default function DecryptRoom() {
             })}
 
             <ConnectionStatus status={status} />
-            <div className={styles.roominbtn}>
-                <p>
-                    <label htmlFor="username">Name</label>
-                </p>
-                <input
-                    type="text"
-                    id="username"
-                    maxLength={20}
-                    onKeyPress={(e) => {
-                        // enterkey event
-                        if (e.key == 'Enter') {
-                            e.preventDefault();
-                            const usernameDom: HTMLInputElement =
-                                document.getElementById(
-                                    'username'
-                                ) as HTMLInputElement;
-                            roomIn(usernameDom.value);
-                        }
-                    }}
-                />
-                <button
-                    onClick={() => {
-                        const usernameDom: HTMLInputElement =
-                            document.getElementById(
-                                'username'
-                            ) as HTMLInputElement;
-                        roomIn(usernameDom.value);
-                    }}
-                >
-                    Room IN
-                </button>
-            </div>
+            <RoomInForm
+                connected={connected}
+                entered={entered}
+                onRoomIn={roomIn}
+                className={styles.roominbtn}
+                enteredClassName={styles.in}
+            />
 
             {/* チームデータ */}
-            {playerData && (
+            {state.playerData && (
                 <TeamDataInfo
-                    userList={userList}
-                    leftTeam={leftTeam}
-                    rightTeam={rightTeam}
-                    turn={turn}
-                    playerData={playerData}
-                    gameTime={gameTime}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    userList={state.userList as any as LegacyDecryptUser[]}
+                    leftTeam={state.leftTeam as TeamData}
+                    rightTeam={state.rightTeam as TeamData}
+                    turn={state.turn}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    playerData={state.playerData as any as LegacyDecryptUser}
+                    gameTime={state.gameTime}
                     resetCode={resetCode}
                     resetTeam={resetTeam}
                     choiceTeam={choiceTeam}
@@ -501,21 +117,16 @@ export default function DecryptRoom() {
                 />
             )}
 
-            <div className={styles.btnarea}>
-                <button
-                    onClick={() => {
-                        Router.push('/');
-                    }}
-                >
-                    HOME
-                </button>
-                <button onClick={init}>
-                    {turn > 0 && turn < 4 ? 'GAME RESET' : 'GAME START'}
-                </button>
-            </div>
+            <GameButtons
+                className={styles.btnarea}
+                turn={state.turn}
+                init={init}
+            />
 
             {/* チャットのやり取り（機能OFF） */}
-            {false && <ChatComponent chatList={chatList} chat={chat} />}
+            {false && (
+                <ChatComponent chatList={state.chatList} chat={chat} />
+            )}
 
             <div className={styles.rulebtn}>
                 <button>遊び方</button>

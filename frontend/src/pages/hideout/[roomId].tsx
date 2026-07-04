@@ -3,273 +3,38 @@ import { useRouter } from 'next/router';
 import { SystemConst } from '../../const/next.config';
 import Layout from '../../components/layout';
 import Head from 'next/head';
-import { SocketInfo } from '../../type';
-import Chatmessage from '../../components/message/chatmessage';
-import { useEffect, useState, useCallback } from 'react';
 import ChatComponent from '../../components/chatcomponent';
-import BuildCard from '../../components/hideout/buildcard';
-import UserInfo from '../../components/hideout/userInfo';
-import RushTurn from '../../components/hideout/rushturn';
 import styles from '../../styles/components/hideout/room.module.scss';
-import HideoutModal from '../../components/modal/hideoutmodal';
-import HideoutHeadInfo from '../../components/hideout/hideoutheadinfo';
-import GameInfo from '../../components/hideout/gameinfo';
 import Router from 'next/router';
-import Start from '../../components/timebomb/start';
+import Start from '../../components/common/Start';
 import Socialbtn from '../../components/button/sosialbtn';
-import { useGameSocket } from '../../lib/stomp/useGameSocket';
 import ConnectionStatus from '../../components/common/ConnectionStatus';
+import RoomInForm from '../../components/common/RoomInForm';
+import WinnerModals from '../../features/hideout/components/WinnerModals';
+import GameInfoArea from '../../features/hideout/components/GameInfoArea';
+import PlayArea from '../../features/hideout/components/PlayArea';
+import { useHideoutRoom } from '../../features/hideout/useHideoutRoom';
 
 export default function HideoutRoom() {
     // roomId取得
     const router = useRouter();
     const { roomId } = router.query;
 
-    const { connected, status, send } = useGameSocket({
-        topic: `/topic/${roomId}`,
-        onMessage: (msg) => getMessage(msg),
-        enabled: !!roomId,
-    });
-
-    const [messageList, setMessageList] = useState([]);
-    const [playerName, setPlayerName] = useState(null);
-    const [chatList, setChatList] = useState([]);
-
-    // gamedata
-    const [userList, setUserLst] = useState([]);
-    const [memberFirldList, setMemberFirldList] = useState([]);
-    const [rushFlg, setRushFlg] = useState(false);
-    const [firldBuilding, setFirldBuilding] = useState(null);
-    const [waitUserIndexList, setWaitUserIndexList] = useState([]);
-    const [memberCardList, setMemberCardList] = useState([]);
-    const [buildingCardList, setBuildingCardList] = useState([]);
-    const [winnerTeam, setWinnerTeam] = useState(0);
-    const [turn, setTurn] = useState(0);
-
-    // view
-    const [viewMemberCardList, setViewMemberCardList] = useState([]);
-    const [startFlg, setStartFlg] = useState(false);
-    const [rushAreaFlg, setRushAreaFlg] = useState(false);
-    const [swatWinFlg, setSwatWinFlg] = useState(false);
-    const [terroristWinFlg, setTerroristWinFlg] = useState(false);
-
-    // ルーム入室
-    const roomIn = (userName: string) => {
-        if (userName === '') {
-            return;
-        }
-        const url = '/app/game-roomin';
-        const soketInfo: SocketInfo = {
-            status: 100,
-            roomId: roomId as string,
-            userName: userName,
-            message: null,
-            obj: null,
-        };
-        setPlayerName(userName);
-        conect(url, soketInfo);
-    };
-
-    // チャット
-    const chat = useCallback(
-        (message: string) => {
-            if (playerName) {
-                const url = '/app/game-chat';
-                const soketInfo: SocketInfo = {
-                    status: 101,
-                    roomId: roomId as string,
-                    userName: playerName,
-                    message: message,
-                    obj: null,
-                };
-                conect(url, soketInfo);
-                setMessageList(messageList.concat(message));
-            }
-        },
-        [playerName, messageList]
-    );
-
-    // ゲーム開始
-    const init = () => {
-        const url = '/app/hideout-init';
-        const soketInfo: SocketInfo = {
-            status: 300,
-            roomId: roomId as string,
-            userName: playerName,
-            message: null,
-            obj: null,
-        };
-        conect(url, soketInfo);
-    };
-
-    const wait = (index: number) => {
-        const url = '/app/hideout-wait';
-        const soketInfo: SocketInfo = {
-            status: 400,
-            roomId: roomId as string,
-            userName: playerName,
-            message: null,
-            obj: index,
-        };
-        conect(url, soketInfo);
-    };
-
-    const rush = (index: number) => {
-        const url = '/app/hideout-rush';
-        const soketInfo: SocketInfo = {
-            status: 500,
-            roomId: roomId as string,
-            userName: playerName,
-            message: null,
-            obj: index,
-        };
-        conect(url, soketInfo);
-    };
-
-    // アイコン変更
-    const changeIcon = useCallback(
-        (iconUrl: string) => {
-            const url = '/app/game-changeIcon';
-            const soketInfo: SocketInfo = {
-                status: 600,
-                roomId: roomId as string,
-                userName: playerName,
-                message: null,
-                obj: iconUrl,
-            };
-            conect(url, soketInfo);
-        },
-        [playerName]
-    );
-
-    const conect = (url: string, soketInfo: SocketInfo) => {
-        try {
-            send(url, soketInfo);
-        } catch (e) {
-            setMessageList(
-                messageList.concat('通信エラー。再度試してください')
-            );
-        }
-    };
-
-    const getMessage = (socketInfo: SocketInfo) => {
-        //console.log(socketInfo);
-
-        switch (socketInfo.status) {
-            case 100: // ルーム入室
-                dataSet(socketInfo.obj);
-                break;
-            case 101: {
-                // チャット
-                setChatList(socketInfo.obj);
-                const messageFirld = document.getElementById('chat-firld');
-                messageFirld.scrollTop = messageFirld.scrollHeight;
-                break;
-            }
-            case 200:
-                // ルーム入室(同一名ユーザ入室)
-                dataSet(socketInfo.obj);
-                break;
-
-            case 300: // ゲーム開始
-                setRushAreaFlg(false);
-                // 勝敗リセット
-                setTerroristWinFlg(false);
-                setSwatWinFlg(false);
-
-                // ゲームスタート
-                setStartFlg(true);
-
-                dataSet(socketInfo.obj);
-                break;
-
-            case 400: // ゲーム待機
-                // 誰かが行動したらラッシュタイムを終了
-                setRushAreaFlg(false);
-
-                dataSet(socketInfo.obj);
-                break;
-
-            case 500: // 突入
-                dataSet(socketInfo.obj);
-                break;
-
-            case 600: // アイコン変更
-                setUserLst(socketInfo.obj);
-                break;
-
-            default:
-                console.log(socketInfo);
-        }
-    };
-
-    const dataSet = (obj) => {
-        setUserLst(obj.userList);
-        setRushFlg(obj.rushFlg);
-        setFirldBuilding(obj.firldBuilding);
-        setMemberFirldList(obj.memberFirldList);
-        setWaitUserIndexList(obj.waitUserIndexList);
-        setWinnerTeam(obj.winnerTeam);
-        setMemberCardList(obj.memberCardList);
-        setBuildingCardList(obj.buildingCardList);
-        setTurn(obj.turn);
-    };
-
-    // ラッシュフラグの監視
-    useEffect(() => {
-        // ラッシュフラグがtrueのときに連動
-        if (rushFlg) {
-            scrollTo(0, 0);
-            setRushAreaFlg(true);
-        }
-    }, [rushFlg]);
-
-    // スタートフラグの監視
-    useEffect(() => {
-        if (startFlg) {
-            scrollTo(0, 0);
-            window.setTimeout(() => {
-                setStartFlg(false);
-            }, 4000);
-        }
-    }, [startFlg]);
-
-    // 勝敗監視
-    useEffect(() => {
-        // ラッシュフラグがtrueのときに連動
-        switch (winnerTeam) {
-            case 1:
-                setSwatWinFlg(true);
-                break;
-            case 2:
-                setTerroristWinFlg(true);
-                break;
-        }
-    }, [winnerTeam]);
-
-    // 入室時
-    useEffect(() => {
-        const userArray = userList.filter((element) => {
-            return element.userName === playerName;
-        });
-        if (userArray.length > 0) {
-            const btnDom = document.querySelector('.' + styles.roominbtn);
-            if (btnDom.classList.contains(styles.in)) {
-                return;
-            }
-            btnDom.classList.add(styles.in);
-
-            // アイコン初期設定
-            if (userArray[0].userIconUrl === null) {
-                changeIcon('/images/icon/icon' + userArray[0].userNo + '.jpg');
-            }
-        }
-    }, [userList.length, playerName]);
-
-    // ヘッダ用情報更新
-    useEffect(() => {
-        setViewMemberCardList(memberCardList);
-    }, [turn, rushFlg]);
+    const {
+        state,
+        connected,
+        status,
+        entered,
+        roomIn,
+        chat,
+        init,
+        wait,
+        rush,
+        changeIcon,
+        closeRushArea,
+        dismissSwatWin,
+        dismissTerroristWin,
+    } = useHideoutRoom(roomId as string | undefined);
 
     return (
         <Layout home={false}>
@@ -300,133 +65,45 @@ export default function HideoutRoom() {
                 <title>Hideout</title>
             </Head>
             {/* 開始合図 */}
-            {startFlg && <Start />}
+            {state.startFlg && <Start />}
 
-            {turn > 0 && (
-                <HideoutHeadInfo
-                    userList={userList}
-                    memberCardList={viewMemberCardList}
-                />
-            )}
-            {turn > 0 && (
-                <GameInfo
-                    buildingCardList={buildingCardList}
-                    memberCardList={memberCardList}
-                />
-            )}
-            {messageList.map((value, index) => {
-                if (index === messageList.length - 1) {
-                    return (
-                        <Chatmessage value={value} type="info" key={index} />
-                    );
-                }
-            })}
+            <GameInfoArea
+                turn={state.turn}
+                userList={state.userList}
+                viewMemberCardList={state.viewMemberCardList}
+                buildingCardList={state.buildingCardList}
+                memberCardList={state.memberCardList}
+                messageList={state.messageList}
+            />
             <ConnectionStatus status={status} />
-            <div className={styles.roominbtn}>
-                <p>
-                    <label htmlFor="username">Name</label>
-                </p>
-                <input
-                    disabled={!connected}
-                    type="text"
-                    id="username"
-                    maxLength={20}
-                    onKeyPress={(e) => {
-                        if (e.key == 'Enter') {
-                            e.preventDefault();
-                            const usernameDom: HTMLInputElement =
-                                document.getElementById(
-                                    'username'
-                                ) as HTMLInputElement;
-                            roomIn(usernameDom.value);
-                        }
-                    }}
-                />
-                <button
-                    disabled={!connected}
-                    onClick={() => {
-                        const usernameDom: HTMLInputElement =
-                            document.getElementById(
-                                'username'
-                            ) as HTMLInputElement;
-                        roomIn(usernameDom.value);
-                    }}
-                >
-                    Room IN
-                </button>
-            </div>
-            {/* フィールド情報 */}
-            {firldBuilding && (
-                <div className={styles.firldBuild}>
-                    <BuildCard
-                        buildingCard={firldBuilding}
-                        userList={userList}
-                        wait={wait}
-                        waitUserIndexList={waitUserIndexList}
-                        ownFlg={false}
-                    />
-                </div>
-            )}
-            {/* ユーザ情報 */}
-            <div className={styles.userfirld}>
-                {userList.map((user, index: number) => {
-                    return (
-                        <UserInfo
-                            key={index}
-                            user={user}
-                            ownFlg={user.userName === playerName}
-                            userColor={SystemConst.PLAYER_COLOR_LIST[index]}
-                            changeIcon={changeIcon}
-                            userList={userList}
-                            wait={wait}
-                            winnerTeam={winnerTeam}
-                            turn={turn}
-                        />
-                    );
-                })}
-            </div>
-            {rushAreaFlg && (
-                <RushTurn
-                    userList={userList}
-                    playerName={playerName}
-                    rush={rush}
-                    memberFirldList={memberFirldList}
-                    endFnc={() => {
-                        setRushAreaFlg(false);
-                    }}
-                />
-            )}
-            {!rushAreaFlg && terroristWinFlg && (
-                <HideoutModal
-                    type={'seven'}
-                    endFnc={() => {
-                        setTimeout(() => {
-                            setTerroristWinFlg(false);
-                        }, 3000);
-                    }}
-                >
-                    <div className={styles.result}>
-                        <img
-                            src="/images/hideout/terroristwin.png"
-                            alt="結果"
-                        />
-                    </div>
-                </HideoutModal>
-            )}
-            {!rushAreaFlg && swatWinFlg && (
-                <HideoutModal
-                    type={'five'}
-                    endFnc={() => {
-                        setTimeout(() => {
-                            setSwatWinFlg(false);
-                        }, 3000);
-                    }}
-                >
-                    <div className={styles.result}>
-                        <img src="/images/hideout/swatwin.png" alt="結果" />
-                    </div>
-                </HideoutModal>
-            )}
+            <RoomInForm
+                connected={connected}
+                entered={entered}
+                onRoomIn={roomIn}
+                className={styles.roominbtn}
+                enteredClassName={styles.in}
+            />
+            <PlayArea
+                firldBuilding={state.firldBuilding}
+                userList={state.userList}
+                wait={wait}
+                waitUserIndexList={state.waitUserIndexList}
+                playerName={state.playerName}
+                winnerTeam={state.winnerTeam}
+                turn={state.turn}
+                changeIcon={changeIcon}
+                rushAreaFlg={state.rushAreaFlg}
+                memberFirldList={state.memberFirldList}
+                rush={rush}
+                closeRushArea={closeRushArea}
+            />
+            <WinnerModals
+                rushAreaFlg={state.rushAreaFlg}
+                terroristWinFlg={state.terroristWinFlg}
+                swatWinFlg={state.swatWinFlg}
+                dismissTerroristWin={dismissTerroristWin}
+                dismissSwatWin={dismissSwatWin}
+            />
             <div className={styles.btnarea}>
                 <button
                     onClick={() => {
@@ -436,11 +113,11 @@ export default function HideoutRoom() {
                     HOME
                 </button>
                 <button onClick={init}>
-                    {turn > 0 ? 'GAME RESET' : 'GAME START'}
+                    {state.turn > 0 ? 'GAME RESET' : 'GAME START'}
                 </button>
             </div>
             {/* チャットのやり取り（機能OFF） */}
-            {false && <ChatComponent chatList={chatList} chat={chat} />}
+            {false && <ChatComponent chatList={state.chatList} chat={chat} />}
             <div className={styles.rulebtn}>
                 <button
                     onClick={() =>
