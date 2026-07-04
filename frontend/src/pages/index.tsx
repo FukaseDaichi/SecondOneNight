@@ -409,7 +409,7 @@ export default function Homepage() {
                         </Reveal>
                         <Reveal delay="0.08s">
                             <h2 className={styles.ctaTitle}>
-                                さあ、リアルタイム人狼へ。
+                                さあ、セカンドワンナイトへ。
                             </h2>
                         </Reveal>
                         <Reveal delay="0.16s">
