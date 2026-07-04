@@ -82,6 +82,26 @@ div.main {
         }
     }
 
+    .kick {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 24px;
+        height: 24px;
+        border: 1px solid rgba(196, 100, 110, 0.6);
+        border-radius: 50%;
+        background: #fbfefe;
+        font-size: 11px;
+        line-height: 1;
+        color: #c4646e;
+        cursor: pointer;
+
+        &:hover {
+            background: #c4646e;
+            color: #fbfefe;
+        }
+    }
+
     div.icon {
         position: relative;
         width: 100%;

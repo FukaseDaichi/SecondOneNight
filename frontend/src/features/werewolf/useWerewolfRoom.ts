@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import { useGameSocket } from '../../lib/stomp/useGameSocket';
+import Router from 'next/router';
 import type { SocketInfo } from '../../type';
 import type { WerewolfRoll } from '../../type/werewolf';
 import { initialWerewolfState, werewolfReducer } from './reducer';
@@ -60,6 +61,20 @@ export function useWerewolfRoom(roomId: string | undefined) {
     const changeIcon = useCallback(
         (iconUrl: string) => {
             conect('/app/game-changeIcon', buildInfo(650, iconUrl));
+        },
+        [conect, buildInfo]
+    );
+
+    const leaveRoom = useCallback(() => {
+        if (!state.playerName) {
+            return;
+        }
+        conect('/app/game-removeuser', buildInfo(130, state.playerName));
+    }, [conect, buildInfo, state.playerName]);
+
+    const removeUser = useCallback(
+        (userName: string) => {
+            conect('/app/game-removeuser', buildInfo(130, userName));
         },
         [conect, buildInfo]
     );
@@ -237,6 +252,18 @@ export function useWerewolfRoom(roomId: string | undefined) {
         (u) => u.userName === state.playerName
     )[0];
     const entered = !!own;
+
+    // 退出検知: 一度入室した後に userList から消えたらトップへ戻す
+    // (自分の退出ボタン・他プレイヤーからの退出操作の両方をここで拾う)
+    const wasEntered = useRef(false);
+    useEffect(() => {
+        if (entered) {
+            wasEntered.current = true;
+        } else if (wasEntered.current) {
+            Router.push('/');
+        }
+    }, [entered]);
+
     const iconInitialized = useRef(false);
     useEffect(() => {
         if (own && own.userIconUrl === null && !iconInitialized.current) {
@@ -344,6 +371,8 @@ export function useWerewolfRoom(roomId: string | undefined) {
         roomIn,
         chat,
         changeIcon,
+        leaveRoom,
+        removeUser,
         setRoll,
         setRollSet,
         init,

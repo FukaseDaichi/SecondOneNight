@@ -34,6 +34,8 @@ export default function WerewolfRoom() {
         roomIn,
         chat,
         changeIcon,
+        leaveRoom,
+        removeUser,
         setRoll,
         setRollSet,
         init,
@@ -160,6 +162,7 @@ export default function WerewolfRoom() {
                     playerNPCActionName={playerNPCActionName}
                     winteamList={winteamList}
                     setModalOwnFlg={setModalOwnFlg}
+                    removeUser={removeUser}
                 />
             )}
             {/* 役職情報 */}
@@ -202,13 +205,25 @@ export default function WerewolfRoom() {
             )}
 
             <div className={styles.btnarea}>
-                <button
-                    onClick={() => {
-                        Router.push('/');
-                    }}
-                >
-                    HOME
-                </button>
+                {entered && (turn === 0 || turn === 4) ? (
+                    <button
+                        onClick={() => {
+                            if (window.confirm('部屋から退出しますか?')) {
+                                leaveRoom();
+                            }
+                        }}
+                    >
+                        退出
+                    </button>
+                ) : (
+                    <button
+                        onClick={() => {
+                            Router.push('/');
+                        }}
+                    >
+                        HOME
+                    </button>
+                )}
                 <button onClick={init}>
                     {turn > 0 && turn < 4 ? 'GAME RESET' : 'GAME START'}
                 </button>

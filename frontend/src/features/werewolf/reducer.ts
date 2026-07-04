@@ -75,6 +75,12 @@ const onMessage = (state: WerewolfState, socketInfo: SocketInfo): WerewolfState 
                 counterMap: toCounterMap(socketInfo.obj.rollNoList),
                 rollInfoList: socketInfo.obj.rollList,
             };
+        case 130: // 退出(userList から対象を除去した room が届く)
+            return {
+                ...dataSet(state, socketInfo.obj),
+                counterMap: toCounterMap(socketInfo.obj.rollNoList),
+                rollInfoList: socketInfo.obj.rollList,
+            };
         case 150: // 役職設定
             return {
                 ...dataSet(state, socketInfo.obj),

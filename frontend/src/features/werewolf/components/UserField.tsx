@@ -16,6 +16,7 @@ type Props = {
     playerNPCActionName: string | null;
     winteamList: Array<number>;
     setModalOwnFlg: (value: boolean) => void;
+    removeUser: (userName: string) => void;
 };
 
 export default function UserField({
@@ -31,6 +32,7 @@ export default function UserField({
     playerNPCActionName,
     winteamList,
     setModalOwnFlg,
+    removeUser,
 }: Props) {
     return (
         <div className={styles.userfirld}>
@@ -49,6 +51,7 @@ export default function UserField({
                         playerActionName={playerActionName}
                         winteamList={winteamList}
                         setModalOwnFlg={setModalOwnFlg}
+                        removeUser={removeUser}
                     />
                 );
             })}
