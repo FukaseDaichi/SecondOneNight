@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../../styles/components/timebomb/headInfo.module.scss';
+import styles from '../../../styles/components/timebomb/headInfo.module.scss';
 
 type HeadInfoProps = {
     releaseNo: number;

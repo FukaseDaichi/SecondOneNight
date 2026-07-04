@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import { TimeBombUser, LeadCards } from '../../type';
-import styles from '../../styles/components/timebomb/userinfo.module.scss';
-import Icon from '../../components/userInfo/icon';
+import { TimeBombUser, LeadCards } from '../../../type';
+import styles from '../../../styles/components/timebomb/userinfo.module.scss';
+import Icon from '../../../components/userInfo/icon';
 
 import { useState } from 'react';
 
