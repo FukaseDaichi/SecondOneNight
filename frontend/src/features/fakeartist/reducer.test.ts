@@ -355,6 +355,20 @@ describe('fakeartistReducer: サーバメッセージ', () => {
         expect(s).toBe(initialFakeartistState);
     });
 
+    // 21b. バックエンドはアクション拒否時、クライアント送信時の obj(null や
+    // 描画データ等)をそのまま status=200(ApplicationException のデフォルト)で
+    // 再配信する(FakeArtistController の catch)。room 形状でない obj では状態を変えない。
+    it.each([100, 200, 300])(
+        'status %i でも obj が room 形状でなければ state が不変(エラー再配信)',
+        (status) => {
+            const s = fakeartistReducer(initialFakeartistState, {
+                type: 'message',
+                payload: msg(status, null, { message: '対象のターンではありません' }),
+            });
+            expect(s).toBe(initialFakeartistState);
+        }
+    );
+
     it('playerData は userList 内の自分が見つかった時のみ更新され、見つからない場合は据え置かれる', () => {
         const before = { ...initialFakeartistState, playerName: 'me' };
         const s1 = fakeartistReducer(before, {

@@ -1686,7 +1686,7 @@ git commit -m "fakeartistをfeature構造に分割しページを薄型化"
 **Interfaces:**
 - Consumes: Task 1〜12 の全成果物
 
-- [ ] **Step 1: 旧構造の残骸が無いことを確認**
+- [x] **Step 1: 旧構造の残骸が無いことを確認**(PASS。grep ヒットは全て SCSS module パス)
 
 Run: `grep -rn "components/hideout\|components/decrypt\|components/werewolf\|components/fakeartist\|components/timebomb/start\|components/timebomb/headInfo\|components/timebomb/userInfo" src`
 Expected: ヒット 0 件。
@@ -1694,12 +1694,12 @@ Expected: ヒット 0 件。
 Run: `grep -rn "getMessage\|dataSet\|receve" src/pages`
 Expected: ヒット 0 件(全ゲームが reducer 化済み)。
 
-- [ ] **Step 2: ページ行数の確認**
+- [x] **Step 2: ページ行数の確認**(⚠️ fakeartist 251 / werewolf 240 / timebomb 184 が 150 超過。残課題化)
 
 Run: `wc -l src/pages/*/\[roomId\].tsx`
 Expected: 各ページ 150 行以下(hideout / decrypt / timebomb は 100 行以下目安)。
 
-- [ ] **Step 3: 全チェック**
+- [x] **Step 3: 全チェック**(PASS。test 127 / lint error 0 / build 成功)
 
 Run: `npm test && npm run lint && npm run build`
 Expected: テスト全 PASS(reducer 5ゲーム + useGameSocket 12件 + next.config 3件)、lint error 0、build 成功。
@@ -1734,7 +1734,31 @@ git commit -m "Stage 3検証結果を記録"
 4. **timebomb のデバッグ用非表示入室ブロック削除**(`false && (...)`)
 5. **werewolf 役職カウンターの DOM 直接操作 → state 化**: 見た目・操作は同一。カウンター値がサーバ受信(rollNoList)で正しくリセットされる点も現行 `setRollCustum` と同等
 6. **非制御 input(username)→ 制御 input**: 見た目・操作は同一
+7. **アクション拒否時の再配信 obj への防御**(decrypt / fakeartist、Task 13 検証中に発見・修正): バックエンドはアクション拒否時(`ApplicationException`)に status のみ差し替え、`obj` は再設定しない(`CommonLogic.actionHandler` / `FakeArtistController` の catch。`ApplicationException` のデフォルト status は 200=`HTTP_OK`)。このため room 形状でない obj(null 等)が room データ用の status で届く。旧実装は room フィールド参照時に例外→状態不変だったが、reducer 化後は例外にならず不正な状態更新になりうる。`isRoomData`(`userList` が配列か)ガードを追加し「状態不変」を明示的に復元した。挙動は旧実装と同一。
 
 ## 検証記録
 
-(Task 13 実施時に記入)
+**実施日**: 2026-07-04 / feature/stage3-structure
+
+### 自動検証(Step 1〜3)
+
+| Step | 結果 | 備考 |
+| --- | --- | --- |
+| Step 1: 旧構造の残骸 | ✅ PASS | plan の grep ヒットは全て `styles/components/*`(SCSS module のパス)であり旧コンポーネント構造ではない。`src/components/{hideout,decrypt,werewolf,fakeartist,timebomb}` ディレクトリは存在せず、コンポーネント import は全て `features/*/components` 配下。`getMessage`/`dataSet`/`receve` は `src/pages` に 0 件(全ゲーム reducer 化済み) |
+| Step 2: ページ行数 | ⚠️ 一部超過 | decrypt 136 / hideout 142 は 150 以下。**fakeartist 251 / werewolf 240 / timebomb 184 が 150 行目標を超過**。いずれもページはフック接続と JSX 組み立てが中心で受信ロジックは reducer 化済みだが、行数目標は未達。追加分割は残課題(下記)とする |
+| Step 3: 全チェック | ✅ PASS | `npm test` 127 件全 PASS(reducer 5ゲーム計 115 + useGameSocket 9 + next.config 3)/ `npm run lint` **error 0**(warning 26、いずれも既存)/ `npm run build` 成功(全 10 ページ生成) |
+
+> テスト件数の内訳は計画時の見積り(useGameSocket 12 件)と差異があるが、実装済みの 9 件で全 PASS。決定的な差異ではないため許容。
+
+### 手動検証(Step 4: 本番 Heroku・2タブ)
+
+⏳ **未実施**。エージェント環境では本番 WebSocket への 2 タブ同時接続を再現できないため、ユーザーによる手動実施が必要。
+
+### 意図的な挙動差分
+
+上記「意図的な挙動差分」1〜7 のとおり。7 は本検証中に発見・修正(バックエンド無変更、reducer 側で旧挙動=状態不変を復元)。バックエンドソース(`CommonLogic.actionHandler`・`FakeArtistController` catch・`ApplicationException` デフォルト status=200)で挙動を確認済み。
+
+### 残課題
+
+- fakeartist / werewolf / timebomb のページ行数が 150 行目標を超過。受信処理は reducer 化済みのため機能上の問題はないが、JSX / フック接続の追加分割は将来のリファクタ候補。
+- Step 4 の本番 2 タブ手動確認(ユーザー実施待ち)。

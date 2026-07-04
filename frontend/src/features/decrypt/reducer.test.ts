@@ -147,6 +147,20 @@ describe('decryptReducer: サーバメッセージ', () => {
         });
         expect(s).toBe(initialDecryptState);
     });
+
+    // バックエンドはアクション拒否時、クライアント送信時の obj(null 等)を
+    // そのまま status=200(ApplicationException のデフォルト)で再配信する
+    // (CommonLogic.actionHandler)。room 形状でない obj では状態を変えない。
+    it.each([100, 200, 300, 500])(
+        'status %i でも obj が room 形状でなければ state が不変(エラー再配信)',
+        (status) => {
+            const s = decryptReducer(initialDecryptState, {
+                type: 'message',
+                payload: msg(status, null, { message: '対象のターンではありません' }),
+            });
+            expect(s).toBe(initialDecryptState);
+        }
+    );
 });
 
 describe('decryptReducer: ローカルアクション', () => {

@@ -40,6 +40,13 @@ const dataSet = (state: DecryptState, obj: any): DecryptState => {
     return next;
 };
 
+// バックエンドはアクション拒否時、クライアント送信時の obj をそのまま
+// status=e.getStatus()(デフォルト200)で再配信する(CommonLogic.actionHandler)。
+// その obj は room 形状ではない(null 等)。旧実装ではここで例外になり状態は
+// 変わらなかったため、同じ「状態不変」を明示する。
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isRoomData = (obj: any): boolean => !!obj && Array.isArray(obj.userList);
+
 const onMessage = (state: DecryptState, socketInfo: SocketInfo): DecryptState => {
     switch (socketInfo.status) {
         case 100: // ルーム入室
@@ -50,15 +57,24 @@ const onMessage = (state: DecryptState, socketInfo: SocketInfo): DecryptState =>
         case 350: // 立候補
         case 370: // 暗号作成
         case 500: // 解読
+            if (!isRoomData(socketInfo.obj)) {
+                return state;
+            }
             return dataSet(state, socketInfo.obj);
         case 101: // チャット
             return { ...state, chatList: socketInfo.obj };
         case 200: // 同一ユーザ入室
+            if (!isRoomData(socketInfo.obj)) {
+                return state;
+            }
             return {
                 ...dataSet(state, socketInfo.obj),
                 messageList: [...state.messageList, socketInfo.message],
             };
         case 300: // ゲーム開始
+            if (!isRoomData(socketInfo.obj)) {
+                return state;
+            }
             return dataSet({ ...state, startFlg: true }, socketInfo.obj);
         case 404: // 例外
             return { ...state, messageList: [...state.messageList, socketInfo.message] };

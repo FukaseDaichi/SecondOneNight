@@ -58,10 +58,26 @@ const dataSet = (state: FakeartistState, obj: any): FakeartistState => {
     return next;
 };
 
+// room(ゲームデータ)形状の obj を要求する status 群。
+// バックエンドはアクション拒否時、クライアント送信時の obj をそのまま
+// status=e.getStatus()(デフォルト200)で再配信する(FakeArtistController の catch)。
+// その obj は room 形状ではない(null や描画データ等)。旧実装ではここで例外になり
+// 状態は変わらなかったため、同じ「状態不変」を明示する。
+// (450 お絵描きは endFlg なしの通常ストロークでは room 形状にならないため対象外)
+const ROOM_DATA_STATUS = [100, 150, 200, 300, 500, 600];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isRoomData = (obj: any): boolean => !!obj && Array.isArray(obj.userList);
+
 const onMessage = (
     state: FakeartistState,
     socketInfo: SocketInfo
 ): FakeartistState => {
+    if (
+        ROOM_DATA_STATUS.includes(socketInfo.status) &&
+        !isRoomData(socketInfo.obj)
+    ) {
+        return state;
+    }
     switch (socketInfo.status) {
         case 100: {
             // ルーム入室
