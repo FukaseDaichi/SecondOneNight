@@ -17,6 +17,8 @@
     "@tsparticles/engine": "^3.9.1",
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.9.1",
+    "@tsparticles/updater-tilt": "^3.9.1",
+    "@tsparticles/updater-wobble": "^3.9.1",
     "gray-matter": "^4.0.2",
     "interactjs": "^1.10.27",
     "next": "^15.5.20",

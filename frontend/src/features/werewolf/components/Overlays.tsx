@@ -1,8 +1,6 @@
 import WerewolfStart from './WerewolfStart';
 import Modal from '../../../components/modal';
 import CutIn from './cutin';
-import CircleBtn from '../../../components/button/circlebtn';
-import Result from './result';
 import ModalRollCard from './modalrollcard';
 import RollSelectTurn from './rollselectturn';
 import Rule from './rule';
@@ -13,13 +11,8 @@ type Props = {
     startFlg: boolean;
     votingStartFlg: boolean;
     cutInNo: number;
-    winMessage: string | null;
     turn: number;
-    setResultFlg: (value: boolean) => void;
-    resultFlg: boolean;
     userList: Array<WerewolfUser>;
-    winteamList: Array<number>;
-    npcuser: WerewolfUser | null;
     modalRoll: WerewolfRoll | null;
     setModalRoll: (roll: WerewolfRoll | null) => void;
     modalOwnFlg: boolean;
@@ -30,19 +23,16 @@ type Props = {
     setModalOwnFlg: (value: boolean) => void;
     ruleFlg: boolean;
     setRuleFlg: (value: boolean) => void;
+    // ロビーではヘッダーゾーン側に遊び方ボタンを置くため非表示にする
+    showRuleButton: boolean;
 };
 
 export default function Overlays({
     startFlg,
     votingStartFlg,
     cutInNo,
-    winMessage,
     turn,
-    setResultFlg,
-    resultFlg,
     userList,
-    winteamList,
-    npcuser,
     modalRoll,
     setModalRoll,
     modalOwnFlg,
@@ -53,6 +43,7 @@ export default function Overlays({
     setModalOwnFlg,
     ruleFlg,
     setRuleFlg,
+    showRuleButton,
 }: Props) {
     return (
         <>
@@ -66,30 +57,6 @@ export default function Overlays({
             )}
             {/* カットイン */}
             {cutInNo > 0 && <CutIn rollNo={cutInNo} />}
-            {/* 勝利文字 */}
-            {winMessage != null && turn === 4 && (
-                <div className={styles.winmessage}>
-                    <div className={styles.message}>
-                        <span>{winMessage}</span>の勝利
-                    </div>
-                    <div className={styles.resultbtn}>
-                        <CircleBtn
-                            value="詳細"
-                            size={50}
-                            onClickFnc={() => setResultFlg(true)}
-                        />
-                    </div>
-                </div>
-            )}
-            {/* 結果 */}
-            {resultFlg && (
-                <Result
-                    endFnc={() => setResultFlg(false)}
-                    userList={userList}
-                    winteamList={winteamList}
-                    npcuser={npcuser}
-                />
-            )}
 
             {modalRoll && (
                 <ModalRollCard
@@ -116,10 +83,12 @@ export default function Overlays({
                     setModalOwnFlg={setModalOwnFlg}
                 />
             )}
-            <div className={styles.rulebtn}>
-                <button onClick={() => setRuleFlg(true)}>遊び方</button>
-                {ruleFlg && <Rule endFnc={() => setRuleFlg(false)} />}
-            </div>
+            {showRuleButton && (
+                <div className={styles.rulebtn}>
+                    <button onClick={() => setRuleFlg(true)}>遊び方</button>
+                </div>
+            )}
+            {ruleFlg && <Rule endFnc={() => setRuleFlg(false)} />}
         </>
     );
 }

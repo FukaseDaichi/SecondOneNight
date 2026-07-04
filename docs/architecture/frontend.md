@@ -19,7 +19,7 @@ frontend/src/
     types.ts             # ConnectionStatus / GameSocket 型
   lib/imageToIconDataUrl.ts # アップロード画像をアイコン用 JPEG Data URL に変換
   components/
-    common/              # 2ゲーム以上で使う共通 UI(RoomInForm / ConnectionStatus / Start / Countdown 等)
+    common/              # 2ゲーム以上で使う共通 UI(RoomInForm / ConnectionStatus / Start / Countdown / SakuraParticles 等)
     home/                # /secret 専用の部品(creategamebtn.tsx 等)
     lp/                  # トップページ(LP)専用の部品(useReveal / Reveal / LeafFall / RoomCreateCta / RoomJoinByCode)
     ...                  # レイアウト・チャット・モーダル等の汎用部品
@@ -108,6 +108,14 @@ useGameSocket(opts: {
 - 接続状態は `ConnectionStatus` コンポーネント(`components/common/`)が表示(`reconnecting` / `disconnected` のときのみバナー)
 
 通信契約(topic / destination / ペイロード)の詳細は [communication.md](communication.md)。ゲームごとの状態・status・frontend/backend 対応は [games/](games/) を参照。
+
+## SakuraParticles(共通の花びらパーティクル)
+
+`components/common/SakuraParticles.tsx`。tsparticles(`@tsparticles/react` + `@tsparticles/slim` + wobble / tilt updater)で花びらを舞わせる装飾コンポーネント。werewolf の待機画面(`ambient`)と勝利演出(`celebration`、`palette` で陣営色指定)で使用。
+
+- オプション生成は `sakuraParticlesOptions.ts` の純関数(粒子数・速度など。ユニットテスト対象は粒子数決定)
+- `next/dynamic` の `ssr: false` で読み込むこと(他ページのバンドルに影響させない)
+- `prefers-reduced-motion: reduce` 時は何も描画しない。スマホ幅(≤768px)では粒子数を減量
 
 ## テスト方針
 

@@ -1,5 +1,6 @@
 @use '../../variables' as *;
 @use '../../font' as *;
+@use '../../tokens' as *;
 
 @keyframes heartbeat {
     from {
@@ -31,46 +32,6 @@
         transform: scale(1);
         -webkit-animation-timing-function: ease-out;
         animation-timing-function: ease-out;
-    }
-}
-
-@keyframes focus-in-expand {
-    0% {
-        letter-spacing: -0.5em;
-        filter: blur(12px);
-        opacity: 0;
-    }
-    100% {
-        filter: blur(0);
-        opacity: 1;
-    }
-}
-
-.winmessage {
-    width: 90%;
-    text-align: center;
-    font-size: 5rem;
-    top: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    position: absolute;
-    color: rgb(17, 17, 17);
-    font-family: 'APJapanesefont', sans-seri;
-    z-index: 1;
-
-    > div.message {
-        animation: focus-in-expand 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)
-            both;
-        white-space: nowrap;
-        @include mq(md) {
-            font-size: 2.7rem;
-        }
-    }
-    div.resultbtn {
-        font-size: 1rem;
-        @include mq(md) {
-            font-size: 0.7rem;
-        }
     }
 }
 
@@ -227,42 +188,110 @@ div.userfirld {
     z-index: 1;
 }
 
-.result {
-    width: 100%;
-    max-width: 400px;
-    img {
-        max-width: 400px;
-        object-fit: cover;
-        @include mq(md) {
-            width: 350px;
-        }
+/* ヘッダーゾーン(ロビー): ルームコード + 遊び方 */
+div.lobbyHeader {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    /* プレイヤーカードのアバターがカード上に浮くため、下に余白を確保する */
+    margin-bottom: 72px;
+}
+
+button.ruleLink {
+    padding: 6px 20px;
+    border: 1px solid rgba(30, 59, 68, 0.3);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.7);
+    font-family: $serif;
+    font-size: 11.5px;
+    letter-spacing: 0.2em;
+    color: $ink;
+    cursor: pointer;
+    transition:
+        background 0.3s,
+        border-color 0.3s;
+
+    &:hover {
+        background: rgba(53, 168, 180, 0.1);
+        border-color: rgba(53, 168, 180, 0.7);
     }
 }
 
-div.btnarea {
-    margin-top: 50px;
+/* フッター操作帯(ロビー): 役職セット + 設定 + ボタン */
+div.lobbyFooter {
     position: relative;
-    text-align: right;
+    z-index: 1;
+    margin-top: 24px;
+    padding-bottom: 28px;
+}
+
+div.btnarea {
+    margin-top: 36px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
 
     button {
         user-select: none;
-        margin: 0 3px;
-        background-color: rgb(198, 197, 197);
-        color: rgb(255, 255, 255);
-        font-family: 'Patrick Hand SC', cursive;
-        font-size: 2rem;
-        transition: 0.1s;
-        border: rgb(91, 88, 88, 0.8) solid 1px;
-        outline: none;
-        border-radius: 30px;
-        box-shadow: 0px 0px 21px -6px rgba(0, 0, 0, 0.6);
+        min-height: 50px;
+        padding: 11px 30px;
+        font-family: $serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        border-radius: 999px;
+        cursor: pointer;
+        touch-action: manipulation;
+        transition:
+            transform 0.1s,
+            box-shadow 0.35s,
+            background 0.35s,
+            border-color 0.35s;
+
         &:active {
-            transform: scale(0.9);
-            background-color: rgb(255, 255, 255);
-            color: rgb(31, 30, 30);
+            transform: scale(0.93);
+        }
+        &:focus-visible {
+            outline: 2px solid $teal;
+            outline-offset: 2px;
         }
         @include mq(md) {
-            font-size: 1.6rem;
+            font-size: 1rem;
+            padding: 10px 24px;
+        }
+    }
+
+    /* GAME START / GAME RESET(主ボタン): 深青地 + ティールの灯 */
+    button.primary {
+        background: $ink;
+        color: #f2fbfb;
+        border: 1px solid $ink;
+        box-shadow: 0 10px 24px rgba(30, 59, 68, 0.24);
+
+        &:hover {
+            background: $ink-deep;
+            border-color: $teal;
+            box-shadow:
+                0 0 0 2px rgba(53, 168, 180, 0.55),
+                0 10px 24px rgba(30, 59, 68, 0.24);
+        }
+    }
+
+    /* 退出 / HOME: 控えめなアウトライン */
+    button.ghost {
+        background: rgba(251, 254, 254, 0.85);
+        color: $ink;
+        border: 1px solid rgba(30, 59, 68, 0.35);
+
+        &:hover {
+            border-color: $teal;
+            background: rgba(53, 168, 180, 0.08);
         }
     }
 }

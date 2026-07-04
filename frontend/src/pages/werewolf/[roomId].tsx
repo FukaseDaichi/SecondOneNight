@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
 import { SystemConst } from '../../const/next.config';
 import Layout from '../../components/layout';
 import Head from 'next/head';
@@ -19,7 +20,13 @@ import LimitTimeSelector from '../../features/werewolf/components/LimitTimeSelec
 import Overlays from '../../features/werewolf/components/Overlays';
 import UserField from '../../features/werewolf/components/UserField';
 import PhaseBackground from '../../features/werewolf/components/PhaseBackground';
+import VictoryOverlay from '../../features/werewolf/components/VictoryOverlay';
 import { useWerewolfRoom } from '../../features/werewolf/useWerewolfRoom';
+
+const SakuraParticles = dynamic(
+    () => import('../../components/common/SakuraParticles'),
+    { ssr: false }
+);
 
 export default function WerewolfRoom() {
     // roomId取得
@@ -47,7 +54,6 @@ export default function WerewolfRoom() {
         setModalRoll,
         setModalOwnFlg,
         setRuleFlg,
-        setResultFlg,
         playerActionName,
         playerNPCActionName,
     } = useWerewolfRoom(roomId as string | undefined);
@@ -72,11 +78,45 @@ export default function WerewolfRoom() {
         rollSelectTurnFlg,
         votingStartFlg,
         cutInNo,
-        resultFlg,
         ruleFlg,
         winMessage,
         roomCode,
     } = state;
+
+    // 待機中(ロビー): turn 0 と、終了後にロビーへ戻った turn 4
+    const lobby = entered && (turn === 0 || turn === 4);
+    // 勝利演出: 全画面演出 → 結果テーブル → ロビー復帰(VictoryOverlay 内で遷移)
+    const victoryVisible =
+        turn === 4 && winteamList.length > 0 && winMessage != null;
+
+    const actionButtons = (
+        <div className={styles.btnarea}>
+            {entered && (turn === 0 || turn === 4) ? (
+                <button
+                    className={styles.ghost}
+                    onClick={() => {
+                        if (window.confirm('部屋から退出しますか?')) {
+                            leaveRoom();
+                        }
+                    }}
+                >
+                    退出
+                </button>
+            ) : (
+                <button
+                    className={styles.ghost}
+                    onClick={() => {
+                        Router.push('/');
+                    }}
+                >
+                    HOME
+                </button>
+            )}
+            <button className={styles.primary} onClick={init}>
+                {turn > 0 && turn < 4 ? 'GAME RESET' : 'GAME START'}
+            </button>
+        </div>
+    );
 
     return (
         <Layout home={false}>
@@ -101,17 +141,22 @@ export default function WerewolfRoom() {
                 <title>セカンドワンナイト人狼</title>
             </Head>
             <PhaseBackground turn={turn} winteamList={winteamList} />
+            {/* 待機中は控えめな桜の花びら(勝利演出中は celebration 側に譲る) */}
+            {lobby && !victoryVisible && <SakuraParticles mode="ambient" />}
+            {victoryVisible && (
+                <VictoryOverlay
+                    winMessage={winMessage}
+                    winteamList={winteamList}
+                    userList={userList}
+                    npcuser={npcuser}
+                />
+            )}
             <Overlays
                 startFlg={startFlg}
                 votingStartFlg={votingStartFlg}
                 cutInNo={cutInNo}
-                winMessage={winMessage}
                 turn={turn}
-                setResultFlg={setResultFlg}
-                resultFlg={resultFlg}
                 userList={userList}
-                winteamList={winteamList}
-                npcuser={npcuser}
                 modalRoll={modalRoll}
                 setModalRoll={setModalRoll}
                 modalOwnFlg={modalOwnFlg}
@@ -122,6 +167,7 @@ export default function WerewolfRoom() {
                 setModalOwnFlg={setModalOwnFlg}
                 ruleFlg={ruleFlg}
                 setRuleFlg={setRuleFlg}
+                showRuleButton={!lobby}
             />
 
             {/* メッセージエリア */}
@@ -144,10 +190,22 @@ export default function WerewolfRoom() {
                 entered={entered}
                 onRoomIn={roomIn}
             />
-            {entered && (turn === 0 || turn === 4) && (
-                <InvitePanel roomId={roomId as string} roomCode={roomCode} />
+            {/* ヘッダーゾーン: ルームコードカード + 遊び方 */}
+            {lobby && (
+                <div className={styles.lobbyHeader}>
+                    <InvitePanel
+                        roomId={roomId as string}
+                        roomCode={roomCode}
+                    />
+                    <button
+                        className={styles.ruleLink}
+                        onClick={() => setRuleFlg(true)}
+                    >
+                        遊び方
+                    </button>
+                </div>
             )}
-            {/* ユーザ情報 */}
+            {/* プレイヤーグリッド */}
             {playerData && (
                 <UserField
                     playerData={playerData}
@@ -176,58 +234,31 @@ export default function WerewolfRoom() {
                 />
             )}
 
-            {/* 役職おすすめセット */}
-            {playerData && (turn === 0 || turn === 4) && (
-                <WerewolfSet
-                    userSize={userList.length}
-                    changeFnc={setRollSet}
-                />
+            {/* フッター操作帯: 役職セット + 設定 + GAME START / 退出 */}
+            {playerData && (turn === 0 || turn === 4) ? (
+                <div className={styles.lobbyFooter}>
+                    <WerewolfSet
+                        userSize={userList.length}
+                        changeFnc={setRollSet}
+                    />
+                    <RollCustomize
+                        staticRollList={staticRollList}
+                        counterMap={counterMap}
+                        counter={counter}
+                        setRoll={setRoll}
+                        setModalRoll={setModalRoll}
+                        setModalOwnFlg={setModalOwnFlg}
+                        turn={turn}
+                    />
+                    <LimitTimeSelector
+                        limitTime={limitTime}
+                        changeLimitTime={changeLimitTime}
+                    />
+                    {actionButtons}
+                </div>
+            ) : (
+                actionButtons
             )}
-
-            {/* 役職カスタマイズ */}
-            {playerData && (turn === 0 || turn === 4) && (
-                <RollCustomize
-                    staticRollList={staticRollList}
-                    counterMap={counterMap}
-                    counter={counter}
-                    setRoll={setRoll}
-                    setModalRoll={setModalRoll}
-                    setModalOwnFlg={setModalOwnFlg}
-                    turn={turn}
-                />
-            )}
-
-            {playerData && (turn === 0 || turn === 4) && (
-                <LimitTimeSelector
-                    limitTime={limitTime}
-                    changeLimitTime={changeLimitTime}
-                />
-            )}
-
-            <div className={styles.btnarea}>
-                {entered && (turn === 0 || turn === 4) ? (
-                    <button
-                        onClick={() => {
-                            if (window.confirm('部屋から退出しますか?')) {
-                                leaveRoom();
-                            }
-                        }}
-                    >
-                        退出
-                    </button>
-                ) : (
-                    <button
-                        onClick={() => {
-                            Router.push('/');
-                        }}
-                    >
-                        HOME
-                    </button>
-                )}
-                <button onClick={init}>
-                    {turn > 0 && turn < 4 ? 'GAME RESET' : 'GAME START'}
-                </button>
-            </div>
             {/* チャットのやり取り（機能OFF） */}
             {false && <ChatComponent chatList={chatList} chat={chat} />}
             <Socialbtn
