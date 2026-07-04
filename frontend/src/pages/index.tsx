@@ -206,10 +206,10 @@ export default function Homepage() {
                                 </span>
                             </h1>
                             <p className={styles.tagline}>
-                                ── 夜は、二度おとずれる。
+                                夜は、二人おとずれる。
                             </p>
                             <p className={styles.lead}>
-                                たった数分の、嘘と推理。配られた札から、なりたい役職を自分で選べる。ひとめぐりの議論と投票で、この村に潜む人狼を見つけ出せるか──。
+                                たった数分の、嘘と推理。配られた札から、なりたい役職を自分で選べる。議論と投票で、この村に潜む人狼を見つけ出せるか──。
                             </p>
                             <div className={styles.chips}>
                                 <span className={styles.chip}>4人〜</span>
@@ -409,7 +409,7 @@ export default function Homepage() {
                         </Reveal>
                         <Reveal delay="0.08s">
                             <h2 className={styles.ctaTitle}>
-                                さあ、二度目の夜へ。
+                                さあ、リアルタイム人狼へ。
                             </h2>
                         </Reveal>
                         <Reveal delay="0.16s">
