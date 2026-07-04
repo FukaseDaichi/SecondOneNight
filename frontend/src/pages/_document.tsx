@@ -30,6 +30,10 @@ class DocumentTsx extends Document {
                         rel="stylesheet"
                         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap"
                     />
+                    <link
+                        rel="stylesheet"
+                        href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"
+                    />
                     <meta name="mobile-web-app-capable" content="yes" />
                     <meta name="apple-mobile-web-app-capable" content="yes" />
                     <link

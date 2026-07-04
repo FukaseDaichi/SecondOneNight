@@ -137,10 +137,6 @@ export default function Homepage() {
                     property="og:description"
                     content="ブラウザで遊べる正体隠匿ゲーム「セカンドワンナイト人狼」。役職が選べて1プレイ約10分。"
                 />
-                <link
-                    href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"
-                    rel="stylesheet"
-                />
                 <title>セカンドワンナイト人狼</title>
             </Head>
             <style jsx global>
