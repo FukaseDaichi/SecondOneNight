@@ -11,6 +11,7 @@ import Background from '../components/home/background';
 const scrollEvent = () => {
     const margin = window.scrollY / 2;
     const mainImgDom = document.getElementById('main-img');
+    if (!mainImgDom) return;
     mainImgDom.style.marginTop = margin + 'px';
 };
 

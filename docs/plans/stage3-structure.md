@@ -1704,14 +1704,14 @@ Expected: 各ページ 150 行以下(hideout / decrypt / timebomb は 100 行以
 Run: `npm test && npm run lint && npm run build`
 Expected: テスト全 PASS(reducer 5ゲーム + useGameSocket 12件 + next.config 3件)、lint error 0、build 成功。
 
-- [ ] **Step 4: 全5ゲーム最終確認(本番 Heroku 接続、2タブ)**
+- [x] **Step 4: 全5ゲーム最終確認(本番 Heroku 接続、2タブ)**(ユーザー手動確認済み、問題なし)
 
-- [ ] hideout: 入室 → 開始 → 待機/突入 → 勝敗
-- [ ] decrypt: 入室 → チーム選択 → 開始 → 暗号作成 → 解読
-- [ ] timebomb: 入室 → 開始 → カード公開 → ラウンド演出 → 設定同期 → 勝敗
-- [ ] werewolf: 入室 → 役職カスタマイズ → 開始 → 役職選択 → アクション(カットイン/銃声)→ 投票 → 勝敗
-- [ ] fakeartist: 入室 → 開始 → 描画同期 → 議論 → 投票 → 結果、再入室で絵の復元
-- [ ] コンソールエラーが無いこと
+- [x] hideout: 入室 → 開始 → 待機/突入 → 勝敗
+- [x] decrypt: 入室 → チーム選択 → 開始 → 暗号作成 → 解読
+- [x] timebomb: 入室 → 開始 → カード公開 → ラウンド演出 → 設定同期 → 勝敗
+- [x] werewolf: 入室 → 役職カスタマイズ → 開始 → 役職選択 → アクション(カットイン/銃声)→ 投票 → 勝敗
+- [x] fakeartist: 入室 → 開始 → 描画同期 → 議論 → 投票 → 結果、再入室で絵の復元
+- [x] コンソールエラーが無いこと
 
 - [ ] **Step 5: 検証記録を記入して Commit**
 
@@ -1752,7 +1752,9 @@ git commit -m "Stage 3検証結果を記録"
 
 ### 手動検証(Step 4: 本番 Heroku・2タブ)
 
-⏳ **未実施**。エージェント環境では本番 WebSocket への 2 タブ同時接続を再現できないため、ユーザーによる手動実施が必要。
+✅ **実施済み**(ユーザーによる手動確認、2026-07-04)。全5ゲームの入室〜進行を確認し、問題なし。
+
+なお手動確認中に、ホーム画面(`src/pages/index.tsx`)のパララックス処理で `#main-img` 未存在時に `Cannot read properties of null (reading 'style')` が発生する既存バグ(Stage 3 リファクタとは無関係)を発見し、null ガードを追加して修正した。
 
 ### 意図的な挙動差分
 
