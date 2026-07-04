@@ -170,7 +170,7 @@ export default function WerewolfRoom() {
                             limitDone={limittimeDone}
                         />
                     )}
-                    議論中 <Loadingdod color={'rgb(17, 17, 17)'} />
+                    議論中 <Loadingdod color={'rgb(17, 17, 17)'} />　
                     <button className={styles.endbtn} onClick={limittimeDone}>
                         議論終了
                     </button>

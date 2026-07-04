@@ -97,6 +97,7 @@ const onMessage = (state: WerewolfState, socketInfo: SocketInfo): WerewolfState 
             const userIndex = Number(socketInfo.message);
             const actionUser: WerewolfUser = socketInfo.obj.userList[userIndex];
 
+            // 防御的ガード(現行は未定義indexで例外。挙動維持上ほぼ到達しないが安全側に倒す)
             if (!actionUser) {
                 return next;
             }
