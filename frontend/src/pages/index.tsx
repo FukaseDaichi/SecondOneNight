@@ -13,7 +13,7 @@ const TITLE_MAIN: string[][] = [
 ];
 
 const STATS = [
-    { label: 'PLAYERS', value: '3〜8', unit: '人', caption: 'プレイ人数' },
+    { label: 'PLAYERS', value: '4', unit: '人〜', caption: 'プレイ人数' },
     { label: 'TIME', value: '約10', unit: '分', caption: '1プレイの時間' },
     { label: 'SETUP', value: '約1', unit: '分', caption: '準備にかかる時間' },
     { label: 'AGE', value: '10', unit: '歳以上', caption: '対象年齢' },
@@ -23,26 +23,20 @@ const STEPS = [
     {
         num: '壱',
         color: '#35A8B4',
-        title: 'くばる',
-        text: '役職カードを1枚ずつ伏せて配り、余りの2枚は場の中央へ。自分の正体は、自分だけがそっと確認します。',
+        title: 'えらぶ',
+        text: 'スタートプレイヤーには2枚、ほかのプレイヤーには1枚の役職が配られます。2枚から好きなほうを選び、残りを次の人へ。最後まで選ばれなかった役職は、NPCのものになります。',
     },
     {
         num: '弐',
         color: '#17454F',
-        title: 'ねむる',
-        text: '全員が目を閉じる、一度きりの夜。人狼は仲間を確かめ、占い師や怪盗が、闇のなかでひそかに動きます。',
+        title: 'かたる',
+        text: '決めた時間だけ話し合う。「最初に配られた役職」「渡された役職」「選んだ役職」は、語ってもいい大切な手がかり。占い・暗殺・独裁など、一部の役職は議論中に能力を使えます。',
     },
     {
         num: '参',
         color: '#C4646E',
-        title: 'はなす',
-        text: '朝が来たら議論の時間。名乗り、かまをかけ、嘘を見抜く。記憶と証言が交錯する数分間です。',
-    },
-    {
-        num: '肆',
-        color: '#E88F94',
-        title: 'ゆびさす',
-        text: '「せーの」で一斉に投票。最多票の人物が追放され、勝敗が決まります。──その指は、正しかったのか。',
+        title: 'さす',
+        text: '「せーの」で一斉に投票。最多票のプレイヤーが処刑され、それぞれの勝利条件で勝敗が決まります。全員に1票ずつなら、全員が処刑に。',
     },
 ];
 
@@ -54,46 +48,58 @@ const CAMP_LABEL: Record<Camp, string> = {
 };
 
 const ROLES: {
-    glyph: string;
+    rollNo: number;
     camp: Camp;
     name: string;
     text: string;
 }[] = [
     {
-        glyph: '狼',
+        rollNo: 1,
         camp: 'wolf',
         name: '人狼',
-        text: '正体を隠し、夜をやり過ごす闇の住人。仲間と目配せを交わし、村人のふりをして議論を欺きます。',
+        text: '村に紛れこんだ狼。味方の人狼が誰かを知っている。人狼が誰も処刑されなければ、その勝ち。',
     },
     {
-        glyph: '占',
+        rollNo: 8,
         camp: 'village',
         name: '占い師',
-        text: '夜、誰かひとりの正体か、中央の2枚をのぞき見る。真実にもっとも近く、もっとも疑われる者。',
+        text: '議論中、指名した1人の正体を占える。ただし占えば、あなたは投票の権利を失う。',
     },
     {
-        glyph: '盗',
-        camp: 'village',
+        rollNo: 11,
+        camp: 'wolf',
         name: '怪盗',
-        text: '夜、誰かと役職をすり替えられる。朝を迎えたとき、あなたは本当に「あなた」のままですか。',
+        text: '議論中、NPCとこっそり役職を交換できる。交換したあとの役職が、そのまま勝利条件に。使わない選択も。',
     },
     {
-        glyph: '村',
+        rollNo: 6,
         camp: 'village',
-        name: '村人',
-        text: '能力は持たない。あるのは言葉と観察眼だけ。それでも議論の中心に立つのは、いつも村人です。',
+        name: '独裁者',
+        text: '議論中に役職を開示し、指名した1人をただちに処刑できる、村の切り札。',
     },
     {
-        glyph: '狂',
+        rollNo: 10,
+        camp: 'wolf',
+        name: '暗殺者',
+        text: '議論のさなか、狙った1人を殺害できる。殺された者は、議論にも投票にも加われない。',
+    },
+    {
+        rollNo: 3,
+        camp: 'village',
+        name: '村長',
+        text: '村の重鎮。あなたの投票は、2票分として数えられる。',
+    },
+    {
+        rollNo: 5,
         camp: 'wolf',
         name: '狂人',
-        text: '人狼の勝利を望む人間。占い師を騙り、場をかき乱す。嘘をつくほど輝く、愉快な裏切り者。',
+        text: '人間でありながら、人狼の勝利を願う裏切り者。人狼が処刑されなければ、あなたの勝ち。',
     },
     {
-        glyph: '吊',
+        rollNo: 4,
         camp: 'third',
-        name: '吊人',
-        text: '追放されたとき、ただひとり勝利する。疑われるために振る舞う、すべてを裏返す逆転の役職。',
+        name: 'てるてる',
+        text: '第三陣営。自分が処刑されたときだけ、たったひとり勝利する。',
     },
 ];
 
@@ -156,7 +162,8 @@ export default function Homepage() {
                     <div className={styles.heroInner}>
                         <div className={styles.heroCopy}>
                             <p className={styles.heroEyebrow}>
-                                SECOND ONE NIGHT WEREWOLF ─ 正体隠匿ボードゲーム
+                                SECOND ONE NIGHT WEREWOLF ─
+                                役職が選べる正体隠匿ゲーム
                             </p>
                             <h1 className={styles.heroTitle}>
                                 <span className={styles.titleSub}>
@@ -202,10 +209,10 @@ export default function Homepage() {
                                 ── 夜は、二度おとずれる。
                             </p>
                             <p className={styles.lead}>
-                                たった一晩の、嘘と推理。配られた正体はあなただけの秘密。時計の針がひとめぐりする前に、この村に潜む人狼を見つけ出せるか──。
+                                たった数分の、嘘と推理。配られた札から、なりたい役職を自分で選べる。ひとめぐりの議論と投票で、この村に潜む人狼を見つけ出せるか──。
                             </p>
                             <div className={styles.chips}>
-                                <span className={styles.chip}>3〜8人</span>
+                                <span className={styles.chip}>4人〜</span>
                                 <span className={styles.chip}>
                                     1プレイ 約10分
                                 </span>
@@ -270,7 +277,7 @@ export default function Homepage() {
                         </Reveal>
                         <Reveal delay="0.1s">
                             <p className={styles.aboutLead}>
-                                配られた役職カードは、自分だけがそっと確認。全員が目を閉じる「夜」を越えたら、短い議論と一度きりの投票で人狼をあばき出す──。ゲームマスター不要・脱落者なし、はじめての人ともすぐに遊べるワンナイト人狼です。
+                                配られた役職を、そのまま引き受けなくていい。2枚から好きな役職を選び、残りを隣へ渡していく──それがこのゲーム。役職選択で得た手がかりをもとに議論し、一度きりの投票で人狼をあばきます。ゲームマスター不要・脱落者なし。必ず加わるNPCが最後に余った役職を引き受けるので、はじめての人ともすぐに遊べます。
                             </p>
                         </Reveal>
                         <div className={styles.statGrid}>
@@ -307,7 +314,7 @@ export default function Homepage() {
                                 HOW TO PLAY
                             </p>
                             <h2 className={styles.sectionTitle}>
-                                遊び方は、たったの四手順。
+                                遊び方は、たったの三手順。
                             </h2>
                             <div className={styles.divider}></div>
                         </Reveal>
@@ -368,15 +375,18 @@ export default function Homepage() {
                                     <div
                                         className={`${styles.roleCard} ${CAMP_CLASS[role.camp]}`}
                                     >
+                                        <img
+                                            className={styles.roleImg}
+                                            src={`/images/werewolf/roll/${role.rollNo}.jpg`}
+                                            alt={`${role.name}の役職カード`}
+                                            loading="lazy"
+                                        />
                                         <div className={styles.roleHead}>
-                                            <span className={styles.roleGlyph}>
-                                                {role.glyph}
-                                            </span>
+                                            <h3>{role.name}</h3>
                                             <span className={styles.roleCamp}>
                                                 {CAMP_LABEL[role.camp]}
                                             </span>
                                         </div>
-                                        <h3>{role.name}</h3>
                                         <p>{role.text}</p>
                                     </div>
                                 </Reveal>
