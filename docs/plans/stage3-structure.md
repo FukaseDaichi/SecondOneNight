@@ -1,10 +1,13 @@
 # Stage 3: ゲームごとの構造リファクタ 実装計画
 
+> 状態: 進行中(2026-07-04 時点で Task 1〜12 実装済み。残りは Task 13 の完了検証)
+> Stage 3 完了時: 検証記録の要点と残課題を `docs/roadmap.md` に吸収し、本ファイルを削除する
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 5ゲームの受信ハンドラ(status switch)を純粋関数の reducer に変換してユニットテストを整備し、god component を feature 構造に分割して、各ページを薄い入り口(目安100行以下)にする。
 
-**Architecture:** ゲームごとに `src/features/<game>/`(reducer.ts + types.ts + use\<Game\>Room.ts + components/)を作る。reducer は「サーバ受信メッセージ + ローカルUIアクション」を受ける純粋関数。副作用(スクロール・タイマー・Audio・canvas・bodyクラス)はフック内の useEffect に分離。設計書: `docs/superpowers/specs/2026-07-04-stage3-structure-design.md`
+**Architecture:** ゲームごとに `src/features/<game>/`(reducer.ts + types.ts + use\<Game\>Room.ts + components/)を作る。reducer は「サーバ受信メッセージ + ローカルUIアクション」を受ける純粋関数。副作用(スクロール・タイマー・Audio・canvas・bodyクラス)はフック内の useEffect に分離。設計書: `docs/architecture/frontend.md(旧: Stage 3 設計書を吸収)`
 
 **Tech Stack:** React 19 useReducer / @stomp/stompjs(既存 useGameSocket)/ Vitest
 
@@ -1678,7 +1681,7 @@ git commit -m "fakeartistをfeature構造に分割しページを薄型化"
 ### Task 13: Stage 3 完了検証
 
 **Files:**
-- Modify: `docs/superpowers/plans/2026-07-04-stage3-structure.md`(検証記録)
+- Modify: `docs/plans/stage3-structure.md`(検証記録)
 
 **Interfaces:**
 - Consumes: Task 1〜12 の全成果物
@@ -1715,7 +1718,7 @@ Expected: テスト全 PASS(reducer 5ゲーム + useGameSocket 12件 + next.conf
 本ファイル末尾の「検証記録」に、結果と意図的な挙動差分の一覧を記入:
 
 ```bash
-git add ../docs/superpowers/plans/2026-07-04-stage3-structure.md
+git add ../docs/plans/stage3-structure.md
 git commit -m "Stage 3検証結果を記録"
 ```
 
