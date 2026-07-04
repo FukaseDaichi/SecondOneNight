@@ -84,7 +84,7 @@ useGameSocket(opts: {
 - `enabled` が false に戻ると `deactivate()` し status は `disconnected` に戻る
 - 接続状態は `ConnectionStatus` コンポーネント(`components/common/`)が表示(`reconnecting` / `disconnected` のときのみバナー)
 
-通信契約(topic / destination / ペイロード)の詳細は [communication.md](communication.md)。
+通信契約(topic / destination / ペイロード)の詳細は [communication.md](communication.md)。ゲームごとの状態・status・frontend/backend 対応は [games/](games/) を参照。
 
 ## テスト方針
 

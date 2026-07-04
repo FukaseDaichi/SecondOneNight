@@ -51,3 +51,15 @@ type SocketInfo = {
 - fakeartist: `/app/fakeartist-init` `/app/fakeartist-setpattern` `/app/fakeartist-drawing` `/app/fakeartist-voting`
 
 正確な一覧はバックエンドの `@MessageMapping`(`backend/.../controller/*Controller.java`)が正。フロント側の送信箇所は `frontend/src/features/*/use*Room.ts` に集約されている。
+
+## ゲーム別 status / state 対応
+
+この文書は通信契約の横断仕様を扱う。status ごとの意味、`obj` の中身、frontend reducer state への反映はゲーム別設計書を正とする。
+
+| ゲーム | 設計書 |
+|---|---|
+| timebomb | [games/timebomb.md](games/timebomb.md) |
+| werewolf | [games/werewolf.md](games/werewolf.md) |
+| hideout | [games/hideout.md](games/hideout.md) |
+| decrypt | [games/decrypt.md](games/decrypt.md) |
+| fakeartist | [games/fakeartist.md](games/fakeartist.md) |
