@@ -1,4 +1,4 @@
-@import '../../variables';
+@use '../../variables' as *;
 // ハイドアウトユーザ
 div.main {
     position: relative;

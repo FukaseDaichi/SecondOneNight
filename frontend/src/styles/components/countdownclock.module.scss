@@ -1,4 +1,4 @@
-@import '../variables';
+@use '../variables' as *;
 
 div.clock {
     width: calc(100% + 3rem);

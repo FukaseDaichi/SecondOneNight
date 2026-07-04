@@ -137,7 +137,7 @@ export default function Homepage() {
                 <meta name="twitter:site" content="@2d7rqU5gFQ6VpGo" />
                 <meta
                     property="og:image"
-                    content={SystemConst.Server.SITE_URL + '/images/ogp.png'}
+                    content={SystemConst.Server.SITE_URL + '/images/ogp.jpg'}
                 />
                 <meta
                     property="og:description"

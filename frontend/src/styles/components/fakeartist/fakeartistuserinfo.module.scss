@@ -1,5 +1,5 @@
-@import '../../variables';
-@import '../../font';
+@use '../../variables' as *;
+@use '../../font' as *;
 
 $animetiondelay: 2s;
 
