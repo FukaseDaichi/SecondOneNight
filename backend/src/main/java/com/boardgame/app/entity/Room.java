@@ -21,6 +21,8 @@ public abstract class Room implements Serializable {
 
 	protected String roomId;
 
+	protected String roomCode;
+
 	protected List<User> userList;
 
 	public void addUser(User user) throws ApplicationException {
