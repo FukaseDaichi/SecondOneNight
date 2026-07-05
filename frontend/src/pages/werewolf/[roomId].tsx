@@ -124,7 +124,7 @@ export default function WerewolfRoom() {
                 {`
                     body {
                         overflow-x: hidden;
-                        background-color: #effdfe;
+                        background-color: #2b2440;
                     }
                 `}
             </style>

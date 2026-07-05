@@ -17,15 +17,15 @@ const phaseClass = (turn: number, winteamList: number[]): string => {
         return styles.voting;
     }
     if (turn === 4 && winteamList.length > 0) {
-        if (winteamList[0] === 1) {
-            return styles.resultWolf;
-        }
-        if (winteamList[0] === 2) {
-            return styles.resultVillage;
-        }
-        return styles.resultThird;
+        const tint =
+            winteamList[0] === 1
+                ? styles.dawnWolf
+                : winteamList[0] === 2
+                  ? styles.dawnVillage
+                  : styles.dawnThird;
+        return `${styles.dawn} ${tint}`;
     }
-    return styles.day;
+    return styles.dusk;
 };
 
 export default function PhaseBackground({ turn, winteamList }: Props) {

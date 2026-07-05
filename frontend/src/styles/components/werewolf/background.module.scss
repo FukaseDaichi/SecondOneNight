@@ -5,12 +5,7 @@
     inset: 0;
     z-index: -1;
     overflow: hidden;
-    transition: background 1.6s $ease;
-}
-
-/* 朝の顔(待機・議論) */
-.day {
-    background: radial-gradient(120% 90% at 78% 20%, #f7eff2 0%, $mist 55%);
+    transition: background 1.8s $ease; /* 日没・夜明けのシーン間トランジション */
 }
 
 /* 夜の顔(役職選択) */
@@ -28,15 +23,42 @@
     background: radial-gradient(120% 90% at 50% 0%, #35323f 0%, $night 55%, $night-deep 100%);
 }
 
-/* 結果(勝利陣営色のティント) */
-.resultWolf {
-    background: radial-gradient(120% 90% at 50% 10%, #3a2229 0%, $night 60%, $night-deep 100%);
+/* 待機の顔(夕暮れ) */
+.dusk {
+    background: linear-gradient(180deg, $dusk-sky 0%, #4a3550 55%, $dusk-horizon 100%);
+    &::after {
+        /* 遠景の山並みシルエット+一番星は疑似要素で描く */
+        content: '';
+        position: absolute;
+        inset: auto 0 0 0;
+        height: 28vh;
+        background:
+            radial-gradient(2px 2px at 78% 18%, #fff8, transparent 60%),
+            radial-gradient(60% 100% at 30% 100%, #1d1830 60%, transparent 61%),
+            radial-gradient(50% 90% at 75% 100%, #241d38 55%, transparent 56%);
+    }
 }
-.resultVillage {
-    background: radial-gradient(120% 90% at 50% 10%, #16404b 0%, $night 60%, $night-deep 100%);
+/* 終了の顔(夜明け) */
+.dawn {
+    background: linear-gradient(180deg, $dawn-sky 0%, #7a6a80 55%, $dawn-horizon 100%);
 }
-.resultThird {
-    background: radial-gradient(120% 90% at 50% 10%, #33283a 0%, $night 60%, $night-deep 100%);
+/* 朝焼けに陣営色を「混ぜる」ティント(ベタ塗り resultXxx は廃止) */
+.dawnWolf::before,
+.dawnVillage::before,
+.dawnThird::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.22;
+}
+.dawnWolf::before {
+    background: linear-gradient(180deg, transparent 40%, $rose 100%);
+}
+.dawnVillage::before {
+    background: linear-gradient(180deg, transparent 40%, $teal 100%);
+}
+.dawnThird::before {
+    background: linear-gradient(180deg, transparent 40%, $gold 100%);
 }
 
 @keyframes bgBreathe {
