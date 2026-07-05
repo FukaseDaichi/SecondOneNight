@@ -25,7 +25,7 @@ frontend/src/
     ...                  # レイアウト・チャット・モーダル等の汎用部品
   pages/index.tsx        # トップページ = セカンドワンナイト人狼(werewolf)専用 LP
   pages/secret/index.tsx # 非公開のゲーム一覧(timebomb / hideout / fakeartist。noindex,nofollow)
-  pages/<game>/[roomId].tsx  # 薄い入り口(roomId 取得 → use<Game>Room 呼び出し → レイアウト組み立て)
+  pages/<game>/[roomId].tsx  # roomId 取得 → use<Game>Room 呼び出し → レイアウト組み立て
   styles/tokens.scss         # デザイントークンの source of truth
   styles/lp.module.scss      # トップページ(LP)専用スタイル(tokens を @use)
   styles/secret.module.scss  # /secret 専用スタイル
@@ -35,6 +35,7 @@ frontend/src/
 ```
 
 - ゲーム間で共有するのは `SocketInfo` 型と `useGameSocket` が中心。reducer・型はゲームごとに独立させ、ゲーム間の差異を無理に抽象化しない(共通化の要否は [../roadmap.md](../roadmap.md) で扱う)
+- `pages/<game>/[roomId].tsx` は全ゲームとも hook を呼ぶ入口だが、werewolf / fakeartist / timebomb などはページ側に画面組み立てがまだ多く残る。追加分割は [../roadmap.md](../roadmap.md) のページ分割タスクで扱う
 - デザイントークンは `styles/tokens.scss` を正とし、`styles/lp.module.scss` と werewolf の `background.module.scss` / `entry.module.scss` / `result.module.scss` / `room.module.scss` / `rule.module.scss` / `start.module.scss` / `userinfo.module.scss` / `victory.module.scss` が `@use` する
 
 ## ページ構成

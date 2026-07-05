@@ -35,7 +35,7 @@ flowchart LR
 
 ## リポジトリ運用
 
-この作業ツリーは future 側。main リポジトリは安定版・本番反映を担当し、future リポジトリは次期 UI、設計整理、モダナイズを進める。future で API / WebSocket 契約を変える場合も、main へ昇格する前に frontend / backend / docs の互換性を確認する。
+アクティブなリポジトリは main / future の2本に整理する。この作業ツリーは future 側。main リポジトリは安定版・本番反映を担当し、future リポジトリは次期 UI、設計整理、モダナイズを進める。future で API / WebSocket 契約を変える場合も、main へ昇格する前に frontend / backend / docs の互換性を確認する。
 
 ## 実行時の基本フロー
 

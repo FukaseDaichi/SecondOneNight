@@ -2,7 +2,7 @@
 
 この文書は**これから行う作業だけ**を置く。完了済みの変更履歴は git / PR に任せ、必要な現在仕様は `docs/architecture/` と `docs/design.md` に反映する。
 
-このリポジトリは future 側として扱う。安定運用・本番反映を担う main リポジトリとは分け、future では次期 UI、設計整理、モダナイズを進める。
+このリポジトリは future 側として扱う。アクティブなリポジトリは main / future の2本に整理し、安定運用・本番反映を担う main とは分けて、future では次期 UI、設計整理、モダナイズを進める。
 
 ## 現在のコード確認
 
@@ -12,7 +12,7 @@
 | TypeScript | `frontend/tsconfig.json` は `strict: false`、`allowJs: true` | strict 化、サーバペイロード型の具体化 |
 | ESLint | `no-explicit-any` は warning、`no-img-element` は off | `any` 削減後に rule を強化 |
 | STOMP | 全ゲームが `useGameSocket` 経由。topic / destination は既存互換 | 契約を変える場合のみ frontend / backend / docs を同時更新 |
-| werewolf | LP、6桁ルームコード、退出/キック、カスタムアイコン、待機/終了 UI、勝利演出、ゲーム中画面(役職選択/議論/投票/演出)の夜系デザイン統一まで実装済み | 特になし(横断の CSS・DOM 整理に合流) |
+| werewolf | LP、6桁ルームコード、退出/キック、カスタムアイコン、待機/終了 UI、勝利演出、ゲーム中画面(役職選択/議論/投票/演出)の夜系デザインが現在仕様 | ゲーム固有の追加タスクはなし。横断の CSS・DOM 整理に合流 |
 | decrypt | hook に制限時間系送信口があるが、画面からは使っていない。`DecryptRoom` は `LimitTimeInterface` 未実装 | 使うなら backend 対応、使わないなら hook から削除 |
 | CSS | `_app.tsx` が `bootstrap.min.css` を import。`row` / `d-flex` / `container` の使用が残る | Bootstrap 依存の削減 |
 | SCSS 配置 | ゲーム別 SCSS は `frontend/src/styles/components/<game>/` 配下 | feature 配下へ寄せるか判断 |
@@ -22,9 +22,11 @@
 
 ## 今後やること
 
-1. リポジトリ運用を main / future の2本に整理する
-   - main は安定版・本番反映用、future は次期開発用にする。
+1. リポジトリ運用を main / future の2本に固定する
+   - main は安定版・本番反映用、future は次期開発用として扱う。
    - 本番 Vercel / Heroku へ接続するのは main 側に限定する。
+   - 旧 backend 専用リポジトリは運用対象から外し、アクティブな開発対象を main / future の2本に絞る。
+   - GitHub / Vercel / Heroku の接続先が main を向き、future が本番へ直接デプロイされないことを確認する。
    - future の成果を取り込む時は、契約変更と検証結果を確認して main へ昇格する。
 
 2. App Router へ移行する
@@ -51,7 +53,7 @@
    - 実装する場合は `DecryptRoom` を `LimitTimeInterface` に対応させ、UI と reducer も追加する。
    - 実装しない場合は `useDecryptRoom` の未使用送信口を削除する。
 
-7. future から main へ昇格する検証を定義する
+7. future から main へ昇格する時の検証を実施する
    - frontend: `npm test && npm run lint && npm run build`
    - backend: Java 11 環境で `./mvnw test`
    - 手動確認: 本番相当バックエンド接続で、公開 werewolf と `/secret` の各ゲームのルーム作成・入室・主要進行を確認する。
