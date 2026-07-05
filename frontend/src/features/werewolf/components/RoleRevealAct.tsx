@@ -48,7 +48,7 @@ export default function RoleRevealAct({ userList, npcuser, onDone }: Props) {
                         >
                             <span className={styles.name}>{u.userName}</span>
                             <span className={styles.face}>
-                                {open ? u.roll?.name ?? 'なし' : '？'}
+                                {open ? (u.roll?.name ?? 'なし') : '？'}
                             </span>
                             {open && (
                                 <span className={styles.voteTo}>

@@ -49,8 +49,12 @@ export default function VerdictAct({
                     </span>
                 ))}
             </p>
-            <ul className={styles.winnerRow}>{winners.map((u) => card(u, true))}</ul>
-            <ul className={styles.loserRow}>{losers.map((u) => card(u, false))}</ul>
+            <ul className={styles.winnerRow}>
+                {winners.map((u) => card(u, true))}
+            </ul>
+            <ul className={styles.loserRow}>
+                {losers.map((u) => card(u, false))}
+            </ul>
             <p className={styles.hint}>タップで結果へ</p>
         </div>
     );
