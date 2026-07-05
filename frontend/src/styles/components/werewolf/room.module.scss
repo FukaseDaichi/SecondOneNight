@@ -211,7 +211,7 @@ div.userfirld {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    /* アイコンピッカーのポップオーバーを後続の操作帯(lobbyFooter 等)より前面に出す */
+    /* アイコンピッカーのポップオーバーを後続の操作帯(お品書き等)より前面に出す */
     z-index: 2;
 
     /* ゲーム中はフェーズ帯の直下に来るため、浮遊アバター分の余白を確保 */
@@ -220,17 +220,31 @@ div.userfirld {
     }
 }
 
-/* ヘッダーゾーン(ロビー): ルームコード + 遊び方 */
-div.lobbyHeader {
+/* ページ本文の中央カラム(Layout の 36rem 制約より広く取り、視覚的に中央へ寄せる) */
+div.room {
+    position: relative;
+    left: 50%;
+    width: min(960px, 94vw);
+    margin-left: calc(min(960px, 94vw) / -2);
+}
+
+/* ヘッダーゾーン(ロビー): ルームコード + 遊び方(スマホは縦積み) */
+div.lobbyHead {
     position: relative;
     z-index: 1;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 8px;
+    flex-wrap: wrap;
+    gap: 12px;
     margin-top: 6px;
     /* プレイヤーカードのアバターがカード上に浮くため、下に余白を確保する */
     margin-bottom: 72px;
+
+    @include mq(md) {
+        flex-direction: column;
+        gap: 8px;
+    }
 }
 
 button.ruleLink {
@@ -251,14 +265,6 @@ button.ruleLink {
         background: rgba(53, 168, 180, 0.1);
         border-color: rgba(53, 168, 180, 0.7);
     }
-}
-
-/* フッター操作帯(ロビー): 役職セット + 設定 + ボタン */
-div.lobbyFooter {
-    position: relative;
-    z-index: 1;
-    margin-top: 24px;
-    padding-bottom: 28px;
 }
 
 div.btnarea {
@@ -306,12 +312,18 @@ div.btnarea {
         border: 1px solid $ink;
         box-shadow: 0 10px 24px rgba(30, 59, 68, 0.24);
 
-        &:hover {
+        &:hover:enabled {
             background: $ink-deep;
             border-color: $teal;
             box-shadow:
                 0 0 0 2px rgba(53, 168, 180, 0.55),
                 0 10px 24px rgba(30, 59, 68, 0.24);
+        }
+
+        /* 開始条件未達(lobbyReadiness)のあいだは灯を落とす */
+        &:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
         }
     }
 
