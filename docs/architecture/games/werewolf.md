@@ -127,7 +127,9 @@ stateDiagram-v2
 | --- | --- | --- |
 | `startFlg` | `useWerewolfRoom.ts` | 一定時間後に `dismissStart` |
 | `turn` | `useWerewolfRoom.ts` | 役職選択・投票開始表示を制御 |
-| `votingStartFlg` | `useWerewolfRoom.ts` | 一定時間後に `setVotingStartFlg(false)` |
+| `turn` / `winteamList` | `PhaseBackground.tsx` / `background.module.scss` | turn に応じ全画面背景を切替。0=待機(day)、1=役職選択(night)、2=議論、3=投票(いずれも夜系バリエーション)、4=勝利陣営色。ゲーム中(1〜3)は夜系で連続する |
+| body クラス | `useBodyClass.ts` | 役職選択(`RollSelectTurn`)・役職モーダル(`ModalRollCard`)の body クラス付与(スクロールロック等)を共通フックに集約。旧 `document.*` 直接操作は廃止し、開閉は React state から導出する |
+| `votingStartFlg` | `useWerewolfRoom.ts` / `VotingStart.tsx` | 一定時間後に `setVotingStartFlg(false)`。表示は開始演出(`WerewolfStart`)と同構造の `VotingStart` オーバーレイ(rose ティント) |
 | `cutInNo` | `useWerewolfRoom.ts` | 役職アクション cut-in 表示 |
 | `snipeSeq` | `useWerewolfRoom.ts` | 独裁者・暗殺者アクション時の効果音 |
 | `chatList` | `useWerewolfRoom.ts` | チャット欄を下までスクロール |
@@ -145,6 +147,8 @@ stateDiagram-v2
 - `roomCode` は Room JSON から `WerewolfState.roomCode` に取り込み、待機中/終了後の `InvitePanel` で表示する。
 - status `650` のアイコン `obj` は従来のプリセット URL に加えて、アップロード画像から生成した JPEG Data URL も許容する。バックエンドは文字列として保存し、`userList` を broadcast する。
 - 勝利演出は reducer や backend の turn を変えず、overlay のローカル state で「勝利演出 → 結果表示 → 閉じる」を進める。閉じた後も turn `4` のロビー表示に戻る。
+- ゲーム中画面(役職選択・議論・投票)と演出(cut-in・投票開始)は `tokens.scss` ベースの夜系デザインで統一している。色・フォント・余白はトークンを使い、role カードの陣営色ボーダーのみ `TEAM_COLOR_LIST` から tsx の inline style で付ける。
+- `Countdown` は fakeartist と共用。werewolf の議論画面では `variant="night"` を渡して夜背景向けの配色にする。variant 未指定(fakeartist)では従来表示のまま。
 
 ## テスト・確認観点
 

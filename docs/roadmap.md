@@ -12,11 +12,11 @@
 | TypeScript | `frontend/tsconfig.json` は `strict: false`、`allowJs: true` | strict 化、サーバペイロード型の具体化 |
 | ESLint | `no-explicit-any` は warning、`no-img-element` は off | `any` 削減後に rule を強化 |
 | STOMP | 全ゲームが `useGameSocket` 経由。topic / destination は既存互換 | 契約を変える場合のみ frontend / backend / docs を同時更新 |
-| werewolf | LP、6桁ルームコード、退出/キック、カスタムアイコン、待機/終了 UI、勝利演出は実装済み | ゲーム中画面の UI 統一 |
+| werewolf | LP、6桁ルームコード、退出/キック、カスタムアイコン、待機/終了 UI、勝利演出、ゲーム中画面(役職選択/議論/投票/演出)の夜系デザイン統一まで実装済み | 特になし(横断の CSS・DOM 整理に合流) |
 | decrypt | hook に制限時間系送信口があるが、画面からは使っていない。`DecryptRoom` は `LimitTimeInterface` 未実装 | 使うなら backend 対応、使わないなら hook から削除 |
 | CSS | `_app.tsx` が `bootstrap.min.css` を import。`row` / `d-flex` / `container` の使用が残る | Bootstrap 依存の削減 |
 | SCSS 配置 | ゲーム別 SCSS は `frontend/src/styles/components/<game>/` 配下 | feature 配下へ寄せるか判断 |
-| DOM 直接操作 | modal、icon menu、fakeartist canvas、timebomb/werewolf/hideout の一部に `document.*` が残る | React state / ref へ段階移行 |
+| DOM 直接操作 | 共通 `modal.tsx`、icon menu、fakeartist canvas、timebomb/hideout の一部に `document.*` が残る(werewolf の役職選択・役職モーダルは `useBodyClass` + state 導出へ移行済み) | 残りを React state / ref へ段階移行。`useBodyClass` を共通 `modal.tsx` にも展開できるか判断 |
 | 重複・命名 | `countdownclock.tsx` と `clock/countdownClock.tsx` が併存。`sosialbtn` / `caroucel` など旧綴りが残る | 統合・リネーム |
 | ページ分割 | `index.tsx` 451行、`werewolf/[roomId].tsx` 273行、`fakeartist/[roomId].tsx` 252行 | 画面単位コンポーネントへ追加分割 |
 
@@ -47,15 +47,11 @@
    - `sosialbtn` / `caroucel` などの旧綴りを、import 追従込みで整理する。
    - ゲーム固有 SCSS を feature 側へ移すか判断する。
 
-6. werewolf のゲーム中画面をデザインシステムへ寄せる
-   - 待機/終了画面で入った `tokens.scss`、`PhaseBackground`、`SakuraParticles`、`VictoryOverlay` の方向性を、役職選択・議論・投票画面にも広げる。
-   - 通信契約と reducer の挙動は維持する。
-
-7. decrypt の制限時間機能を決める
+6. decrypt の制限時間機能を決める
    - 実装する場合は `DecryptRoom` を `LimitTimeInterface` に対応させ、UI と reducer も追加する。
    - 実装しない場合は `useDecryptRoom` の未使用送信口を削除する。
 
-8. future から main へ昇格する検証を定義する
+7. future から main へ昇格する検証を定義する
    - frontend: `npm test && npm run lint && npm run build`
    - backend: Java 11 環境で `./mvnw test`
    - 手動確認: 本番相当バックエンド接続で、公開 werewolf と `/secret` の各ゲームのルーム作成・入室・主要進行を確認する。
