@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from '../../../styles/components/werewolf/modalrollcard.module.scss';
-import { useEffect } from 'react';
 import { WerewolfRoll } from '../../../type/werewolf';
 import { SystemConst } from '../../../const/next.config';
+import { useBodyClass } from '../../../lib/useBodyClass';
 
 const getParam = (
     roll: WerewolfRoll,
@@ -25,11 +25,10 @@ type ModalRollCardProps = {
     hidden: () => void;
 };
 
-const view = () => {
-    document.querySelector('body').classList.add('modal_active_overflow_view');
-};
-
 export default function ModalRollCard(props: ModalRollCardProps) {
+    const [closing, setClosing] = useState(false);
+    useBodyClass('modal_active_overflow_view', true);
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const rollStyle = {
         border: `3px solid ${
@@ -46,25 +45,14 @@ export default function ModalRollCard(props: ModalRollCardProps) {
     };
 
     const unView = () => {
+        setClosing(true);
         props.hidden();
-        const dom = document.getElementById('modal-roll-area');
-        if (dom) {
-            dom.classList.add(styles['flip-out-hor-top']);
-        }
-        document
-            .querySelector('body')
-            .classList.remove('modal_active_overflow_view');
     };
-
-    useEffect(() => {
-        view();
-        return () =>
-            document.querySelector('body').classList.remove('modal_active');
-    }, []);
 
     return (
         <div className={styles.modal}>
             <div
+                className={closing ? styles['flip-out-hor-top'] : ''}
                 style={{
                     backgroundColor:
                         SystemConst.TEAM_COLOR_LIST[
@@ -78,7 +66,6 @@ export default function ModalRollCard(props: ModalRollCardProps) {
                         ],
                 }}
                 onClick={unView}
-                id="modal-roll-area"
             >
                 <div
                     className={styles.imgdiv}
