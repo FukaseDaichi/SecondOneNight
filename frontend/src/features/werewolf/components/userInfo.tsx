@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../../../styles/components/werewolf/userinfo.module.scss';
 import IconPicker from '../../../components/common/IconPicker';
 import { WerewolfUser } from '../../../type/werewolf';
@@ -50,10 +50,23 @@ export default function UserInfo(props: UserInfoProps) {
         borderColor: props.userColor,
         color: props.userColor,
     };
+    const lobby = props.turn === 0 || props.turn === 4;
+
+    // つつき演出(ローカルのみ・通信なし)。ロビー中に他人のアバターをタップすると揺れる
+    const [poked, setPoked] = useState(false);
+    useEffect(() => {
+        if (!poked) {
+            return;
+        }
+        const id = window.setTimeout(() => setPoked(false), 500);
+        return () => window.clearTimeout(id);
+    }, [poked]);
 
     return (
         <div
-            className={`${styles.main} ${props.ownFlg ? styles.own : ''}`}
+            className={`${styles.main} ${props.ownFlg ? styles.own : ''} ${
+                lobby ? styles.enter : ''
+            }`}
             style={divStyles}
         >
             {props.ownFlg && <span className={styles.you}>YOU</span>}
@@ -89,7 +102,12 @@ export default function UserInfo(props: UserInfoProps) {
                         mainIconSrc={getIconImgUrl(props.user.userIconUrl)}
                     />
                 ) : (
-                    <div className={styles.imgdiv}>
+                    <div
+                        className={`${styles.imgdiv} ${
+                            poked ? styles.poked : ''
+                        }`}
+                        onClick={lobby ? () => setPoked(true) : undefined}
+                    >
                         <img
                             src={getIconImgUrl(props.user.userIconUrl)}
                             alt="アイコン"
