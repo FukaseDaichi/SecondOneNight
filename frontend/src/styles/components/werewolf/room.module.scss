@@ -36,36 +36,50 @@
 }
 
 div.messagearea {
-    font-family: 'APJapanesefont', sans-seri;
+    font-family: $serif;
     position: absolute;
     width: 90%;
     text-align: center;
-    font-size: 3rem;
+    font-size: 2.6rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
     top: 50px;
     left: 50%;
     transform: translateX(-50%);
-    color: rgb(17, 17, 17);
+    color: #f2fbfb;
+    text-shadow: 0 2px 12px rgba(13, 34, 41, 0.6);
     @include mq(md) {
-        font-size: 2.4rem;
+        font-size: 2rem;
     }
 
     > button {
         &.endbtn {
             outline: none;
-            margin: auto 0;
-            height: 2rem;
-            font-size: 1.2rem;
-            border-radius: 54px;
-            background: #f3f3f3;
-            box-shadow:
-                7px 7px 14px #bebebe,
-                -7px -7px 14px #ffffff;
+            margin: auto 0 auto 12px;
+            padding: 4px 18px;
+            font-family: $serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.12em;
+            border-radius: 999px;
+            background: rgba(251, 254, 254, 0.12);
+            color: #f2fbfb;
+            border: 1px solid rgba(242, 251, 251, 0.45);
+            cursor: pointer;
+            transition:
+                background 0.3s,
+                border-color 0.3s,
+                transform 0.1s;
 
+            &:hover {
+                background: rgba(53, 168, 180, 0.25);
+                border-color: $teal-soft;
+            }
             &:active {
-                background: linear-gradient(145deg, #dbdbdb, #ffffff);
-                box-shadow:
-                    7px 7px 14px #bebebe,
-                    -7px -7px 14px #ffffff;
+                transform: scale(0.93);
+            }
+            &:focus-visible {
+                outline: 2px solid $teal;
+                outline-offset: 2px;
             }
         }
     }

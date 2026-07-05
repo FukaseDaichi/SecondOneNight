@@ -19,7 +19,7 @@ export default function TurnMessage({
         <>
             {turn === 1 && (
                 <div className={styles.messagearea}>
-                    選択中 <Loadingdod color={'rgb(17, 17, 17)'} />
+                    選択中 <Loadingdod color={'#f2fbfb'} />
                 </div>
             )}
             {turn === 2 && (
@@ -30,7 +30,7 @@ export default function TurnMessage({
                             limitDone={limittimeDone}
                         />
                     )}
-                    議論中 <Loadingdod color={'rgb(17, 17, 17)'} />　
+                    議論中 <Loadingdod color={'#f2fbfb'} />　
                     <button className={styles.endbtn} onClick={limittimeDone}>
                         議論終了
                     </button>
@@ -39,7 +39,7 @@ export default function TurnMessage({
 
             {turn === 3 && (
                 <div className={styles.messagearea}>
-                    投票中 <Loadingdod color={'rgb(17, 17, 17)'} />
+                    投票中 <Loadingdod color={'#f2fbfb'} />
                 </div>
             )}
         </>
