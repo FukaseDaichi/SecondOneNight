@@ -28,6 +28,7 @@ export default function TurnMessage({
                         <Countdown
                             timeLimit={limitTime}
                             limitDone={limittimeDone}
+                            variant="night"
                         />
                     )}
                     議論中 <Loadingdod color={'#f2fbfb'} />　

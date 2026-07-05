@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 type CountdownProps = {
     timeLimit: number; // 秒
     limitDone: () => void;
+    variant?: 'night';
 };
 
 export default function Countdown(props: CountdownProps) {
@@ -34,7 +35,12 @@ export default function Countdown(props: CountdownProps) {
     }, [limitTime]);
 
     return (
-        <div className={styles.clock} id="limit-time">
+        <div
+            className={`${styles.clock} ${
+                props.variant === 'night' ? styles.night : ''
+            }`}
+            id="limit-time"
+        >
             <div>
                 残り時間
                 <img src="/images/sunadokei_black.png" alt="砂時計" />
