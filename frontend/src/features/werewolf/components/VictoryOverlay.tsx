@@ -2,13 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import styles from '../../../styles/components/werewolf/victory.module.scss';
 import { WerewolfUser } from '../../../type/werewolf';
-import Result from './result';
-import {
-    nextVictoryPhase,
-    victoryPalette,
-    victoryTeam,
-    VictoryPhase,
-} from '../victory';
+import RoleRevealAct from './RoleRevealAct';
+import VerdictAct from './VerdictAct';
+import ResultScroll from './ResultScroll';
+import { nextVictoryAct, victoryPalette, VictoryAct } from '../victory';
 
 const SakuraParticles = dynamic(
     () => import('../../../components/common/SakuraParticles'),
@@ -22,8 +19,8 @@ type Props = {
     npcuser: WerewolfUser | null;
 };
 
-// 演出フェーズの長さ(タップでスキップ可)
-const CELEBRATION_MS = 3000;
+// 勝敗発表の自動送り(タップでも送れる)
+const VERDICT_MS = 4000;
 
 export default function VictoryOverlay({
     winMessage,
@@ -31,71 +28,71 @@ export default function VictoryOverlay({
     userList,
     npcuser,
 }: Props) {
-    const [phase, setPhase] = useState<VictoryPhase>('celebration');
-    const team = victoryTeam(winteamList);
-    const palette = useMemo(
-        () => victoryPalette(winteamList),
-        [winteamList]
-    );
+    const [act, setAct] = useState<VictoryAct>('reveal');
+    const palette = useMemo(() => victoryPalette(winteamList), [winteamList]);
 
     useEffect(() => {
-        if (phase !== 'celebration') {
-            return;
-        }
+        if (act !== 'verdict') return;
         const id = window.setTimeout(
-            () => setPhase((p) => nextVictoryPhase(p, 'timer')),
-            CELEBRATION_MS
+            () => setAct((a) => nextVictoryAct(a, 'advance')),
+            VERDICT_MS
         );
         return () => window.clearTimeout(id);
-    }, [phase]);
+    }, [act]);
 
-    if (phase === 'closed') {
+    if (act === 'closed') {
         return null;
     }
 
-    const chars = Array.from(`${winMessage}の勝利`);
-
     return (
         <div
-            className={`${styles.overlay} ${styles[team]}`}
+            className={`${styles.overlay} ${styles[`act-${act}`]}`}
             onClick={
-                phase === 'celebration'
-                    ? () => setPhase((p) => nextVictoryPhase(p, 'skip'))
+                act === 'verdict'
+                    ? () => setAct((a) => nextVictoryAct(a, 'advance'))
                     : undefined
             }
         >
-            <SakuraParticles mode="celebration" palette={palette} />
+            {act !== 'reveal' && (
+                <SakuraParticles mode="celebration" palette={palette} />
+            )}
             <div className={styles.inner}>
-                <p className={styles.message} role="status">
-                    {chars.map((ch, i) => (
-                        <span
-                            key={i}
-                            className={styles.char}
-                            style={{ animationDelay: `${0.2 + i * 0.14}s` }}
-                        >
-                            {ch}
-                        </span>
-                    ))}
-                </p>
-                {phase === 'celebration' && (
-                    <p className={styles.skipHint}>タップでスキップ</p>
+                {act === 'reveal' && (
+                    <RoleRevealAct
+                        userList={userList}
+                        npcuser={npcuser}
+                        onDone={() =>
+                            setAct((a) => nextVictoryAct(a, 'advance'))
+                        }
+                    />
                 )}
-                {phase === 'result' && (
-                    <div className={styles.resultCard}>
-                        <Result
-                            userList={userList}
-                            winteamList={winteamList}
-                            npcuser={npcuser}
-                        />
-                        <button
-                            className={styles.returnBtn}
-                            onClick={() =>
-                                setPhase((p) => nextVictoryPhase(p, 'return'))
-                            }
-                        >
-                            ロビーへ戻る
-                        </button>
-                    </div>
+                {act === 'verdict' && (
+                    <VerdictAct
+                        winMessage={winMessage}
+                        winteamList={winteamList}
+                        userList={userList}
+                    />
+                )}
+                {act === 'result' && (
+                    <ResultScroll
+                        userList={userList}
+                        winteamList={winteamList}
+                        npcuser={npcuser}
+                        onReturn={() =>
+                            setAct((a) => nextVictoryAct(a, 'return'))
+                        }
+                    />
+                )}
+                {act === 'reveal' && (
+                    <button
+                        className={styles.skipBtn}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setAct((a) => nextVictoryAct(a, 'skip'));
+                        }}
+                    >
+                        スキップ
+                    </button>
                 )}
             </div>
         </div>

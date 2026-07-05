@@ -3,8 +3,6 @@ import { WerewolfUser } from '../../type/werewolf';
 // 勝利演出のロジック(表示層のみ。reducer には触れない)
 
 export type VictoryTeam = 'wolf' | 'village' | 'third';
-export type VictoryPhase = 'celebration' | 'result' | 'closed';
-export type VictoryEvent = 'timer' | 'skip' | 'return';
 
 // 死亡者(処刑=最多得票 / 暗殺者・独裁者の銃撃)は backend が roll.punishmentFlg を立てる
 export const isDeadUser = (user: WerewolfUser): boolean =>
@@ -65,18 +63,4 @@ export const victoryPalette = (winteamList: number[]): string[] => {
         case 'third':
             return ['#D3A94F', '#ECD9A8', '#E3BE6E', '#B98A2F'];
     }
-};
-
-// 3段シーケンスの遷移: 演出(タップ/タイマーで結果へ)→ 結果 → ロビー復帰
-export const nextVictoryPhase = (
-    phase: VictoryPhase,
-    event: VictoryEvent
-): VictoryPhase => {
-    if (phase === 'celebration' && (event === 'timer' || event === 'skip')) {
-        return 'result';
-    }
-    if (phase === 'result' && event === 'return') {
-        return 'closed';
-    }
-    return phase;
 };

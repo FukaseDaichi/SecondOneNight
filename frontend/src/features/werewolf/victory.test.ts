@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import {
     isDeadUser,
     nextVictoryAct,
-    nextVictoryPhase,
     revealOrder,
     victoryPalette,
     victoryTeam,
@@ -44,26 +43,6 @@ describe('victoryPalette', () => {
     });
 });
 
-describe('nextVictoryPhase', () => {
-    it('演出フェーズはタイマーで結果フェーズへ', () => {
-        expect(nextVictoryPhase('celebration', 'timer')).toBe('result');
-    });
-    it('演出フェーズはタップスキップで結果フェーズへ', () => {
-        expect(nextVictoryPhase('celebration', 'skip')).toBe('result');
-    });
-    it('結果フェーズは「ロビーへ戻る」で閉じる', () => {
-        expect(nextVictoryPhase('result', 'return')).toBe('closed');
-    });
-    it('結果フェーズでタイマーが発火しても遷移しない', () => {
-        expect(nextVictoryPhase('result', 'timer')).toBe('result');
-    });
-    it('閉じた後はどのイベントでも閉じたまま', () => {
-        expect(nextVictoryPhase('closed', 'timer')).toBe('closed');
-        expect(nextVictoryPhase('closed', 'skip')).toBe('closed');
-        expect(nextVictoryPhase('closed', 'return')).toBe('closed');
-    });
-});
-
 describe('particleCount', () => {
     it('ambient は PC 15 / スマホ 10', () => {
         expect(particleCount('ambient', false)).toBe(15);
@@ -91,19 +70,15 @@ describe('isDeadUser', () => {
 
 describe('revealOrder', () => {
     it('人狼陣営(teamNo=1)を最後に回し、他は userNo 昇順', () => {
-        const order = revealOrder([
-            user(3, 1),
-            user(1, 2),
-            user(2, 3),
-        ]).map((u) => u.userNo);
+        const order = revealOrder([user(3, 1), user(1, 2), user(2, 3)]).map(
+            (u) => u.userNo
+        );
         expect(order).toEqual([1, 2, 3]);
     });
     it('人狼が複数でも全員最後尾に並ぶ', () => {
-        const order = revealOrder([
-            user(1, 1),
-            user(2, 2),
-            user(3, 1),
-        ]).map((u) => u.userNo);
+        const order = revealOrder([user(1, 1), user(2, 2), user(3, 1)]).map(
+            (u) => u.userNo
+        );
         expect(order).toEqual([2, 1, 3]);
     });
 });
