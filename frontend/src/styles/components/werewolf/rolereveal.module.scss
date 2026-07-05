@@ -1,0 +1,59 @@
+@use '../../tokens' as *;
+
+.act {
+    width: min(680px, 92vw);
+    margin: 0 auto;
+    text-align: center;
+    color: $paper;
+    font-family: $serif;
+}
+.heading {
+    letter-spacing: 0.4em;
+    color: $gold-soft;
+    margin-bottom: 16px;
+}
+.grid {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 10px;
+}
+.card {
+    position: relative;
+    background: rgba($night-deep, 0.85);
+    border: 1px solid rgba($gold-soft, 0.35);
+    border-radius: 10px;
+    padding: 10px 6px 12px;
+    transform: rotateY(180deg);
+    transition: transform 0.5s $ease;
+    display: grid;
+    gap: 4px;
+}
+.open {
+    transform: rotateY(0);
+}
+.dead {
+    filter: grayscale(0.9);
+}
+.name {
+    font-size: 0.75rem;
+    color: $teal-soft;
+}
+.face {
+    font-size: 1.05rem;
+}
+.voteTo {
+    font-size: 0.7rem;
+    color: $label;
+}
+.hint {
+    margin-top: 14px;
+    font-size: 0.75rem;
+    color: rgba($paper, 0.7);
+}
+@media (prefers-reduced-motion: reduce) {
+    .card {
+        transition: none;
+    }
+}
