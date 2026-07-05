@@ -21,6 +21,42 @@ div.clock {
         }
     }
 
+    /* フェーズ帯内のインライン表示(werewolf)。absolute 配置を解除しコンパクトに */
+    &.inline {
+        position: static;
+        transform: none;
+        z-index: auto;
+
+        div {
+            display: flex;
+            align-items: baseline;
+            width: auto;
+            font-size: 1.5rem;
+
+            img {
+                align-self: center;
+                height: 18px;
+                margin: 0 6px 0 8px;
+            }
+
+            span.min,
+            span.sec {
+                position: static;
+                left: auto;
+                margin-left: 2px;
+                font-size: 1.1rem;
+
+                > span {
+                    position: static;
+                    left: auto;
+                    font-size: 1.5rem;
+                    font-weight: 600;
+                    white-space: pre;
+                }
+            }
+        }
+    }
+
     div {
         position: relative;
         width: 300px;

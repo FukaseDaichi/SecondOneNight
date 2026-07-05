@@ -35,27 +35,44 @@
     }
 }
 
+/* フェーズヘッダー帯: フェーズ名+残り時間+議論終了。
+   通常フローで高さを持つためカードと重ならず、sticky で常に見える */
 div.messagearea {
     font-family: $serif;
-    position: absolute;
-    width: 90%;
-    text-align: center;
-    font-size: 2.6rem;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px 22px;
+    padding: 10px 16px 12px;
+    font-size: 1.9rem;
     font-weight: 600;
     letter-spacing: 0.14em;
-    top: 50px;
-    left: 50%;
-    transform: translateX(-50%);
     color: #f2fbfb;
     text-shadow: 0 2px 12px rgba(13, 34, 41, 0.6);
+    background: rgba(13, 34, 41, 0.72);
+    border-bottom: 1px solid rgba(242, 251, 251, 0.14);
+    box-shadow: 0 8px 24px rgba(13, 34, 41, 0.35);
     @include mq(md) {
-        font-size: 2rem;
+        font-size: 1.5rem;
+        gap: 2px 14px;
+    }
+
+    span.phasename {
+        display: inline-flex;
+        align-items: center;
     }
 
     > button {
         &.endbtn {
             outline: none;
-            margin: auto 0 auto 12px;
+            margin: 0;
             padding: 4px 18px;
             font-family: $serif;
             font-size: 1.1rem;
@@ -194,7 +211,13 @@ div.userfirld {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    z-index: 1;
+    /* アイコンピッカーのポップオーバーを後続の操作帯(lobbyFooter 等)より前面に出す */
+    z-index: 2;
+
+    /* ゲーム中はフェーズ帯の直下に来るため、浮遊アバター分の余白を確保 */
+    &.ingame {
+        margin-top: 48px;
+    }
 }
 
 /* ヘッダーゾーン(ロビー): ルームコード + 遊び方 */

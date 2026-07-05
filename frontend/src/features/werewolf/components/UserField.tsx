@@ -35,7 +35,11 @@ export default function UserField({
     removeUser,
 }: Props) {
     return (
-        <div className={styles.userfirld}>
+        <div
+            className={`${styles.userfirld} ${
+                turn > 0 && turn < 4 ? styles.ingame : ''
+            }`}
+        >
             {userList.map((user, index: number) => {
                 return (
                     <UserInfo

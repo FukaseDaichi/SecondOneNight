@@ -135,7 +135,8 @@ stateDiagram-v2
 | `chatList` | `useWerewolfRoom.ts` | チャット欄を下までスクロール |
 | own user 検出 | reducer / hook | `playerData` 更新、初期アイコン自動設定 |
 | 退出検知 | `useWerewolfRoom.ts` | 一度入室した後に自分が `userList` から消えたら `/` へ遷移 |
-| 写真アイコン | `userInfo.tsx` / `imageToIconDataUrl.ts` | 画像を 96px JPEG Data URL に変換し、40,000文字未満なら status `650` で送信 |
+| アイコン変更 | `IconPicker.tsx`(共通) / `imageToIconDataUrl.ts` | 自分のアバターをクリックするとポップオーバーを表示(プリセット6個+シャッフル+「写真をアップロード」常設)。プリセットは相対 URL、アップロードは画像を 96px JPEG Data URL に変換し、40,000文字未満なら status `650` で送信。外側クリック / Esc で閉じ、画面端でははみ出しを自動補正する |
+| フェーズ帯 | `TurnMessage.tsx` / `room.module.scss` | turn 1〜3 で「フェーズ名+残り時間+議論終了」を通常フローの sticky 帯として表示。帯自身が高さを持つためプレイヤーカードと重ならない。ゲーム中は `UserField` に `ingame` クラスを付け、浮遊アバター分の上マージンを確保する |
 | 勝利演出 | `VictoryOverlay.tsx` / `victory.ts` | 勝利演出、結果表示、ロビー復帰の3段階を表示層だけで制御 |
 
 ## 注意点
@@ -148,7 +149,9 @@ stateDiagram-v2
 - status `650` のアイコン `obj` は従来のプリセット URL に加えて、アップロード画像から生成した JPEG Data URL も許容する。バックエンドは文字列として保存し、`userList` を broadcast する。
 - 勝利演出は reducer や backend の turn を変えず、overlay のローカル state で「勝利演出 → 結果表示 → 閉じる」を進める。閉じた後も turn `4` のロビー表示に戻る。
 - ゲーム中画面(役職選択・議論・投票)と演出(cut-in・投票開始)は `tokens.scss` ベースの夜系デザインで統一している。色・フォント・余白はトークンを使い、role カードの陣営色ボーダーのみ `TEAM_COLOR_LIST` から tsx の inline style で付ける。
-- `Countdown` は fakeartist と共用。werewolf の議論画面では `variant="night"` を渡して夜背景向けの配色にする。variant 未指定(fakeartist)では従来表示のまま。
+- `Countdown` は fakeartist と共用。werewolf の議論画面では `variant="night"`(夜背景向け配色)と `inline`(absolute 配置を解除しフェーズ帯内に置く)を渡す。prop 未指定(fakeartist)では従来表示のまま。
+- プレイヤーカード(`userInfo.tsx`)は全員同一構造・同一高さ。名前ゾーンは2行分の固定高で、文字数に応じて4段階にフォントを縮小し(14文字以上は3行まで許容)最大20文字を全文表示する。自分のカードは上端バッジではなく「カード下辺中央の YOU タブ+ティール発光」で示す(上端はアバターと干渉するため)。
+- アイコン選択の `HideoutIcon`(円形展開UI)は werewolf では使わず `components/common/IconPicker.tsx` に置き換えた。hideout は引き続き `HideoutIcon` を使用。
 
 ## テスト・確認観点
 

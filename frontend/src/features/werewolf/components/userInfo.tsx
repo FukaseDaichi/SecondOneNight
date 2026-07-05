@@ -1,21 +1,33 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import styles from '../../../styles/components/werewolf/userinfo.module.scss';
-import { useState } from 'react';
-import HideoutIcon from '../../../components/common/HideoutIcon';
+import IconPicker from '../../../components/common/IconPicker';
 import { WerewolfUser } from '../../../type/werewolf';
 import RollCard from './rollcard';
 import CircleBtn from '../../../components/button/circlebtn';
 import WinText from '../../../components/text/wintext';
-import { imageToIconDataUrl } from '../../../lib/imageToIconDataUrl';
 
 // 人狼用
 
-const getIconImgUrl = (userNo: number, userIconUrl: string) => {
+const getIconImgUrl = (userIconUrl: string) => {
     if (userIconUrl) {
         return userIconUrl;
     }
     return '/images/icon/icon0.jpg';
+};
+
+/* 名前の文字数に応じて段階的に縮小する(最大20文字を2行で収める) */
+const getNameSizeClass = (userName: string) => {
+    const len = userName ? userName.length : 0;
+    if (len <= 4) {
+        return '';
+    }
+    if (len <= 8) {
+        return styles.namemid;
+    }
+    if (len <= 13) {
+        return styles.namesmall;
+    }
+    return styles.namexs;
 };
 
 type UserInfoProps = {
@@ -34,37 +46,16 @@ type UserInfoProps = {
 };
 
 export default function UserInfo(props: UserInfoProps) {
-    const [infoFlg, setInfoFlg] = useState(false);
-    const [iconError, setIconError] = useState<string | null>(null);
-
-    const handleIconFile = async (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        const file = e.target.files?.[0];
-        e.target.value = '';
-        if (!file) {
-            return;
-        }
-        try {
-            const dataUrl = await imageToIconDataUrl(file);
-            setIconError(null);
-            props.changeIcon(dataUrl);
-        } catch (err) {
-            setIconError(
-                err instanceof Error
-                    ? err.message
-                    : '画像を変換できませんでした'
-            );
-        }
-    };
-
     const divStyles = {
         borderColor: props.userColor,
         color: props.userColor,
     };
 
     return (
-        <div className={`${styles.main}`} style={divStyles}>
+        <div
+            className={`${styles.main} ${props.ownFlg ? styles.own : ''}`}
+            style={divStyles}
+        >
             {props.ownFlg && <span className={styles.you}>YOU</span>}
             {props.removeUser &&
                 !props.ownFlg &&
@@ -93,44 +84,27 @@ export default function UserInfo(props: UserInfoProps) {
                         </div>
                     )}
                 {props.ownFlg ? (
-                    <HideoutIcon
+                    <IconPicker
                         changeIcon={props.changeIcon}
-                        mainIconSrc={getIconImgUrl(
-                            props.user.userNo,
-                            props.user.userIconUrl
-                        )}
+                        mainIconSrc={getIconImgUrl(props.user.userIconUrl)}
                     />
                 ) : (
                     <div className={styles.imgdiv}>
                         <img
-                            src={getIconImgUrl(
-                                props.user.userNo,
-                                props.user.userIconUrl
-                            )}
+                            src={getIconImgUrl(props.user.userIconUrl)}
                             alt="アイコン"
                         />
                     </div>
                 )}
                 <div className={styles.content}>
-                    <div className={styles.text}>
+                    <div
+                        className={`${styles.text} ${getNameSizeClass(
+                            props.user.userName
+                        )}`}
+                    >
                         <label>{props.user.userName}</label>
                     </div>
                 </div>
-                {props.ownFlg && (
-                    <div className={styles.upload}>
-                        <label>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleIconFile}
-                            />
-                            写真をアイコンに
-                        </label>
-                        {iconError && (
-                            <p className={styles.uploaderror}>{iconError}</p>
-                        )}
-                    </div>
-                )}
             </div>
 
             {props.playerActionName && !props.ownFlg && (

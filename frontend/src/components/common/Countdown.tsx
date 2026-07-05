@@ -6,6 +6,7 @@ type CountdownProps = {
     timeLimit: number; // 秒
     limitDone: () => void;
     variant?: 'night';
+    inline?: boolean; // フェーズ帯などの通常フロー内に置く(werewolf 用)
 };
 
 export default function Countdown(props: CountdownProps) {
@@ -38,7 +39,7 @@ export default function Countdown(props: CountdownProps) {
         <div
             className={`${styles.clock} ${
                 props.variant === 'night' ? styles.night : ''
-            }`}
+            } ${props.inline ? styles.inline : ''}`}
             id="limit-time"
         >
             <div>

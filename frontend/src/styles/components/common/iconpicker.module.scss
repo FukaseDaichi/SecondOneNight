@@ -1,0 +1,148 @@
+@use '../../variables' as *;
+@use '../../tokens' as *;
+
+/* アバタークリックで開くアイコン選択ポップオーバー(プリセット+アップロード) */
+div.picker {
+    position: relative;
+    margin: 0 auto;
+    width: 80px;
+
+    @include mq(md) {
+        width: 65px;
+    }
+
+    button.avatar {
+        display: block;
+        width: 100%;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        overflow: hidden;
+        background: none;
+        cursor: pointer;
+        box-shadow: 5px 4px 10px 3px rgba(0, 0, 0, 0.6);
+
+        /* マウスクリック時のブラウザ標準リングは消し、キーボード操作時のみ表示 */
+        &:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $teal;
+            outline-offset: 2px;
+        }
+
+        img {
+            display: block;
+            width: 100%;
+        }
+    }
+
+    span.editbadge {
+        position: absolute;
+        right: -4px;
+        bottom: 0;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: $teal;
+        color: #f2fbfb;
+        font-size: 12px;
+        line-height: 22px;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(13, 34, 41, 0.4);
+        pointer-events: none;
+
+        @include mq(md) {
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            line-height: 18px;
+        }
+    }
+
+    div.popover {
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 50%;
+        transform: translateX(-50%);
+        width: 188px;
+        padding: 10px;
+        box-sizing: border-box;
+        background: $paper;
+        border: 1px solid rgba(53, 168, 180, 0.4);
+        border-radius: 14px;
+        box-shadow: 0 14px 30px rgba(23, 69, 79, 0.3);
+        z-index: 40;
+    }
+
+    div.grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+
+        button.choice {
+            padding: 0;
+            border: 2px solid transparent;
+            border-radius: 50%;
+            overflow: hidden;
+            background: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+
+            &:focus:not(:focus-visible) {
+                outline: none;
+            }
+
+            &:hover,
+            &:focus-visible {
+                border-color: $teal;
+            }
+
+            img {
+                display: block;
+                width: 100%;
+            }
+        }
+    }
+
+    div.actions {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+
+        button.shuffle,
+        label.uploadtile {
+            display: inline-block;
+            padding: 4px 10px;
+            border: 1px solid rgba(53, 168, 180, 0.5);
+            border-radius: 999px;
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            color: #2e6d77;
+            background: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+
+            &:hover {
+                background: rgba(53, 168, 180, 0.12);
+            }
+
+            &:focus:not(:focus-visible) {
+                outline: none;
+            }
+        }
+
+        input {
+            display: none;
+        }
+    }
+
+    p.error {
+        margin: 6px 0 0;
+        font-size: 9.5px;
+        text-align: center;
+        color: $rose-deep;
+    }
+}
