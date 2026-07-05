@@ -1,8 +1,8 @@
 # セカンドワンナイト人狼 デザインシステム
 
-トップ LP([frontend/src/pages/index.tsx](../frontend/src/pages/index.tsx) / [frontend/src/styles/lp.module.scss](../frontend/src/styles/lp.module.scss))で確立したデザイン言語を体系化した文書。
+トップ LP([frontend/src/pages/index.tsx](../frontend/src/pages/index.tsx) / [frontend/src/styles/lp.module.scss](../frontend/src/styles/lp.module.scss))と werewolf 画面で使っているデザイン言語を体系化した文書。
 
-**適用範囲**: トップ LP と、セカンドワンナイト人狼のゲーム画面(ルーム・進行画面)。今後 werewolf の画面を刷新する際は本書に従う。他4ゲーム(timebomb / hideout / decrypt / fakeartist)は対象外。
+**適用範囲**: トップ LP と、セカンドワンナイト人狼のゲーム画面(ルーム・進行画面)。他4ゲーム(timebomb / hideout / decrypt / fakeartist)は対象外。
 
 **運用**: LP・werewolf 画面のデザインを変えたら同じ PR で本書も更新する(docs/architecture/ と同じ運用)。
 
@@ -61,7 +61,7 @@ SCSS 変数名は lp.module.scss の定義に準拠。
 | ライト | `$mist` / `$paper` | `$ink` | `$text-sub` / `$label` | 情報を読ませる場面。ルール説明・ロビー・昼フェーズなど |
 | ダーク | `$night` / `$night-deep` | `#f2fbfb` | `rgba(242, 251, 251, 0.7)` | 世界観・緊張感を出す場面。役職紹介・夜フェーズなど |
 
-ゲーム画面では **昼(議論・投票)= ライト面、夜(役職行動)= ダーク面** を基本とする。
+werewolf の現行ゲーム画面では、ロビーはライト面、ゲーム中(turn 1〜3)は夜系ダーク面で連続させる。役職選択だけでなく、議論・投票も暗背景に置き、緊張感を保ったままフェーズ差分を色味で出す。
 
 - ダーク面のカード: `rgba(255, 255, 255, 0.045)` 背景 + `rgba(255, 255, 255, 0.1)` ボーダー
 - ダーク面のアクセントは soft 系(`$teal-soft` / `$rose-soft`)を使う。原色の `$teal` / `$rose` は暗背景では沈む
@@ -201,16 +201,17 @@ line-height: 本文・リード文は **1.9〜2.2**(ゆったり読ませる)。
 
 ## 7. ゲーム画面への適用ガイド
 
-werewolf のルーム・進行画面を刷新する際の指針。
+werewolf のルーム・進行画面で使う指針。
 
 ### 7.1 フェーズと面
 
 | フェーズ | 面 | 備考 |
 | --- | --- | --- |
 | ロビー・ルーム作成 | ライト面(`$mist` / `$paper`) | 情報が読みやすいことを優先 |
-| 昼(議論・投票) | ライト面 | |
-| 夜(役職行動) | ダーク面(`$night`) | グロー装飾で緊張感。アクセントは soft 系 |
-| 結果発表 | 勝利陣営の色をアクセントに | 人狼勝利=ローズ系、村人勝利=ティール系 |
+| 役職選択(turn 1) | ダーク面(`$night`) | グロー装飾で夜の始まりを作る |
+| 議論(turn 2) | 夜系ダーク面 | 役職選択より少し明るい藍。gold の灯で会話の温度を足す |
+| 投票(turn 3) | 夜系ダーク面 | deep 藍 + rose ティントで緊張感を強める |
+| 結果発表(turn 4) | 勝利陣営の色をアクセントに | 人狼勝利=ローズ系、村人勝利=ティール系、第三陣営=ローズソフト系 |
 
 ### 7.2 コンポーネント指針
 
@@ -220,6 +221,10 @@ werewolf のルーム・進行画面を刷新する際の指針。
 - **見出し**: フェーズ名・役職名は明朝(Shippori Mincho 600)+ 広い letter-spacing。eyebrow(小ラベル)+ タイトルの2段構成を踏襲
 - **エラー・警告**: ライト面 `$rose-deep`、ダーク面 `#ffd7da`
 - **モーション**: フェーズ切替は fadeUp 系のゆっくりした遷移。reduced-motion 対応を忘れない
+- **待機/招待**: `EntryCard` / `InvitePanel` は中央カードとコンパクトな招待カードで構成する。roomCode は待機中/終了後だけ目立たせる
+- **背景**: `PhaseBackground` で turn / 勝利陣営に応じて、ロビー(day)、役職選択(night)、議論(discussion)、投票(voting)、結果(勝利陣営色)を切り替える
+- **花びら演出**: `SakuraParticles` は待機中は `ambient`、勝利演出では `celebration` を使う。勝利時は `victoryPalette` で陣営色を指定する
+- **勝利演出**: `VictoryOverlay` で「勝利演出 → 結果表示 → ロビー復帰」を全画面 overlay として出す。結果表は overlay 内に収め、招待カードと重ねない
 
 ### 7.3 実装メモ
 

@@ -19,18 +19,24 @@ export default function TurnMessage({
         <>
             {turn === 1 && (
                 <div className={styles.messagearea}>
-                    選択中 <Loadingdod color={'rgb(17, 17, 17)'} />
+                    <span className={styles.phasename}>
+                        選択中 <Loadingdod color={'#f2fbfb'} />
+                    </span>
                 </div>
             )}
             {turn === 2 && (
                 <div className={styles.messagearea}>
+                    <span className={styles.phasename}>
+                        議論中 <Loadingdod color={'#f2fbfb'} />
+                    </span>
                     {limitTime > 0 && !votingStartFlg && (
                         <Countdown
                             timeLimit={limitTime}
                             limitDone={limittimeDone}
+                            variant="night"
+                            inline
                         />
                     )}
-                    議論中 <Loadingdod color={'rgb(17, 17, 17)'} />　
                     <button className={styles.endbtn} onClick={limittimeDone}>
                         議論終了
                     </button>
@@ -39,7 +45,9 @@ export default function TurnMessage({
 
             {turn === 3 && (
                 <div className={styles.messagearea}>
-                    投票中 <Loadingdod color={'rgb(17, 17, 17)'} />
+                    <span className={styles.phasename}>
+                        投票中 <Loadingdod color={'#f2fbfb'} />
+                    </span>
                 </div>
             )}
         </>

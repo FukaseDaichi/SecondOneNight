@@ -1,25 +1,34 @@
 @use '../../variables' as *;
+@use '../../tokens' as *;
 
 div.werewolfset {
-    margin: 20px 0 20px 0;
-    font-family: 'APJapanesefont', sans-seri;
+    margin: 20px 0;
+    font-family: $serif;
     text-align: center;
     line-height: 3;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+    color: $ink;
+    letter-spacing: 0.06em;
 
     &.none {
         display: none;
     }
+
     select {
-        background: #34495e;
-        flex: 1;
-        padding: 0.5rem 1rem 0.5rem 1rem;
-        color: #fff;
+        padding: 0.5rem 1rem;
+        font-family: $serif;
+        font-size: 1rem;
+        color: $ink;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(30, 59, 68, 0.3);
+        border-radius: 8px;
         cursor: pointer;
         outline: 0;
-        box-shadow: none;
-        border: 0 !important;
-        background: #696b6c;
-        background-image: none;
+        transition: border-color 0.3s;
+
+        &:hover,
+        &:focus-visible {
+            border-color: $teal;
+        }
     }
 }

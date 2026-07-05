@@ -1,15 +1,21 @@
+@use '../../tokens' as *;
+
 .rollcard {
-    font-family: 'APJapanesefont', sans-seri;
+    font-family: $serif;
     position: relative;
     overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 16px 11px 22px -3px rgba(0, 0, 0, 0.6);
+    border-radius: 12px;
+    box-shadow: 0 12px 24px rgba(13, 34, 41, 0.5);
     cursor: pointer;
-    transition: all 0.1s;
+    transition:
+        transform 0.15s $ease,
+        box-shadow 0.15s $ease;
 
     &:hover {
-        box-shadow: 22px 24px 22px -3px rgba(0, 0, 0, 0.6);
-        transform: scale(1.1, 1.1);
+        box-shadow:
+            0 0 0 2px rgba(211, 169, 79, 0.55),
+            0 16px 30px rgba(13, 34, 41, 0.55);
+        transform: scale(1.06);
     }
 
     div.imgdiv {
@@ -22,18 +28,17 @@
         span.rollname {
             position: absolute;
             display: block;
-            bottom: -3px;
+            bottom: 0;
             width: 100%;
             text-align: center;
-            margin: 0 auto;
-            color: white;
-            text-shadow:
-                1px 1px 0 #000,
-                -1px 1px 0 #000,
-                1px -1px 0 #000,
-                -1px -1px 0 #000;
-            letter-spacing: -0.2rem;
+            padding: 2px 0;
+            color: #f2fbfb;
+            letter-spacing: -0.1rem;
             white-space: nowrap;
+            background: linear-gradient(
+                transparent,
+                rgba(13, 34, 41, 0.85) 45%
+            );
         }
     }
 }

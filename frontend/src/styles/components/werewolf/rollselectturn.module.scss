@@ -1,4 +1,5 @@
 @use '../../variables' as *;
+@use '../../tokens' as *;
 
 @keyframes unfoldIn {
     0% {
@@ -11,25 +12,6 @@
         transform: scaleY(1) scaleX(1);
     }
 }
-
-@keyframes zoomIn {
-    0% {
-        transform: scale(0);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-@keyframes zoomOut {
-    0% {
-        transform: scale(1);
-    }
-    100% {
-        transform: scale(0);
-    }
-}
-
 @keyframes unfoldOut {
     0% {
         transform: scaleY(1) scaleX(1);
@@ -41,48 +23,51 @@
         transform: scaleY(0.005) scaleX(0);
     }
 }
-
-@keyframes attention {
+@keyframes zoomIn {
     0% {
-        box-shadow: 1px 0px 9px 7px rgba(255, 255, 255, 0.6);
-    }
-    50% {
-        box-shadow: 1px 0px 9px 0px rgba(255, 255, 255, 0.6);
+        transform: scale(0);
     }
     100% {
-        box-shadow: 1px 0px 9px 7px rgba(255, 255, 255, 0.6);
+        transform: scale(1);
     }
 }
-
+@keyframes attention {
+    0%,
+    100% {
+        box-shadow: 0 0 9px 7px rgba(211, 169, 79, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 9px 0 rgba(211, 169, 79, 0.5);
+    }
+}
 @keyframes puff-in-center {
     0% {
-        -webkit-transform: scale(2);
         transform: scale(2);
-        -webkit-filter: blur(4px);
-        filter: blur(4px);
         opacity: 0;
     }
     100% {
-        -webkit-transform: scale(1);
         transform: scale(1);
-        -webkit-filter: blur(0px);
-        filter: blur(0px);
         opacity: 1;
     }
 }
-
 @keyframes tilt-in-tl {
     0% {
-        -webkit-transform: rotateY(35deg) rotateX(20deg)
-            translate(-250px, -250px) skew(12deg, 15deg);
         transform: rotateY(35deg) rotateX(20deg) translate(-250px, -250px)
             skew(12deg, 15deg);
         opacity: 0;
     }
     100% {
-        -webkit-transform: rotateY(0) rotateX(0deg) translate(0, 0)
-            skew(0deg, 0deg);
         transform: rotateY(0) rotateX(0deg) translate(0, 0) skew(0deg, 0deg);
+        opacity: 1;
+    }
+}
+@keyframes listRise {
+    0% {
+        transform: translateY(24px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
         opacity: 1;
     }
 }
@@ -95,26 +80,18 @@ div.rollselect {
     top: 0;
     left: 0;
     z-index: 10;
-
     transform: scaleY(0.01) scaleX(0);
-    animation: unfoldIn 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    animation: unfoldIn 1s $ease forwards;
 
     &.out {
         transform: scale(1);
-        animation: unfoldOut 1s 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+        animation: unfoldOut 1s $ease forwards;
         animation-delay: 3s;
-        .modal_background {
-            .modal {
-                animation: zoomOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
-                    forwards;
-                animation-delay: 3s;
-            }
-        }
     }
 
     div.rollselect_background {
         display: table-cell;
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(13, 34, 41, 0.86);
         vertical-align: middle;
 
         div.turndata {
@@ -127,23 +104,23 @@ div.rollselect {
 
             > div {
                 margin: 0 3px 2px 3px;
+
                 div.imgdiv {
                     margin: 0 auto;
                     width: 75px;
                     border-radius: 50%;
                     overflow: hidden;
-                    transform: all 0.1s;
+                    border: 2px solid rgba(242, 251, 251, 0.2);
                     @include mq(md) {
                         width: 50px;
                     }
                     img {
+                        display: block;
                         width: 100%;
                         filter: grayscale(1);
-                        transform: all 0.1s;
                     }
-
                     &.turn {
-                        box-shadow: 1px 0px 9px 7px rgba(255, 255, 255, 0.6);
+                        border-color: $gold-soft;
                         animation: attention 3s infinite;
                         img {
                             filter: grayscale(0);
@@ -152,9 +129,10 @@ div.rollselect {
                 }
 
                 div.name {
-                    font-size: 1rem;
-                    color: white;
-                    font-family: 'APJapanesefont', sans-seri;
+                    font-family: $serif;
+                    font-size: 0.9rem;
+                    letter-spacing: 0.08em;
+                    color: rgba(242, 251, 251, 0.85);
                     white-space: nowrap;
                     text-align: center;
                     @include mq(md) {
@@ -163,20 +141,22 @@ div.rollselect {
                 }
             }
         }
+
         .area {
             text-align: center;
             width: 100%;
             position: relative;
             transform: scale(0);
-            animation: zoomIn 0.5s 0.8s cubic-bezier(0.165, 0.84, 0.44, 1)
-                forwards;
+            animation: zoomIn 0.5s 0.8s $ease forwards;
+
             > span {
                 display: block;
                 margin-top: 50px;
                 line-height: 4rem;
-                font-family: 'APJapanesefont', sans-seri;
-                font-size: 2rem;
-                color: white;
+                font-family: $serif;
+                font-size: 1.8rem;
+                letter-spacing: 0.2em;
+                color: rgba(242, 251, 251, 0.75);
 
                 &.none {
                     visibility: hidden;
@@ -187,28 +167,25 @@ div.rollselect {
                 display: flex;
                 justify-content: center;
                 height: 300px;
+
                 > div {
-                    margin: 0 10px 0 10px;
+                    margin: 0 10px;
                     width: 140px;
 
                     div.memo {
-                        font-size: 1.2rem;
-                        font-family: 'APJapanesefont', sans-seri;
                         position: absolute;
-                        color: white;
                         left: 16px;
                         top: 0;
-                        text-shadow:
-                            1px 1px 0 #000,
-                            -1px 1px 0 #000,
-                            1px -1px 0 #000,
-                            -1px -1px 0 #000;
+                        font-family: $serif;
+                        font-size: 1rem;
+                        letter-spacing: 0.12em;
+                        color: $gold-soft;
+                        text-shadow: 0 2px 8px rgba(13, 34, 41, 0.8);
                     }
                 }
 
                 > div:nth-child(2) {
-                    animation: tilt-in-tl 0.65s
-                        cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+                    animation: tilt-in-tl 0.65s $ease both;
                 }
             }
 
@@ -217,19 +194,21 @@ div.rollselect {
                 justify-content: center;
                 align-items: center;
                 flex-flow: column;
-                animation: puff-in-center 0.7s
-                    cubic-bezier(0.47, 0, 0.745, 0.715) both;
+                animation: puff-in-center 0.7s $ease both;
+
                 > div {
                     text-align: center;
-                    font-family: 'APJapanesefont', sans-seri;
-                    font-size: 3rem;
-                    color: white;
+                    font-family: $serif;
+                    font-size: 2rem;
+                    letter-spacing: 0.2em;
+                    color: #f2fbfb;
                 }
             }
         }
+
         div.rollinfo {
-            font-family: 'APJapanesefont', sans-seri;
-            color: white;
+            font-family: $serif;
+            color: #f2fbfb;
             width: 100%;
             position: absolute;
             text-align: center;
@@ -240,219 +219,72 @@ div.rollselect {
 
             > h2 {
                 display: none;
-
                 @include mq(md) {
-                    font-weight: 200;
                     display: block;
+                    font-weight: 400;
+                    font-size: 1rem;
+                    letter-spacing: 0.14em;
+                    color: rgba(242, 251, 251, 0.7);
                 }
             }
 
-            /* Checkmark style starts */
-            $checked-color: #34b93d;
-            $unchecked-color: rgb(255, 255, 255);
-            $checkbox-height: 30px;
-            $font-color: #efefef;
-            $duration: 0.1s;
-
-            @-moz-keyframes dothabottomcheck {
-                0% {
-                    height: 0;
-                }
-                100% {
-                    height: $checkbox-height * 0.5;
-                }
-            }
-
-            @-webkit-keyframes dothabottomcheck {
-                0% {
-                    height: 0;
-                }
-                100% {
-                    height: $checkbox-height * 0.5;
-                }
-            }
-
-            @keyframes dothabottomcheck {
-                0% {
-                    height: 0;
-                }
-                100% {
-                    height: $checkbox-height * 0.5;
-                }
-            }
-
-            @keyframes dothatopcheck {
-                0% {
-                    height: 0;
-                }
-                50% {
-                    height: 0;
-                }
-                100% {
-                    height: $checkbox-height * 1.2;
-                }
-            }
-            @-webkit-keyframes dothatopcheck {
-                0% {
-                    height: 0;
-                }
-                50% {
-                    height: 0;
-                }
-                100% {
-                    height: $checkbox-height * 1.2;
-                }
-            }
-            @-moz-keyframes dothatopcheck {
-                0% {
-                    height: 0;
-                }
-                50% {
-                    height: 0;
-                }
-                100% {
-                    height: $checkbox-height * 1.2;
-                }
-            }
-
-            input[type='checkbox'] {
-                display: none;
-            }
-            .check-box {
-                height: $checkbox-height;
-                width: $checkbox-height;
-                background-color: transparent;
-                border: $checkbox-height * 0.1 solid $unchecked-color;
-                border-radius: 5px;
-                position: relative;
-                display: inline-block;
-                -moz-box-sizing: border-box;
-                -webkit-box-sizing: border-box;
-                box-sizing: border-box;
-                -moz-transition: border-color ease $duration * 0.5;
-                -o-transition: border-color ease $duration * 0.5;
-                -webkit-transition: border-color ease $duration * 0.5;
-                transition: border-color ease $duration * 0.5;
-                cursor: pointer;
-
+            button.rolltoggle {
                 display: none;
                 @include mq(md) {
                     display: inline-block;
-                }
+                    padding: 6px 24px;
+                    font-family: $serif;
+                    font-size: 0.9rem;
+                    letter-spacing: 0.16em;
+                    border-radius: 999px;
+                    background: rgba(251, 254, 254, 0.1);
+                    color: #f2fbfb;
+                    border: 1px solid rgba(242, 251, 251, 0.4);
+                    cursor: pointer;
+                    transition:
+                        background 0.3s,
+                        border-color 0.3s;
 
-                &::before,
-                &::after {
-                    -moz-box-sizing: border-box;
-                    -webkit-box-sizing: border-box;
-                    box-sizing: border-box;
-                    position: absolute;
-                    height: 0;
-                    width: $checkbox-height * 0.2;
-                    background-color: $checked-color;
-                    display: inline-block;
-                    -moz-transform-origin: left top;
-                    -ms-transform-origin: left top;
-                    -o-transform-origin: left top;
-                    -webkit-transform-origin: left top;
-                    transform-origin: left top;
-                    border-radius: 5px;
-                    content: ' ';
-                    -webkit-transition: opacity ease 0.5;
-                    -moz-transition: opacity ease 0.5;
-                    transition: opacity ease 0.5;
-                }
-
-                &::before {
-                    top: $checkbox-height * 0.72;
-                    left: $checkbox-height * 0.41;
-                    transform: rotate(-135deg);
-                }
-
-                &::after {
-                    top: $checkbox-height * 0.37;
-                    left: $checkbox-height * 0.05;
-                    -moz-transform: rotate(-45deg);
-                    -ms-transform: rotate(-45deg);
-                    -o-transform: rotate(-45deg);
-                    -webkit-transform: rotate(-45deg);
-                    transform: rotate(-45deg);
+                    &.open,
+                    &:hover {
+                        background: rgba(53, 168, 180, 0.25);
+                        border-color: $teal-soft;
+                    }
                 }
             }
 
-            input[type='checkbox']:checked + .check-box,
-            .check-box.checked {
-                border-color: $checked-color;
-
-                &::after {
-                    height: $checkbox-height * 0.5;
-                    -moz-animation: dothabottomcheck $duration * 0.5 ease 0s
-                        forwards;
-                    -o-animation: dothabottomcheck $duration * 0.5 ease 0s
-                        forwards;
-                    -webkit-animation: dothabottomcheck $duration * 0.5 ease 0s
-                        forwards;
-                    animation: dothabottomcheck $duration * 0.5 ease 0s forwards;
-                }
-
-                &::before {
-                    height: $checkbox-height * 1.2;
-                    -moz-animation: dothatopcheck $duration ease 0s forwards;
-                    -o-animation: dothatopcheck $duration ease 0s forwards;
-                    -webkit-animation: dothatopcheck $duration ease 0s forwards;
-                    animation: dothatopcheck $duration ease 0s forwards;
-                }
-            }
-
-            // チェックボックス終わり
-
-            // 他の役職情報
+            /* 役職一覧: デスクトップは常時表示、モバイルはトグルで開閉 */
             > div {
                 max-width: 36rem;
-                padding: 1rem 1rem;
-                margin: 0 auto 0;
+                padding: 1rem;
+                margin: 0 auto;
                 z-index: 2;
-                top: -100px;
-                border-radius: 5px;
+                border-radius: 12px;
 
                 @include mq(md) {
+                    display: none;
                     width: 100%;
                     max-width: 100%;
-                    background-color: black;
-                    display: block;
                     position: absolute;
-                    display: none;
-                }
-            }
+                    background: rgba(13, 34, 41, 0.96);
 
-            @keyframes slide-in-blurred-bottom {
-                0% {
-                    -webkit-transform: translateY(1000px) scaleY(2.5)
-                        scaleX(0.2);
-                    transform: translateY(1000px) scaleY(2.5) scaleX(0.2);
-                    -webkit-transform-origin: 50% 100%;
-                    transform-origin: 50% 100%;
-                    -webkit-filter: blur(40px);
-                    filter: blur(40px);
-                    opacity: 0;
-                }
-                100% {
-                    -webkit-transform: translateY(0) scaleY(1) scaleX(1);
-                    transform: translateY(0) scaleY(1) scaleX(1);
-                    -webkit-transform-origin: 50% 50%;
-                    transform-origin: 50% 50%;
-                    -webkit-filter: blur(0);
-                    filter: blur(0);
-                    opacity: 1;
-                }
-            }
-
-            input[type='checkbox']:checked ~ div {
-                @include mq(md) {
-                    animation: slide-in-blurred-bottom 0.6s
-                        cubic-bezier(0.23, 1, 0.32, 1) both;
-                    display: block;
+                    &.listopen {
+                        display: block;
+                        animation: listRise 0.4s $ease both;
+                    }
                 }
             }
         }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    div.rollselect,
+    div.rollselect .area,
+    div.rollselect div.handrollarea > div:nth-child(2),
+    div.rollselect div.slectedroll,
+    div.rollselect div.rollinfo > div.listopen {
+        animation: none;
+        transform: none;
     }
 }

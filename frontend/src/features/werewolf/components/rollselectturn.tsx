@@ -1,30 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from '../../../styles/components/werewolf/rollselectturn.module.scss';
-import { useEffect, useState } from 'react';
 import AnimationBtn from '../../../components/button/animationbtn';
 import Loadingdod from '../../../components/text/loadingdod';
 import { WerewolfRoll, WerewolfUser } from '../../../type/werewolf';
 import RollCard from './rollcard';
 import RollInfo from './rollinfo';
+import { useBodyClass } from '../../../lib/useBodyClass';
 
 const getIconImgUrl = (userNo: number, userIconUrl: string) => {
     if (userIconUrl) {
         return userIconUrl;
     }
     return '/images/icon/icon' + String(userNo) + '.jpg';
-};
-
-const view = () => {
-    document.querySelector('body').classList.add('modal_active_second');
-};
-
-const unView = () => {
-    document.querySelector('body').classList.remove('modal_active_second');
-    if (document.getElementById('rollselectturn-area')) {
-        document
-            .getElementById('rollselectturn-area')
-            .classList.add(styles.out);
-    }
 };
 
 type RollSelectTurnProps = {
@@ -39,23 +26,18 @@ type RollSelectTurnProps = {
 };
 
 export default function RollSelectTurn(props: RollSelectTurnProps) {
-    const [turn, setTurn] = useState(0);
-
-    if (turn !== props.turn) {
-        setTurn(props.turn);
-    }
-
-    useEffect(() => {
-        if (turn === 1) {
-            view();
-        }
-        return unView;
-    }, [turn]);
+    // 役職一覧の開閉(モバイルのみ。旧チェックボックスハックの置き換え)
+    const [rollListOpen, setRollListOpen] = useState(false);
+    useBodyClass('modal_active_second', props.turn === 1);
 
     const handRollFlg: boolean =
         props.user.handRollList && props.user.handRollList.length > 0;
     return (
-        <div className={styles.rollselect} id="rollselectturn-area">
+        <div
+            className={`${styles.rollselect} ${
+                props.turn !== 1 ? styles.out : ''
+            }`}
+        >
             <div className={styles.rollselect_background}>
                 <div className={styles.turndata}>
                     {props.userList.map(
@@ -170,20 +152,19 @@ export default function RollSelectTurn(props: RollSelectTurnProps) {
                 </div>
                 <div className={styles.rollinfo}>
                     <h2>他の役職を確認する</h2>
-                    <input type="checkbox" id="rollviewcb" />
-                    <label
-                        htmlFor="rollviewcb"
-                        className={styles['check-box']}
-                    ></label>
+                    <button
+                        type="button"
+                        aria-expanded={rollListOpen}
+                        className={`${styles.rolltoggle} ${
+                            rollListOpen ? styles.open : ''
+                        }`}
+                        onClick={() => setRollListOpen(!rollListOpen)}
+                    >
+                        {rollListOpen ? '閉じる' : '役職一覧'}
+                    </button>
                     <div
-                        onClick={() => {
-                            const cbDom = document.getElementById(
-                                'rollviewcb'
-                            ) as HTMLInputElement;
-                            if (cbDom) {
-                                cbDom.checked = false;
-                            }
-                        }}
+                        className={rollListOpen ? styles.listopen : ''}
+                        onClick={() => setRollListOpen(false)}
                     >
                         <RollInfo
                             rollList={props.rollList}

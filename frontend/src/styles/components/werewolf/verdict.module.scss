@@ -1,0 +1,116 @@
+@use '../../tokens' as *;
+
+@keyframes verdictCharIn {
+    0% {
+        opacity: 0;
+        transform: translateY(0.55em);
+        filter: blur(8px);
+    }
+    55% {
+        opacity: 1;
+        filter: blur(0.5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+.act {
+    width: min(680px, 92vw);
+    margin: 0 auto;
+    text-align: center;
+    color: $paper;
+    font-family: $serif;
+}
+
+.banner {
+    margin: 0 0 20px;
+    font-weight: 600;
+    font-size: clamp(1.8rem, 8vw, 3.4rem);
+    letter-spacing: 0.12em;
+    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.45);
+}
+
+.char {
+    display: inline-block;
+    animation: verdictCharIn 0.9s $ease both;
+}
+
+.wolf .char {
+    color: $rose;
+}
+.village .char {
+    color: $teal-soft;
+}
+.third .char {
+    color: $gold-soft;
+}
+
+.winnerRow,
+.loserRow {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 10px;
+}
+.winnerRow {
+    margin: 0 0 14px;
+}
+.loserRow {
+    margin: 0;
+}
+
+.card {
+    position: relative;
+    background: rgba($night-deep, 0.85);
+    border: 1px solid rgba($gold-soft, 0.35);
+    border-radius: 10px;
+    padding: 10px 6px 12px;
+    display: grid;
+    gap: 4px;
+    transition:
+        transform 0.4s $ease,
+        opacity 0.4s $ease,
+        box-shadow 0.4s $ease;
+}
+
+.winner {
+    transform: translateY(-6px);
+    box-shadow: 0 0 24px rgba($gold-soft, 0.5);
+}
+
+.loser {
+    opacity: 0.55;
+    transform: scale(0.92);
+}
+
+.dead {
+    filter: grayscale(0.9);
+}
+
+.name {
+    font-size: 0.75rem;
+    color: $teal-soft;
+}
+.roll {
+    font-size: 1.05rem;
+}
+
+.hint {
+    margin-top: 14px;
+    font-size: 0.75rem;
+    color: rgba($paper, 0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .char {
+        animation-duration: 0.01s;
+        animation-delay: 0s !important;
+    }
+    .card {
+        transition: none;
+    }
+}

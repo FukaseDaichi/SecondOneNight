@@ -35,47 +35,73 @@
     }
 }
 
+/* フェーズヘッダー帯: フェーズ名+残り時間+議論終了。
+   通常フローで高さを持つためカードと重ならず、sticky で常に見える */
 div.messagearea {
-    font-family: 'APJapanesefont', sans-seri;
-    position: absolute;
-    width: 90%;
-    text-align: center;
-    font-size: 3rem;
-    top: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: rgb(17, 17, 17);
+    font-family: $serif;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px 22px;
+    padding: 10px 16px 12px;
+    font-size: 1.9rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: #f2fbfb;
+    text-shadow: 0 2px 12px rgba(13, 34, 41, 0.6);
+    background: rgba(13, 34, 41, 0.72);
+    border-bottom: 1px solid rgba(242, 251, 251, 0.14);
+    box-shadow: 0 8px 24px rgba(13, 34, 41, 0.35);
     @include mq(md) {
-        font-size: 2.4rem;
+        font-size: 1.5rem;
+        gap: 2px 14px;
+    }
+
+    span.phasename {
+        display: inline-flex;
+        align-items: center;
     }
 
     > button {
         &.endbtn {
             outline: none;
-            margin: auto 0;
-            height: 2rem;
-            font-size: 1.2rem;
-            border-radius: 54px;
-            background: #f3f3f3;
-            box-shadow:
-                7px 7px 14px #bebebe,
-                -7px -7px 14px #ffffff;
+            margin: 0;
+            padding: 4px 18px;
+            font-family: $serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.12em;
+            border-radius: 999px;
+            background: rgba(251, 254, 254, 0.12);
+            color: #f2fbfb;
+            border: 1px solid rgba(242, 251, 251, 0.45);
+            cursor: pointer;
+            transition:
+                background 0.3s,
+                border-color 0.3s,
+                transform 0.1s;
 
+            &:hover {
+                background: rgba(53, 168, 180, 0.25);
+                border-color: $teal-soft;
+            }
             &:active {
-                background: linear-gradient(145deg, #dbdbdb, #ffffff);
-                box-shadow:
-                    7px 7px 14px #bebebe,
-                    -7px -7px 14px #ffffff;
+                transform: scale(0.93);
+            }
+            &:focus-visible {
+                outline: 2px solid $teal;
+                outline-offset: 2px;
             }
         }
     }
 }
 
-.roundMessage {
-    color: white;
-    font-family: 'APJapanesefont', sans-seri;
-    font-size: 3rem;
-}
 .roominbtn {
     height: 180px;
     animation: first-view 1s forwards;
@@ -185,20 +211,40 @@ div.userfirld {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    z-index: 1;
+    /* アイコンピッカーのポップオーバーを後続の操作帯(お品書き等)より前面に出す */
+    z-index: 2;
+
+    /* ゲーム中はフェーズ帯の直下に来るため、浮遊アバター分の余白を確保 */
+    &.ingame {
+        margin-top: 48px;
+    }
 }
 
-/* ヘッダーゾーン(ロビー): ルームコード + 遊び方 */
-div.lobbyHeader {
+/* ページ本文の中央カラム(Layout の 36rem 制約より広く取り、視覚的に中央へ寄せる) */
+div.room {
+    position: relative;
+    left: 50%;
+    width: min(960px, 94vw);
+    margin-left: calc(min(960px, 94vw) / -2);
+}
+
+/* ヘッダーゾーン(ロビー): ルームコード + 遊び方(スマホは縦積み) */
+div.lobbyHead {
     position: relative;
     z-index: 1;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 8px;
+    flex-wrap: wrap;
+    gap: 12px;
     margin-top: 6px;
     /* プレイヤーカードのアバターがカード上に浮くため、下に余白を確保する */
     margin-bottom: 72px;
+
+    @include mq(md) {
+        flex-direction: column;
+        gap: 8px;
+    }
 }
 
 button.ruleLink {
@@ -219,14 +265,6 @@ button.ruleLink {
         background: rgba(53, 168, 180, 0.1);
         border-color: rgba(53, 168, 180, 0.7);
     }
-}
-
-/* フッター操作帯(ロビー): 役職セット + 設定 + ボタン */
-div.lobbyFooter {
-    position: relative;
-    z-index: 1;
-    margin-top: 24px;
-    padding-bottom: 28px;
 }
 
 div.btnarea {
@@ -274,12 +312,18 @@ div.btnarea {
         border: 1px solid $ink;
         box-shadow: 0 10px 24px rgba(30, 59, 68, 0.24);
 
-        &:hover {
+        &:hover:enabled {
             background: $ink-deep;
             border-color: $teal;
             box-shadow:
                 0 0 0 2px rgba(53, 168, 180, 0.55),
                 0 10px 24px rgba(30, 59, 68, 0.24);
+        }
+
+        /* 開始条件未達(lobbyReadiness)のあいだは灯を落とす */
+        &:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
         }
     }
 

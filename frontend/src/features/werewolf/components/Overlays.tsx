@@ -1,5 +1,5 @@
 import WerewolfStart from './WerewolfStart';
-import Modal from '../../../components/modal';
+import VotingStart from './VotingStart';
 import CutIn from './cutin';
 import ModalRollCard from './modalrollcard';
 import RollSelectTurn from './rollselectturn';
@@ -50,11 +50,7 @@ export default function Overlays({
             {/* 開始合図 */}
             {startFlg && <WerewolfStart />}
             {/* 投票時間 */}
-            {votingStartFlg && (
-                <Modal type="one">
-                    <div className={styles.roundMessage}>投票時間</div>
-                </Modal>
-            )}
+            {votingStartFlg && <VotingStart />}
             {/* カットイン */}
             {cutInNo > 0 && <CutIn rollNo={cutInNo} />}
 

@@ -1,6 +1,6 @@
 import type { ISourceOptions } from '@tsparticles/engine';
 
-export type SakuraMode = 'ambient' | 'celebration';
+export type SakuraMode = 'ambient' | 'celebration' | 'dusk';
 
 // LP の LeafFall と同系のローズ/ティール(待機中のデフォルト)
 export const DEFAULT_PALETTE = [
@@ -9,6 +9,9 @@ export const DEFAULT_PALETTE = [
     '#F3B9BC',
     '#8FD0D6',
 ];
+
+// 夕暮れロビー用: 茜・金を混ぜた palette(挙動は ambient と同じ)
+export const DUSK_PALETTE = ['#E9A7BE', '#D3A94F', '#C96F4A', '#F3B9BC'];
 
 // 花びら形 SVG(3種)。fill は palette の色で焼き込む
 const PETAL_PATHS = [
@@ -41,7 +44,12 @@ export const buildSakuraOptions = (
     palette: string[],
     isMobile: boolean
 ): ISourceOptions => {
-    const colors = palette.length > 0 ? palette : DEFAULT_PALETTE;
+    const colors =
+        palette.length > 0
+            ? palette
+            : mode === 'dusk'
+              ? DUSK_PALETTE
+              : DEFAULT_PALETTE;
     const images = colors.flatMap((color) =>
         PETAL_PATHS.map((path) => ({
             src: petalDataUrl(path, color),

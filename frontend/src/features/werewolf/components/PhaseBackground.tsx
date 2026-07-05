@@ -10,16 +10,22 @@ const phaseClass = (turn: number, winteamList: number[]): string => {
     if (turn === 1) {
         return styles.night;
     }
-    if (turn === 4 && winteamList.length > 0) {
-        if (winteamList[0] === 1) {
-            return styles.resultWolf;
-        }
-        if (winteamList[0] === 2) {
-            return styles.resultVillage;
-        }
-        return styles.resultThird;
+    if (turn === 2) {
+        return styles.discussion;
     }
-    return styles.day;
+    if (turn === 3) {
+        return styles.voting;
+    }
+    if (turn === 4 && winteamList.length > 0) {
+        const tint =
+            winteamList[0] === 1
+                ? styles.dawnWolf
+                : winteamList[0] === 2
+                  ? styles.dawnVillage
+                  : styles.dawnThird;
+        return `${styles.dawn} ${tint}`;
+    }
+    return styles.dusk;
 };
 
 export default function PhaseBackground({ turn, winteamList }: Props) {

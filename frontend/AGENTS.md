@@ -43,7 +43,7 @@ src/
   components/common/   # 2ゲーム以上で使う共通 UI(RoomInForm、ConnectionStatus 等)
   components/          # レイアウト・汎用部品
   pages/<game>/[roomId].tsx  # 薄い入り口のみ(フック呼び出し + レイアウト組み立て)
-  styles/components/<game>/  # scss(Stage 4 まで移動しない)
+  styles/components/<game>/  # scss(future の CSS 整理まで移動しない)
   const/next.config.ts # 接続先などのシステム定数
 ```
 
@@ -57,4 +57,4 @@ src/
 - ファイル移動は `git mv`(履歴維持)
 - Prettier 設定(tabWidth:4 / singleQuote / semi / trailingComma:es5)は変更しない
 - テストは reducer と通信層が対象。UI コンポーネントの網羅テストは書かない
-- サーバペイロードの詳細型は Stage 4(strict 化)まで `any` 許容。state のトップレベル形状は types.ts に明示する
+- サーバペイロードの詳細型は future の strict 化まで `any` 許容。state のトップレベル形状は types.ts に明示する

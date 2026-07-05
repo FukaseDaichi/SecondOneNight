@@ -51,6 +51,43 @@ $animetiondelay: 2s;
     }
 }
 
+/* ロビー入室時の登場演出(暖簾をくぐるイメージ) */
+.enter {
+    animation: norenIn 0.6s $ease both;
+}
+@keyframes norenIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+        clip-path: inset(0 0 100% 0);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+/* つつき演出(ロビー中に他人のアバターをタップ) */
+.poked {
+    animation: pokeWobble 0.5s $ease;
+}
+@keyframes pokeWobble {
+    25% {
+        transform: rotate(-6deg) scale(1.06);
+    }
+    60% {
+        transform: rotate(5deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .enter,
+    .poked {
+        animation: none;
+    }
+}
+
 // 人狼ユーザ
 div.main {
     position: relative;
@@ -69,11 +106,20 @@ div.main {
         margin: 1em 0.15em 1.5em 0.15em;
     }
 
+    /* 自分のカード: ほのかなティール発光で識別(上端はアバターと干渉するため下辺タブ) */
+    &.own {
+        box-shadow:
+            0 14px 30px rgba(23, 69, 79, 0.22),
+            0 0 0 3px rgba(53, 168, 180, 0.22),
+            0 0 18px rgba(53, 168, 180, 0.4);
+    }
+
     span.you {
         position: absolute;
-        top: -12px;
-        left: 8px;
-        padding: 3px 10px;
+        bottom: -11px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 3px 12px;
         font-family: $serif;
         font-size: 10px;
         font-weight: 700;
@@ -84,9 +130,8 @@ div.main {
         z-index: 5;
 
         @include mq(md) {
-            left: 4px;
             font-size: 9px;
-            padding: 2px 8px;
+            padding: 2px 9px;
         }
     }
 
@@ -108,35 +153,6 @@ div.main {
             background: #c4646e;
             color: #fbfefe;
         }
-    }
-
-    .upload {
-        margin-top: 4px;
-        text-align: center;
-
-        label {
-            display: inline-block;
-            padding: 3px 10px;
-            border: 1px solid rgba(53, 168, 180, 0.5);
-            border-radius: 999px;
-            font-size: 9.5px;
-            letter-spacing: 0.08em;
-            color: #2e6d77;
-            background: rgba(255, 255, 255, 0.8);
-            cursor: pointer;
-
-            &:hover {
-                background: rgba(53, 168, 180, 0.12);
-            }
-        }
-        input {
-            display: none;
-        }
-    }
-    .uploaderror {
-        margin: 4px 0 0;
-        font-size: 9.5px;
-        color: #c4646e;
     }
 
     div.icon {
@@ -180,19 +196,56 @@ div.main {
             text-align: center;
             margin-top: 3px;
             div.text {
-                /* 名前はカードの見出し(従来比約2倍・Shippori Mincho) */
+                /* 名前はカードの見出し。ゾーンは2行分の固定高で全カード共通 */
                 font-family: $serif;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 58px;
+
+                @include mq(md) {
+                    min-height: 46px;
+                }
+
                 label {
                     font-size: 2.1rem;
                     font-weight: 600;
                     letter-spacing: 0.04em;
+                    line-height: 1.25;
                     color: $ink;
                     text-shadow: 0 0 1px #ffffff;
+                    text-align: center;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                    word-break: break-all;
                     @include mq(md) {
                         font-size: 1.6rem;
+                    }
+                }
+
+                /* 文字数に応じた段階縮小(userInfo.tsx の getNameSizeClass と対応) */
+                &.namemid label {
+                    font-size: 1.4rem;
+                    @include mq(md) {
+                        font-size: 1.1rem;
+                    }
+                }
+                &.namesmall label {
+                    font-size: 1.15rem;
+                    letter-spacing: 0.02em;
+                    @include mq(md) {
+                        font-size: 0.95rem;
+                    }
+                }
+                &.namexs label {
+                    font-size: 0.85rem;
+                    letter-spacing: 0;
+                    /* 14文字以上は3行まで許容して20文字を収める */
+                    -webkit-line-clamp: 3;
+                    @include mq(md) {
+                        font-size: 0.72rem;
                     }
                 }
             }
@@ -202,13 +255,13 @@ div.main {
     .btn {
         position: absolute;
         left: 50%;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, 50%);
         width: 50px;
-        top: 100px;
+        /* 名前が複数行でも被らないよう、下部の役職スロット中央を基準に置く */
+        bottom: calc(1em + 50px);
         z-index: 3;
         @include mq(lg) {
             font-size: 0.7rem;
-            top: 80px;
         }
     }
     div.rollcard {

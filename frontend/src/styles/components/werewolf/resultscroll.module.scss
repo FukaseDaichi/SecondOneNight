@@ -1,0 +1,83 @@
+@use '../../tokens' as *;
+
+.scroll {
+	background: $dawn-paper;
+	border-top: 3px double $gold;
+	border-bottom: 3px double $gold;
+	padding: 20px 16px;
+	max-width: 640px;
+	margin: 0 auto;
+	font-family: $serif;
+	color: $ink;
+}
+.heading {
+	text-align: center;
+	letter-spacing: 0.4em;
+	color: $label;
+	margin-bottom: 12px;
+}
+.list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.row {
+	display: grid;
+	grid-template-columns: 1fr auto auto auto auto;
+	gap: 8px;
+	align-items: baseline;
+	padding: 8px 4px;
+	border-bottom: 1px solid rgba($ink, 0.12);
+	font-size: 0.9rem;
+
+	@media (max-width: 480px) {
+		grid-template-columns: 1fr auto auto;
+		font-size: 0.8rem;
+	}
+}
+.win {
+	box-shadow: inset 0 -2px 0 $gold-soft;
+}
+.dead {
+	filter: grayscale(1);
+	opacity: 0.65;
+}
+.deadTag {
+	margin-left: 6px;
+	font-size: 0.7rem;
+	color: $paper;
+	background: $ink-deep;
+	padding: 0 0.4em;
+}
+.name {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.vote {
+	max-width: 9em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	@media (max-width: 480px) {
+		grid-column: 1 / -1;
+		grid-row: 2;
+		font-size: 0.75rem;
+		color: $label;
+	}
+}
+.verdict {
+	font-weight: 700;
+}
+.returnBtn {
+	display: block;
+	margin: 16px auto 0;
+	font-family: $sans;
+	background: $ink-deep;
+	color: $paper;
+	border: none;
+	border-radius: 999px;
+	padding: 10px 32px;
+}
