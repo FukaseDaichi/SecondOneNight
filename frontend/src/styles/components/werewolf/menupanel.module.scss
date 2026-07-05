@@ -1,0 +1,58 @@
+@use '../../tokens' as *;
+
+/* お品書きパネル: 夕暮れ下の紙色の品書き。設定 UI をひとまとめにする */
+.panel {
+    background: $dusk-paper;
+    border: 1px solid rgba($ink, 0.15);
+    border-top: 3px double $gold;
+    border-radius: 6px;
+    padding: 18px 14px 20px;
+    max-width: 640px;
+    margin: 16px auto 0;
+    box-shadow: 0 8px 24px rgba(13, 34, 41, 0.35);
+}
+
+.title {
+    font-family: $serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 0.5em;
+    text-indent: 0.5em;
+    color: $ink;
+    margin: 0 0 14px;
+}
+
+.section {
+    margin-bottom: 14px;
+
+    &:last-of-type {
+        margin-bottom: 0;
+    }
+}
+
+.label {
+    font-family: $serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    color: $label;
+    margin: 0 0 6px;
+    border-bottom: 1px solid rgba($ink, 0.12);
+    padding-bottom: 4px;
+}
+
+/* 開始条件の不足メッセージ */
+.notice {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: rgba($rose, 0.1);
+    color: $rose-deep;
+    font-family: $sans;
+    font-size: 0.85rem;
+
+    > li {
+        line-height: 1.7;
+    }
+}
