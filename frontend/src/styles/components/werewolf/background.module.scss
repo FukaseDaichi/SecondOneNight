@@ -18,6 +18,16 @@
     background: radial-gradient(120% 90% at 50% 0%, #1d4550 0%, $night 55%, $night-deep 100%);
 }
 
+/* 夜の顔(議論): 役職選択よりやや明るい藍 + 提灯的な gold の灯 */
+.discussion {
+    background: radial-gradient(120% 90% at 50% 0%, #245562 0%, #1b3f4a 55%, $night 100%);
+}
+
+/* 夜の顔(投票): 緊張感のある深い藍 + rose-deep のティント */
+.voting {
+    background: radial-gradient(120% 90% at 50% 0%, #35323f 0%, $night 55%, $night-deep 100%);
+}
+
 /* 結果(勝利陣営色のティント) */
 .resultWolf {
     background: radial-gradient(120% 90% at 50% 10%, #3a2229 0%, $night 60%, $night-deep 100%);
@@ -62,6 +72,13 @@
     height: 460px;
     background: radial-gradient(circle, rgba(233, 167, 190, 0.12), transparent 70%);
     animation: bgBreathe 14s ease-in-out 3s infinite;
+}
+
+.discussion .glowTeal {
+    background: radial-gradient(circle, rgba(211, 169, 79, 0.16), transparent 70%);
+}
+.voting .glowRose {
+    background: radial-gradient(circle, rgba(196, 100, 110, 0.16), transparent 70%);
 }
 
 @media (prefers-reduced-motion: reduce) {

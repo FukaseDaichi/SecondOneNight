@@ -10,6 +10,12 @@ const phaseClass = (turn: number, winteamList: number[]): string => {
     if (turn === 1) {
         return styles.night;
     }
+    if (turn === 2) {
+        return styles.discussion;
+    }
+    if (turn === 3) {
+        return styles.voting;
+    }
     if (turn === 4 && winteamList.length > 0) {
         if (winteamList[0] === 1) {
             return styles.resultWolf;
