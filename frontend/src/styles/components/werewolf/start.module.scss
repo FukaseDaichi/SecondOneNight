@@ -106,6 +106,23 @@
     animation: startChar 0.9s $ease both;
 }
 
+/* 投票開始の演出: 開始演出と同構造で rose のティント */
+.voting {
+    background: radial-gradient(120% 90% at 50% 0%, #35323f 0%, $night 55%, $night-deep 100%);
+
+    .moon {
+        background: radial-gradient(
+            circle at 50% 42%,
+            rgba(196, 100, 110, 0.3),
+            rgba(233, 167, 190, 0.16) 55%,
+            transparent 74%
+        );
+    }
+    .ring {
+        border-color: rgba(233, 167, 190, 0.3);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .start {
         animation: startOverlay 4s linear both;
