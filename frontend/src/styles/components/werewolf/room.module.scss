@@ -56,7 +56,10 @@ div.messagearea {
     letter-spacing: 0.14em;
     color: #f2fbfb;
     text-shadow: 0 2px 12px rgba(13, 34, 41, 0.6);
-    background: rgba(13, 34, 41, 0.72);
+    /* 下をくぐるユーザー一覧が透けて文字と混ざらないよう、ほぼ不透明+ブラーで遮る */
+    background: rgba(13, 34, 41, 0.94);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     border-bottom: 1px solid rgba(242, 251, 251, 0.14);
     box-shadow: 0 8px 24px rgba(13, 34, 41, 0.35);
     @include mq(md) {
