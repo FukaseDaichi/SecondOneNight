@@ -1,4 +1,68 @@
 @use '../../tokens' as *;
+@use '../../variables' as *;
+
+/* 種明かし(センターステージ): 中央に1人ずつ登場してカードを開示する */
+
+@keyframes playerIn {
+    0% {
+        opacity: 0;
+        transform: translateY(26px) scale(0.92);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+@keyframes shotShake {
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(0);
+    }
+    15% {
+        transform: translate(-7px, 3px) rotate(-2.5deg);
+    }
+    35% {
+        transform: translate(6px, -3px) rotate(2deg);
+    }
+    55% {
+        transform: translate(-4px, 2px) rotate(-1.2deg);
+    }
+    75% {
+        transform: translate(2px, -1px) rotate(0.6deg);
+    }
+}
+@keyframes holePop {
+    0% {
+        opacity: 0;
+        transform: scale(2.4);
+    }
+    45% {
+        opacity: 1;
+        transform: scale(0.88);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+@keyframes muzzleFlash {
+    0% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@keyframes miniIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
 
 .act {
     width: min(680px, 92vw);
@@ -7,53 +71,237 @@
     color: $paper;
     font-family: $serif;
 }
+
 .heading {
     letter-spacing: 0.4em;
     color: $gold-soft;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
 }
-.grid {
-    list-style: none;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+
+/* 中央の舞台。人が入れ替わっても高さが揺れないよう固定気味に取る */
+.stage {
+    position: relative;
+    min-height: 330px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    animation: playerIn 0.5s $ease both;
+}
+
+.who {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 10px;
 }
-.card {
+
+.icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba($gold-soft, 0.7);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.username {
+    max-width: 60vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1.15rem;
+    letter-spacing: 0.12em;
+    color: #f2fbfb;
+}
+
+/* キャラカード(フリップ) */
+.cardFlip {
+    width: 190px;
+    height: 190px;
+    perspective: 900px;
+}
+
+.cardInner {
     position: relative;
-    background: rgba($night-deep, 0.85);
-    border: 1px solid rgba($gold-soft, 0.35);
-    border-radius: 10px;
-    padding: 10px 6px 12px;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s $ease;
+
+    .opened & {
+        transform: rotateY(180deg);
+    }
+}
+
+.cardBack,
+.cardFront {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55);
+}
+
+.cardBack {
+    background: url('/images/werewolf/back.png') center / cover,
+        $night-deep;
+    border: 1px solid rgba($gold-soft, 0.4);
+}
+
+.cardFront {
     transform: rotateY(180deg);
-    transition: transform 0.5s $ease;
-    display: grid;
-    gap: 4px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid rgba($gold-soft, 0.55);
 }
-.open {
-    transform: rotateY(0);
+
+.rollname {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 8px 0 5px;
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+    color: #f2fbfb;
+    text-shadow: 0 1px 4px rgba(13, 34, 41, 0.9);
+    background: linear-gradient(transparent, rgba(13, 34, 41, 0.7) 70%);
 }
-.dead {
-    filter: grayscale(0.9);
+
+/* 銃撃: カードが揺れてモノクロに沈み、銃痕が刻まれる */
+.shot .cardFlip {
+    animation: shotShake 0.5s linear both;
 }
-.name {
-    font-size: 0.75rem;
-    color: $teal-soft;
+.shot .cardFront {
+    filter: grayscale(0.9) brightness(0.75);
+    transition: filter 0.4s 0.15s;
 }
-.face {
-    font-size: 1.05rem;
+.shot .icon {
+    filter: grayscale(1);
 }
+
+.bullethole {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 108px;
+    height: 108px;
+    margin: -54px 0 0 -54px;
+    animation: holePop 0.35s $ease both;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+
+    &.small {
+        width: 46px;
+        height: 46px;
+        margin: -23px 0 0 -23px;
+        animation: none;
+    }
+}
+
+/* 発砲フラッシュ(舞台全体を白く瞬かせる) */
+.flash {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: radial-gradient(
+        60% 60% at 50% 45%,
+        rgba(255, 250, 235, 0.95),
+        rgba(255, 250, 235, 0.35) 60%,
+        transparent 100%
+    );
+    animation: muzzleFlash 0.45s ease-out both;
+}
+
+/* 開示済みの列。死亡者は銃痕とモノクロのまま残る */
+.doneRow {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    min-height: 96px;
+}
+
+.mini {
+    width: 64px;
+    animation: miniIn 0.35s $ease both;
+
+    &.dead .miniArt {
+        filter: grayscale(0.9) brightness(0.75);
+    }
+    &.dead .miniName,
+    &.dead .miniRoll {
+        color: rgba($paper, 0.45);
+    }
+}
+
+.miniArt {
+    position: relative;
+    display: block;
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid rgba($gold-soft, 0.4);
+}
+
+.miniName {
+    display: block;
+    margin-top: 3px;
+    font-size: 0.62rem;
+    color: rgba($paper, 0.75);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.miniRoll {
+    display: block;
+    font-size: 0.72rem;
+    color: $gold-soft;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .voteTo {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
     color: $label;
 }
+
 .hint {
-    margin-top: 14px;
+    margin-top: 12px;
     font-size: 0.75rem;
     color: rgba($paper, 0.7);
 }
+
 @media (prefers-reduced-motion: reduce) {
-    .card {
+    .player,
+    .mini,
+    .bullethole {
+        animation: none;
+    }
+    .cardInner {
         transition: none;
+    }
+    .shot .cardFlip {
+        animation: none;
+    }
+    .flash {
+        display: none;
     }
 }
