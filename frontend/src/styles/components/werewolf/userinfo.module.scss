@@ -51,12 +51,16 @@ $animetiondelay: 2s;
     }
 }
 
-/* ロビー入室時の登場演出(暖簾をくぐるイメージ) */
+/* ロビー入室時の登場演出(暖簾をくぐるイメージ)。
+   fill-mode を both にしないこと: 最終フレームの clip-path が残留すると、
+   カード下へ大きく伸びるアイコンピッカーのポップオーバーが切り取られる。
+   to の値は自然状態(opacity 1 / translate 0)と一致するため、終了後に
+   clip-path が none へ戻っても見た目は変わらない */
 .enter {
-    animation: norenIn 0.6s $ease both;
+    animation: norenIn 0.6s $ease;
 }
-/* fill-mode both で最終値が残留するため、クリップ領域は負の inset で
-   カード外にはみ出す要素(浮遊アバター・YOUバッジ・発光)まで含めておく */
+/* クリップ領域は負の inset でカード外にはみ出す要素
+   (浮遊アバター・YOUバッジ・発光)まで含めておく */
 @keyframes norenIn {
     from {
         opacity: 0;
@@ -97,10 +101,47 @@ div.main {
     padding: 1em 1em;
     box-sizing: border-box;
     background-color: $paper; /* 背景色 */
-    border: 3px solid; /*線の太さ・色(プレイヤーカラー)*/
+    border: 3px solid var(--player-color, $ink); /*線の太さ・色(プレイヤーカラー)*/
     border-radius: 16px;
     box-shadow: 0 14px 30px rgba(23, 69, 79, 0.22);
     width: 180px;
+
+    /* ロビー中(.enter)はニュートラルな白カードにし、
+       プレイヤーカラーはアバターの輪に移す */
+    &.enter {
+        border: 1px solid rgba($ink, 0.12);
+        box-shadow: 0 14px 30px rgba(23, 69, 79, 0.1);
+
+        div.imgdiv {
+            box-shadow:
+                0 0 0 3px var(--player-color, $teal),
+                0 6px 14px rgba(23, 69, 79, 0.25);
+        }
+
+        &.own {
+            box-shadow:
+                0 14px 30px rgba(23, 69, 79, 0.1),
+                0 0 0 3px rgba(53, 168, 180, 0.22),
+                0 0 18px rgba(53, 168, 180, 0.4);
+        }
+    }
+
+    /* 部屋主バッジ */
+    span.host {
+        position: absolute;
+        top: -10px;
+        left: -8px;
+        padding: 3px 10px;
+        font-family: $serif;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: $rose-deep;
+        background: #fff;
+        border: 1px solid rgba($rose, 0.6);
+        border-radius: 999px;
+        z-index: 5;
+    }
 
     @include mq(md) {
         width: 120px;

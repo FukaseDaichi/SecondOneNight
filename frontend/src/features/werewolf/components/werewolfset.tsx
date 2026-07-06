@@ -4,34 +4,31 @@ import Data from '../../../const/json/werewolf.json';
 
 type WerewolfSetProps = {
     userSize: number;
-    changeFnc: (Array) => void;
+    changeFnc: (rollNoList: Array<number>) => void;
 };
 
+// おすすめ役職セットのセレクタ。選択すると即座に役職構成を送信する
 export default function WerewolfSet(props: WerewolfSetProps) {
-    const viewFlg = Data[props.userSize] && Data[props.userSize].length > 0;
+    const presets = Data[String(props.userSize)];
+    const viewFlg = presets && presets.length > 0;
 
     return (
         <div className={`${styles.werewolfset} ${!viewFlg && styles.none}`}>
             <select
-                onChange={() => {
-                    const dom = document.getElementById(
-                        'werewolfset'
-                    ) as HTMLInputElement;
-                    const value = Number(dom.value);
-                    props.changeFnc(
-                        Data[String(props.userSize)][value].rollNoList
-                    );
+                onChange={(e) => {
+                    const value = Number(e.target.value);
+                    props.changeFnc(presets[value].rollNoList);
                 }}
-                id="werewolfset"
+                aria-label="おすすめ役職セット"
                 defaultValue="-1"
             >
                 <option disabled value={-1}>
-                    {Data[String(props.userSize)]
+                    {viewFlg
                         ? 'おすすめ役職セット'
                         : 'おすすめセットはありません'}
                 </option>
-                {Data[String(props.userSize)] &&
-                    Data[String(props.userSize)].map((element, index) => {
+                {viewFlg &&
+                    presets.map((element, index) => {
                         return (
                             <option value={index} key={index}>
                                 {element.title}

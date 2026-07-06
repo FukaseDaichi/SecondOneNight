@@ -135,8 +135,13 @@ div.rollselect {
                     color: rgba(242, 251, 251, 0.85);
                     white-space: nowrap;
                     text-align: center;
+                    /* 長い名前が一人で幅を取らないよう、アバター幅+αで打ち切る */
+                    max-width: 96px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                     @include mq(md) {
                         font-size: 0.7rem;
+                        max-width: 64px;
                     }
                 }
             }

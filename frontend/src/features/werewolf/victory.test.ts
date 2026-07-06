@@ -90,8 +90,11 @@ describe('nextVictoryAct', () => {
     it('verdict → advance → result', () => {
         expect(nextVictoryAct('verdict', 'advance')).toBe('result');
     });
-    it('reveal → skip → result(種明かし飛ばし)', () => {
-        expect(nextVictoryAct('reveal', 'skip')).toBe('result');
+    it('reveal → skip → verdict(種明かし飛ばし。盤面+勝敗発表は残す)', () => {
+        expect(nextVictoryAct('reveal', 'skip')).toBe('verdict');
+    });
+    it('verdict → skip → result', () => {
+        expect(nextVictoryAct('verdict', 'skip')).toBe('result');
     });
     it('result → return → closed', () => {
         expect(nextVictoryAct('result', 'return')).toBe('closed');

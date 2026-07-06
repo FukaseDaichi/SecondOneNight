@@ -28,6 +28,19 @@ type RollCardProps = {
 };
 
 export default function RollCard(props: RollCardProps) {
+    const name: string = getParam(
+        props.roll,
+        'name',
+        props.roll.fakeRollList,
+        props.turn,
+        props.ownFlg
+    );
+    // カード幅から枠線(3px×2)と左右の余白(計4px)を除いた幅に収まるよう
+    // フォントを縮小する。1rem=16px、字間 -0.1rem(-1.6px)を考慮
+    const fitFontSize = Math.min(
+        props.fontSize,
+        ((props.size - 10) / Math.max(name.length, 1) + 1.6) / 16
+    );
     const rollStyle = {
         width: props.size + 'px',
         height: props.size + 'px',
@@ -67,15 +80,9 @@ export default function RollCard(props: RollCardProps) {
             >
                 <span
                     className={styles.rollname}
-                    style={{ fontSize: props.fontSize + 'rem' }}
+                    style={{ fontSize: fitFontSize + 'rem' }}
                 >
-                    {getParam(
-                        props.roll,
-                        'name',
-                        props.roll.fakeRollList,
-                        props.turn,
-                        props.ownFlg
-                    )}
+                    {name}
                 </span>
             </div>
         </div>

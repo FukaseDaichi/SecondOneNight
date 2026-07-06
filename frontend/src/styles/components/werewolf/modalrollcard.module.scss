@@ -84,21 +84,29 @@ div.modal {
             div.winDescription {
                 margin-top: -20px;
                 display: flex;
-                justify-content: center;
-                font-size: 1.15rem;
+                align-items: center;
+                gap: 10px;
                 border-bottom: solid 1px rgba(30, 59, 68, 0.35);
-                padding-bottom: 4px;
+                padding-bottom: 6px;
                 margin-bottom: 8px;
-                white-space: nowrap;
 
+                /* 「勝利条件」ラベル: 小さめの角丸タグにして本文と区別する */
                 span:nth-child(1) {
-                    width: 30%;
-                    color: $label;
-                    letter-spacing: 0.04em;
+                    flex-shrink: 0;
+                    font-size: 0.72rem;
+                    letter-spacing: 0.14em;
+                    text-indent: 0.14em;
+                    color: $paper;
+                    background: $label;
+                    border-radius: 4px;
+                    padding: 3px 7px;
                 }
+                /* 勝利条件の本文: ラベルより一回り大きく、折り返し可 */
                 span:nth-child(2) {
-                    text-align: center;
-                    width: 70%;
+                    flex: 1;
+                    font-size: 0.95rem;
+                    line-height: 1.5;
+                    text-align: left;
                 }
             }
         }

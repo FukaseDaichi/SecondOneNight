@@ -41,7 +41,9 @@ div.messagearea {
     font-family: $serif;
     position: sticky;
     top: 0;
-    z-index: 30;
+    /* ページ内容(ユーザーカード等)よりは前、役職選択オーバーレイ(z:10)よりは
+       後ろに置く。選択中はオーバーレイ上部のユーザー順表示を隠さない */
+    z-index: 9;
     width: 100vw;
     margin-left: calc(50% - 50vw);
     box-sizing: border-box;
@@ -56,7 +58,10 @@ div.messagearea {
     letter-spacing: 0.14em;
     color: #f2fbfb;
     text-shadow: 0 2px 12px rgba(13, 34, 41, 0.6);
-    background: rgba(13, 34, 41, 0.72);
+    /* 下をくぐるユーザー一覧が透けて文字と混ざらないよう、ほぼ不透明+ブラーで遮る */
+    background: rgba(13, 34, 41, 0.94);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     border-bottom: 1px solid rgba(242, 251, 251, 0.14);
     box-shadow: 0 8px 24px rgba(13, 34, 41, 0.35);
     @include mq(md) {
@@ -228,43 +233,206 @@ div.room {
     margin-left: calc(min(960px, 94vw) / -2);
 }
 
-/* ヘッダーゾーン(ロビー): ルームコード + 遊び方(スマホは縦積み) */
-div.lobbyHead {
+/* ロビーヘッダー: タイトル + 状態バッジ */
+header.lobbyHeader {
     position: relative;
     z-index: 1;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
     gap: 12px;
-    margin-top: 6px;
-    /* プレイヤーカードのアバターがカード上に浮くため、下に余白を確保する */
-    margin-bottom: 72px;
+    margin: 22px 4px 0;
 
     @include mq(md) {
+        align-items: flex-start;
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
     }
 }
 
-button.ruleLink {
-    padding: 6px 20px;
-    border: 1px solid rgba(30, 59, 68, 0.3);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.7);
-    font-family: $serif;
-    font-size: 11.5px;
-    letter-spacing: 0.2em;
-    color: $ink;
-    cursor: pointer;
-    transition:
-        background 0.3s,
-        border-color 0.3s;
+p.lobbyEyebrow {
+    margin: 0;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.42em;
+    color: $label;
+}
 
-    &:hover {
-        background: rgba(53, 168, 180, 0.1);
-        border-color: rgba(53, 168, 180, 0.7);
+h1.lobbyTitle {
+    margin: 8px 0 0;
+    font-family: $serif;
+    font-weight: 600;
+    font-size: clamp(1.6rem, 3.4vw, 2.1rem);
+    letter-spacing: 0.28em;
+    color: $ink;
+}
+
+span.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 20px;
+    border: 1px solid rgba($teal, 0.35);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.75);
+    font-family: $serif;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: $ink-deep;
+
+    /* 状態ドット: 参加待ちはティール、開始可で灯る */
+    &::before {
+        content: '';
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: $teal-soft;
     }
+
+    &.ready::before {
+        background: $gold;
+        box-shadow: 0 0 8px rgba($gold, 0.8);
+    }
+}
+
+/* 招待カード + 開始ステータスカードの2カラム */
+div.heroRow {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 18px;
+
+    @include mq(md) {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}
+
+/* セクション見出し(PLAYERS / 集いし者たち) */
+div.sectionHead {
+    position: relative;
+    z-index: 1;
+    margin: 34px 4px 0;
+    /* プレイヤーカードのアバターがカード上に浮くため、下に余白を確保する */
+    margin-bottom: 60px;
+
+    p.sectionEyebrow {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin: 0;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.42em;
+        color: $rose-deep;
+
+        /* 罫線を右へ伸ばす */
+        &::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba($rose, 0.35);
+        }
+    }
+
+    h2.sectionTitle {
+        margin: 10px 0 0;
+        font-family: $serif;
+        font-weight: 600;
+        font-size: clamp(1.25rem, 2.6vw, 1.55rem);
+        letter-spacing: 0.24em;
+        color: $ink;
+    }
+}
+
+/* 下部固定バー(ロビー): 退出 / GAME START */
+div.bottomBar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px max(16px, calc(50vw - min(960px, 94vw) / 2))
+        calc(14px + env(safe-area-inset-bottom));
+    background: rgba(251, 254, 254, 0.82);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba($ink, 0.08);
+
+    button {
+        user-select: none;
+        min-height: 50px;
+        padding: 11px 34px;
+        font-family: $serif;
+        font-size: 1.05rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        border-radius: 999px;
+        cursor: pointer;
+        touch-action: manipulation;
+        transition:
+            transform 0.1s,
+            box-shadow 0.35s,
+            background 0.35s,
+            border-color 0.35s;
+
+        &:active:enabled {
+            transform: scale(0.95);
+        }
+        &:focus-visible {
+            outline: 2px solid $teal;
+            outline-offset: 2px;
+        }
+        @include mq(md) {
+            font-size: 0.95rem;
+            padding: 10px 24px;
+        }
+    }
+
+    button.primary {
+        background: $ink;
+        color: #f2fbfb;
+        border: 1px solid $ink;
+        box-shadow: 0 10px 24px rgba(30, 59, 68, 0.24);
+
+        &:hover:enabled {
+            background: $ink-deep;
+            border-color: $teal;
+            box-shadow:
+                0 0 0 2px rgba(53, 168, 180, 0.55),
+                0 10px 24px rgba(30, 59, 68, 0.24);
+        }
+
+        /* 開始条件未達(lobbyReadiness)のあいだは灯を落とす */
+        &:disabled {
+            background: rgba($ink, 0.12);
+            border-color: transparent;
+            color: rgba($ink, 0.38);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+    }
+
+    button.ghost {
+        background: rgba(251, 254, 254, 0.85);
+        color: $ink;
+        border: 1px solid rgba(30, 59, 68, 0.35);
+
+        &:hover {
+            border-color: $teal;
+            background: rgba(53, 168, 180, 0.08);
+        }
+    }
+}
+
+/* ロビー中の本文: 下部固定バーの高さぶん余白を取る */
+div.lobbyRoom {
+    padding-bottom: 110px;
 }
 
 div.btnarea {

@@ -92,9 +92,8 @@ export default function ModalRollCard(props: ModalRollCardProps) {
 
                 <div className={styles.info}>
                     <div className={styles.winDescription}>
-                        <span>勝利条件 </span>
+                        <span>勝利条件</span>
                         <span>
-                            {' '}
                             {getParam(
                                 props.roll,
                                 'winDescription',

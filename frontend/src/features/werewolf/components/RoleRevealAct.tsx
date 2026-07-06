@@ -1,66 +1,174 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from '../../../styles/components/werewolf/rolereveal.module.scss';
 import { WerewolfUser } from '../../../type/werewolf';
 import { isDeadUser, revealOrder } from '../victory';
-import DeadMarker from './DeadMarker';
+import BulletHole from './BulletHole';
 
 type Props = {
     userList: Array<WerewolfUser>;
     npcuser: WerewolfUser | null;
     onDone: () => void;
+    // true の間は進行を止め、全員開示済みの最終盤面を静的に表示する
+    finished?: boolean;
 };
 
-const REVEAL_INTERVAL_MS = 1100;
-const DONE_DELAY_MS = 1500;
+// センターステージの進行: 登場 → カード開示 → (死亡者のみ)銃撃 → 次の人
+type StagePhase = 'enter' | 'open' | 'shot';
 
-// 第1幕: 種明かし。人狼系を最後に1枚ずつ役職開示。死亡者マーカーは開示と同時に表示
-export default function RoleRevealAct({ userList, npcuser, onDone }: Props) {
+const ENTER_MS = 900;
+const OPEN_MS = 1600;
+const SHOT_MS = 1800;
+const DONE_DELAY_MS = 1400;
+
+const getIconImgUrl = (user: WerewolfUser, npc: boolean) => {
+    if (npc) {
+        return '/images/icon/icon99.jpg';
+    }
+    return user.userIconUrl || '/images/icon/icon0.jpg';
+};
+
+// 第1幕: 種明かし。中央に1人ずつ登場し、キャラカードをフリップ開示。
+// 死亡者は銃声とともに銃痕が刻まれ、開示済みの列にも痕が残る。
+// finished 後は勝敗発表・結果の背景として最終盤面を残す
+export default function RoleRevealAct({
+    userList,
+    npcuser,
+    onDone,
+    finished = false,
+}: Props) {
     const ordered = useMemo(() => {
         const list = npcuser?.roll ? [...userList, npcuser] : userList;
         return revealOrder(list);
     }, [userList, npcuser]);
-    const [revealed, setRevealed] = useState(0);
-    const allRevealed = revealed >= ordered.length;
+    const [index, setIndex] = useState(0);
+    const [phase, setPhase] = useState<StagePhase>('enter');
+    const allRevealed = finished || index >= ordered.length;
+    const current = ordered[index];
+    // finished(スキップ含む)なら全員を開示済みの列へ
+    const revealed = finished ? ordered : ordered.slice(0, index);
+
+    // 銃声: 銃撃フェーズに入った瞬間に一度だけ鳴らす
+    useEffect(() => {
+        if (phase !== 'shot') return;
+        const audio = new Audio('/se/snip.mp3');
+        audio.play().catch(() => {
+            // 自動再生がブロックされても演出は続行する
+        });
+    }, [phase]);
+
+    const advance = useCallback(() => {
+        if (finished || allRevealed) return;
+        if (phase === 'enter') {
+            setPhase('open');
+            return;
+        }
+        if (phase === 'open' && isDeadUser(ordered[index])) {
+            setPhase('shot');
+            return;
+        }
+        setIndex((i) => i + 1);
+        setPhase('enter');
+    }, [finished, allRevealed, phase, ordered, index]);
 
     useEffect(() => {
-        const id = window.setTimeout(
-            allRevealed ? onDone : () => setRevealed((n) => n + 1),
-            allRevealed ? DONE_DELAY_MS : REVEAL_INTERVAL_MS
-        );
+        if (finished) return;
+        if (allRevealed) {
+            const id = window.setTimeout(onDone, DONE_DELAY_MS);
+            return () => window.clearTimeout(id);
+        }
+        const ms =
+            phase === 'enter' ? ENTER_MS : phase === 'open' ? OPEN_MS : SHOT_MS;
+        const id = window.setTimeout(advance, ms);
         return () => window.clearTimeout(id);
-    }, [revealed, allRevealed, onDone]);
+    }, [phase, index, finished, allRevealed, advance, onDone]);
 
     return (
         <div
-            className={styles.act}
-            onClick={() => setRevealed((n) => Math.min(n + 1, ordered.length))}
+            className={`${styles.act} ${finished ? styles.finished : ''}`}
+            onClick={finished ? undefined : advance}
         >
-            <p className={styles.heading}>─ 種明かし ─</p>
-            <ul className={styles.grid}>
-                {ordered.map((u, i) => {
-                    const open = i < revealed;
+            {!finished && <p className={styles.heading}>─ 種明かし ─</p>}
+            <div className={styles.stage}>
+                {!allRevealed && current && (
+                    <div
+                        key={`${current.userNo}-${current.userName}`}
+                        className={`${styles.player} ${
+                            phase !== 'enter' ? styles.opened : ''
+                        } ${phase === 'shot' ? styles.shot : ''}`}
+                    >
+                        <div className={styles.who}>
+                            <img
+                                className={styles.icon}
+                                src={getIconImgUrl(
+                                    current,
+                                    current === npcuser
+                                )}
+                                alt=""
+                            />
+                            <span className={styles.username}>
+                                {current.userName}
+                            </span>
+                        </div>
+                        <div className={styles.cardFlip}>
+                            <div className={styles.cardInner}>
+                                <div className={styles.cardBack} />
+                                <div
+                                    className={styles.cardFront}
+                                    style={{
+                                        backgroundImage: `url(/images/werewolf/roll/${current.roll?.rollNo}.jpg)`,
+                                    }}
+                                >
+                                    <span className={styles.rollname}>
+                                        {current.roll?.name ?? 'なし'}
+                                    </span>
+                                    {phase === 'shot' && <BulletHole />}
+                                </div>
+                            </div>
+                        </div>
+                        <span className={styles.voteTo}>
+                            {current === npcuser
+                                ? '─'
+                                : `投票 → ${current.votingUserName || '─'}`}
+                        </span>
+                    </div>
+                )}
+                {!finished && phase === 'shot' && (
+                    <div className={styles.flash} aria-hidden="true" />
+                )}
+            </div>
+            <ul className={styles.doneRow}>
+                {revealed.map((u) => {
+                    const dead = isDeadUser(u);
                     return (
                         <li
                             key={`${u.userNo}-${u.userName}`}
-                            className={`${styles.card} ${
-                                open ? styles.open : ''
-                            } ${open && isDeadUser(u) ? styles.dead : ''}`}
+                            className={`${styles.mini} ${
+                                dead ? styles.dead : ''
+                            }`}
                         >
-                            <span className={styles.name}>{u.userName}</span>
-                            <span className={styles.face}>
-                                {open ? (u.roll?.name ?? 'なし') : '？'}
+                            <span
+                                className={styles.miniArt}
+                                style={{
+                                    backgroundImage: `url(/images/werewolf/roll/${u.roll?.rollNo}.jpg)`,
+                                }}
+                            >
+                                {dead && <BulletHole small />}
                             </span>
-                            {open && (
-                                <span className={styles.voteTo}>
-                                    → {u.votingUserName || '─'}
-                                </span>
-                            )}
-                            {open && isDeadUser(u) && <DeadMarker />}
+                            <span className={styles.miniName}>
+                                {u.userName}
+                            </span>
+                            <span className={styles.miniRoll}>
+                                {u.roll?.name ?? 'なし'}
+                            </span>
                         </li>
                     );
                 })}
             </ul>
-            <p className={styles.hint}>タップで次へ</p>
+            {!finished && (
+                <p className={styles.hint}>
+                    {allRevealed ? '─ 夜が明ける ─' : 'タップで次へ'}
+                </p>
+            )}
         </div>
     );
 }

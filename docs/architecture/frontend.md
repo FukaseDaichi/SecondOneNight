@@ -51,7 +51,7 @@ frontend/src/
 | 背景/開始演出 | `PhaseBackground` が turn / 勝利陣営に応じて背景を切り替え、`WerewolfStart` が開始 overlay を表示 |
 | ルール表示 | `rule.tsx` + `rule.module.scss` で遊び方モーダルを再構成 |
 | アイコンアップロード | `lib/imageToIconDataUrl.ts` が画像を 96px JPEG Data URL に変換し、werewolf の status `650` で送信 |
-| 勝利/結果演出 | `VictoryOverlay` が「勝利演出 → 結果表示 → ロビー復帰」を担当。表示ロジックは `features/werewolf/victory.ts` に分離し、ユニットテスト対象 |
+| 勝利/結果演出 | `VictoryOverlay` が「種明かし → 勝敗バナー → 結果モーダル → ロビー復帰」を種明かし盤面を残した一枚絵で担当。表示ロジックは `features/werewolf/victory.ts` に分離し、ユニットテスト対象 |
 
 ## 状態管理パターン(feature 構造)
 
