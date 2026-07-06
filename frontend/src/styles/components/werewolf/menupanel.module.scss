@@ -294,18 +294,6 @@
     }
 }
 
-.cardInfo {
-    @extend %card-mini-button;
-    border: 1px solid rgba(232, 244, 244, 0.28);
-    color: rgba(232, 244, 244, 0.7);
-    font-family: $serif;
-
-    &:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: #f2fbfb;
-    }
-}
-
 @media (prefers-reduced-motion: reduce) {
     .rollCard,
     .cardArt img,

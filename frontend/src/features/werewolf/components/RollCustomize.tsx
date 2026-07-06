@@ -9,7 +9,7 @@ type Props = {
     setModalOwnFlg: (value: boolean) => void;
 };
 
-// 役職カードギャラリー。カードタップで+1、−で−1、ⓘ で役職説明モーダルを開く
+// 役職カードギャラリー。カードタップで役職説明モーダル、−/+ で枚数を調整する
 export default function RollCustomize({
     staticRollList,
     counterMap,
@@ -31,9 +31,12 @@ export default function RollCustomize({
                     >
                         <button
                             className={styles.cardBody}
-                            onClick={() => counter(element.rollNo, 1)}
-                            aria-label={`${element.name}を1枚追加(現在${count}枚)`}
-                            title={`${element.name}を1枚追加`}
+                            onClick={() => {
+                                setModalOwnFlg(false);
+                                setModalRoll(element);
+                            }}
+                            aria-label={`${element.name}の説明を見る`}
+                            title={`${element.name}の説明を見る`}
                         >
                             <span className={styles.cardArt}>
                                 {/* 装飾画像。役職名は下のテキストで示す */}
@@ -68,14 +71,11 @@ export default function RollCustomize({
                                 −
                             </button>
                             <button
-                                className={styles.cardInfo}
-                                aria-label={`${element.name}の説明を見る`}
-                                onClick={() => {
-                                    setModalOwnFlg(false);
-                                    setModalRoll(element);
-                                }}
+                                className={styles.cardStep}
+                                aria-label={`${element.name}を増やす`}
+                                onClick={() => counter(element.rollNo, 1)}
                             >
-                                ?
+                                +
                             </button>
                         </div>
                     </div>
