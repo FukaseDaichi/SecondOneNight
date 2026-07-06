@@ -41,7 +41,9 @@ div.messagearea {
     font-family: $serif;
     position: sticky;
     top: 0;
-    z-index: 30;
+    /* ページ内容(ユーザーカード等)よりは前、役職選択オーバーレイ(z:10)よりは
+       後ろに置く。選択中はオーバーレイ上部のユーザー順表示を隠さない */
+    z-index: 9;
     width: 100vw;
     margin-left: calc(50% - 50vw);
     box-sizing: border-box;
