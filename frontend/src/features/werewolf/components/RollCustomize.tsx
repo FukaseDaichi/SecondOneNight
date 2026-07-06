@@ -9,23 +9,7 @@ type Props = {
     setModalOwnFlg: (value: boolean) => void;
 };
 
-/* 役職チップの漢字バッジ(役職名 → 一字)。未登録の役職は先頭一字で代用 */
-const ROLL_KANJI: Record<string, string> = {
-    人狼: '狼',
-    村人: '村',
-    村長: '長',
-    てるてる: '照',
-    狂人: '狂',
-    独裁者: '独',
-    狂信者: '信',
-    占い師: '占',
-    付き人: '付',
-    暗殺者: '暗',
-    怪盗: '盗',
-    白狼: '白',
-};
-
-// 役職チップの一覧。名前タップで役職説明モーダル、−/+ で枚数を調整する
+// 役職カードギャラリー。カードタップで+1、−で−1、ⓘ で役職説明モーダルを開く
 export default function RollCustomize({
     staticRollList,
     counterMap,
@@ -40,40 +24,58 @@ export default function RollCustomize({
                 return (
                     <div
                         key={element.rollNo}
-                        className={`${styles.rollChip} ${
+                        className={`${styles.rollCard} ${
                             count > 0 ? styles.active : ''
                         }`}
                         style={{ order: element.teamNo }}
                     >
                         <button
-                            className={styles.rollName}
-                            onClick={() => {
-                                setModalOwnFlg(false);
-                                setModalRoll(element);
-                            }}
-                            title={`${element.name}の説明を見る`}
+                            className={styles.cardBody}
+                            onClick={() => counter(element.rollNo, 1)}
+                            aria-label={`${element.name}を1枚追加(現在${count}枚)`}
+                            title={`${element.name}を1枚追加`}
                         >
-                            <span className={styles.rollBadge}>
-                                {ROLL_KANJI[element.name] ??
-                                    element.name.charAt(0)}
+                            <span className={styles.cardArt}>
+                                {/* 装飾画像。役職名は下のテキストで示す */}
+                                <img
+                                    src={`/images/werewolf/roll/${element.rollNo}.jpg`}
+                                    alt=""
+                                    loading="lazy"
+                                    draggable={false}
+                                />
                             </span>
-                            {element.name}
+                            <span className={styles.cardName}>
+                                {element.name}
+                            </span>
                         </button>
-                        <div className={styles.rollCounter}>
+                        {count > 0 && (
+                            /* key に count を含めて枚数変更のたびにポップ演出を再生する */
+                            <span
+                                key={count}
+                                className={styles.countBadge}
+                                aria-hidden="true"
+                            >
+                                {count}
+                            </span>
+                        )}
+                        <div className={styles.cardActions}>
                             <button
-                                className={styles.step}
+                                className={styles.cardStep}
                                 aria-label={`${element.name}を減らす`}
+                                disabled={count === 0}
                                 onClick={() => counter(element.rollNo, -1)}
                             >
                                 −
                             </button>
-                            <span className={styles.count}>{count}</span>
                             <button
-                                className={styles.step}
-                                aria-label={`${element.name}を増やす`}
-                                onClick={() => counter(element.rollNo, 1)}
+                                className={styles.cardInfo}
+                                aria-label={`${element.name}の説明を見る`}
+                                onClick={() => {
+                                    setModalOwnFlg(false);
+                                    setModalRoll(element);
+                                }}
                             >
-                                +
+                                ?
                             </button>
                         </div>
                     </div>
