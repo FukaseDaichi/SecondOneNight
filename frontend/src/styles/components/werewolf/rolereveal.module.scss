@@ -31,20 +31,6 @@
         transform: translate(2px, -1px) rotate(0.6deg);
     }
 }
-@keyframes holePop {
-    0% {
-        opacity: 0;
-        transform: scale(2.4);
-    }
-    45% {
-        opacity: 1;
-        transform: scale(0.88);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
 @keyframes muzzleFlash {
     0% {
         opacity: 0.9;
@@ -197,24 +183,6 @@
     filter: grayscale(1);
 }
 
-.bullethole {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 108px;
-    height: 108px;
-    margin: -54px 0 0 -54px;
-    animation: holePop 0.35s $ease both;
-    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
-
-    &.small {
-        width: 46px;
-        height: 46px;
-        margin: -23px 0 0 -23px;
-        animation: none;
-    }
-}
-
 /* 発砲フラッシュ(舞台全体を白く瞬かせる) */
 .flash {
     position: fixed;
@@ -300,8 +268,7 @@
 
 @media (prefers-reduced-motion: reduce) {
     .player,
-    .mini,
-    .bullethole {
+    .mini {
         animation: none;
     }
     .cardInner {

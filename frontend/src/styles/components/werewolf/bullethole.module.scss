@@ -1,0 +1,42 @@
+@use '../../tokens' as *;
+
+/* 銃痕。カード/サムネイルの中央に重ねる前提の絶対配置 */
+
+@keyframes holePop {
+    0% {
+        opacity: 0;
+        transform: scale(2.4);
+    }
+    45% {
+        opacity: 1;
+        transform: scale(0.88);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.bullethole {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 108px;
+    height: 108px;
+    margin: -54px 0 0 -54px;
+    animation: holePop 0.35s $ease both;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+
+    &.small {
+        width: 46px;
+        height: 46px;
+        margin: -23px 0 0 -23px;
+        animation: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bullethole {
+        animation: none;
+    }
+}
