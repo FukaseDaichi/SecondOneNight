@@ -85,6 +85,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: min-height 0.6s $ease;
+}
+
+/* 進行終了後: 舞台を畳み、開示済みの列だけを勝敗発表・結果の背景として残す */
+.finished .stage {
+    min-height: 0;
+}
+.finished .doneRow {
+    margin-top: 6px;
 }
 
 .player {

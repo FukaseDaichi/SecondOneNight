@@ -44,6 +44,11 @@
     text-align: center;
 }
 
+/* 結果モーダル(下寄せ)の後ろでも盤面+バナーが見えるよう上に寄せる */
+.act-result .inner {
+    margin: 0 0 auto;
+}
+
 .skipBtn {
     position: fixed;
     right: 16px;

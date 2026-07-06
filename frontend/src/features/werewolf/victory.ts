@@ -20,6 +20,7 @@ export const revealOrder = (userList: WerewolfUser[]): WerewolfUser[] => {
 };
 
 // 3幕構成: 種明かし → 勝敗発表 → 結果 → ロビー復帰
+// 種明かしの盤面は verdict / result 中も残す(一枚絵)。skip は勝敗発表まで飛ぶ
 export type VictoryAct = 'reveal' | 'verdict' | 'result' | 'closed';
 export type VictoryActEvent = 'advance' | 'skip' | 'return';
 
@@ -27,13 +28,10 @@ export const nextVictoryAct = (
     act: VictoryAct,
     event: VictoryActEvent
 ): VictoryAct => {
-    if (event === 'skip' && (act === 'reveal' || act === 'verdict')) {
-        return 'result';
-    }
-    if (event === 'advance' && act === 'reveal') {
+    if ((event === 'advance' || event === 'skip') && act === 'reveal') {
         return 'verdict';
     }
-    if (event === 'advance' && act === 'verdict') {
+    if ((event === 'advance' || event === 'skip') && act === 'verdict') {
         return 'result';
     }
     if (event === 'return' && act === 'result') {

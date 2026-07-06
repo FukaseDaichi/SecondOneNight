@@ -1,14 +1,51 @@
 @use '../../tokens' as *;
 
+/* 詳細モーダル: 種明かしの盤面と勝敗バナーを背に、下からスライドイン */
+
+@keyframes modalDim {
+	from {
+		background: rgba($night-deep, 0);
+	}
+	to {
+		background: rgba($night-deep, 0.25);
+	}
+}
+@keyframes modalUp {
+	from {
+		opacity: 0;
+		transform: translateY(40px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.modal {
+	position: fixed;
+	inset: 0;
+	z-index: 3;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	padding: 24px 14px;
+	background: rgba($night-deep, 0.25);
+	animation: modalDim 0.5s $ease both;
+}
+
 .scroll {
 	background: $dawn-paper;
 	border-top: 3px double $gold;
 	border-bottom: 3px double $gold;
 	padding: 20px 16px;
-	max-width: 640px;
+	width: min(640px, 100%);
+	max-height: min(76vh, 100%);
+	overflow-y: auto;
 	margin: 0 auto;
 	font-family: $serif;
 	color: $ink;
+	box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+	animation: modalUp 0.5s $ease 0.1s both;
 }
 .heading {
 	text-align: center;
@@ -80,4 +117,12 @@
 	border: none;
 	border-radius: 999px;
 	padding: 10px 32px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.modal,
+	.scroll {
+		animation-duration: 0.01s;
+		animation-delay: 0s;
+	}
 }

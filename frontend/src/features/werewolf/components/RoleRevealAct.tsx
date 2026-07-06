@@ -7,6 +7,8 @@ type Props = {
     userList: Array<WerewolfUser>;
     npcuser: WerewolfUser | null;
     onDone: () => void;
+    // true の間は進行を止め、全員開示済みの最終盤面を静的に表示する
+    finished?: boolean;
 };
 
 // センターステージの進行: 登場 → カード開示 → (死亡者のみ)銃撃 → 次の人
@@ -72,16 +74,24 @@ function BulletHole({ small }: { small?: boolean }) {
 }
 
 // 第1幕: 種明かし。中央に1人ずつ登場し、キャラカードをフリップ開示。
-// 死亡者は銃声とともに銃痕が刻まれ、開示済みの列にも痕が残る
-export default function RoleRevealAct({ userList, npcuser, onDone }: Props) {
+// 死亡者は銃声とともに銃痕が刻まれ、開示済みの列にも痕が残る。
+// finished 後は勝敗発表・結果の背景として最終盤面を残す
+export default function RoleRevealAct({
+    userList,
+    npcuser,
+    onDone,
+    finished = false,
+}: Props) {
     const ordered = useMemo(() => {
         const list = npcuser?.roll ? [...userList, npcuser] : userList;
         return revealOrder(list);
     }, [userList, npcuser]);
     const [index, setIndex] = useState(0);
     const [phase, setPhase] = useState<StagePhase>('enter');
-    const allRevealed = index >= ordered.length;
+    const allRevealed = finished || index >= ordered.length;
     const current = ordered[index];
+    // finished(スキップ含む)なら全員を開示済みの列へ
+    const revealed = finished ? ordered : ordered.slice(0, index);
 
     // 銃声: 銃撃フェーズに入った瞬間に一度だけ鳴らす
     useEffect(() => {
@@ -93,7 +103,7 @@ export default function RoleRevealAct({ userList, npcuser, onDone }: Props) {
     }, [phase]);
 
     const advance = useCallback(() => {
-        if (allRevealed) return;
+        if (finished || allRevealed) return;
         if (phase === 'enter') {
             setPhase('open');
             return;
@@ -104,9 +114,10 @@ export default function RoleRevealAct({ userList, npcuser, onDone }: Props) {
         }
         setIndex((i) => i + 1);
         setPhase('enter');
-    }, [allRevealed, phase, ordered, index]);
+    }, [finished, allRevealed, phase, ordered, index]);
 
     useEffect(() => {
+        if (finished) return;
         if (allRevealed) {
             const id = window.setTimeout(onDone, DONE_DELAY_MS);
             return () => window.clearTimeout(id);
@@ -115,11 +126,14 @@ export default function RoleRevealAct({ userList, npcuser, onDone }: Props) {
             phase === 'enter' ? ENTER_MS : phase === 'open' ? OPEN_MS : SHOT_MS;
         const id = window.setTimeout(advance, ms);
         return () => window.clearTimeout(id);
-    }, [phase, index, allRevealed, advance, onDone]);
+    }, [phase, index, finished, allRevealed, advance, onDone]);
 
     return (
-        <div className={styles.act} onClick={advance}>
-            <p className={styles.heading}>─ 種明かし ─</p>
+        <div
+            className={`${styles.act} ${finished ? styles.finished : ''}`}
+            onClick={finished ? undefined : advance}
+        >
+            {!finished && <p className={styles.heading}>─ 種明かし ─</p>}
             <div className={styles.stage}>
                 {!allRevealed && current && (
                     <div
@@ -164,12 +178,12 @@ export default function RoleRevealAct({ userList, npcuser, onDone }: Props) {
                         </span>
                     </div>
                 )}
-                {phase === 'shot' && (
+                {!finished && phase === 'shot' && (
                     <div className={styles.flash} aria-hidden="true" />
                 )}
             </div>
             <ul className={styles.doneRow}>
-                {ordered.slice(0, index).map((u) => {
+                {revealed.map((u) => {
                     const dead = isDeadUser(u);
                     return (
                         <li
@@ -196,9 +210,11 @@ export default function RoleRevealAct({ userList, npcuser, onDone }: Props) {
                     );
                 })}
             </ul>
-            <p className={styles.hint}>
-                {allRevealed ? '─ 夜が明ける ─' : 'タップで次へ'}
-            </p>
+            {!finished && (
+                <p className={styles.hint}>
+                    {allRevealed ? '─ 夜が明ける ─' : 'タップで次へ'}
+                </p>
+            )}
         </div>
     );
 }

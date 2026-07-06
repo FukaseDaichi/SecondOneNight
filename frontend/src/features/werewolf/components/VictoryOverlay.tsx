@@ -3,8 +3,8 @@ import dynamic from 'next/dynamic';
 import styles from '../../../styles/components/werewolf/victory.module.scss';
 import { WerewolfUser } from '../../../type/werewolf';
 import RoleRevealAct from './RoleRevealAct';
-import VerdictAct from './VerdictAct';
-import ResultScroll from './ResultScroll';
+import VerdictBanner from './VerdictBanner';
+import ResultModal from './ResultModal';
 import { nextVictoryAct, victoryPalette, VictoryAct } from '../victory';
 
 const SakuraParticles = dynamic(
@@ -22,6 +22,7 @@ type Props = {
 // 勝敗発表の自動送り(タップでも送れる)
 const VERDICT_MS = 4000;
 
+// 種明かしの盤面は最後まで残し、勝敗バナー → 詳細モーダルを上に重ねる一枚絵構成
 export default function VictoryOverlay({
     winMessage,
     winteamList,
@@ -57,24 +58,21 @@ export default function VictoryOverlay({
                 <SakuraParticles mode="celebration" palette={palette} />
             )}
             <div className={styles.inner}>
-                {act === 'reveal' && (
-                    <RoleRevealAct
-                        userList={userList}
-                        npcuser={npcuser}
-                        onDone={() =>
-                            setAct((a) => nextVictoryAct(a, 'advance'))
-                        }
-                    />
-                )}
-                {act === 'verdict' && (
-                    <VerdictAct
+                {act !== 'reveal' && (
+                    <VerdictBanner
                         winMessage={winMessage}
                         winteamList={winteamList}
-                        userList={userList}
+                        compact={act === 'result'}
                     />
                 )}
+                <RoleRevealAct
+                    userList={userList}
+                    npcuser={npcuser}
+                    finished={act !== 'reveal'}
+                    onDone={() => setAct((a) => nextVictoryAct(a, 'advance'))}
+                />
                 {act === 'result' && (
-                    <ResultScroll
+                    <ResultModal
                         userList={userList}
                         winteamList={winteamList}
                         npcuser={npcuser}
