@@ -47,6 +47,7 @@ export default function UserField({
                         key={index}
                         user={user}
                         ownFlg={user.userName === playerName}
+                        hostFlg={index === 0}
                         userColor={SystemConst.PLAYER_COLOR_LIST[index]}
                         changeIcon={changeIcon}
                         turn={turn}

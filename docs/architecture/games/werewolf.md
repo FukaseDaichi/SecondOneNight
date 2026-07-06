@@ -128,7 +128,7 @@ stateDiagram-v2
 | --- | --- | --- |
 | `startFlg` | `useWerewolfRoom.ts` | 一定時間後に `dismissStart` |
 | `turn` | `useWerewolfRoom.ts` | 役職選択・投票開始表示を制御 |
-| `turn` / `winteamList` | `PhaseBackground.tsx` / `background.module.scss` | turn に応じ全画面背景を切替。0=待機(dusk: 宵の口)、1=役職選択(night)、2=議論、3=投票(いずれも夜系バリエーション)、4=夜明け(dawn)+勝利陣営のグラデーションティント(wolf=rose / village=teal / third=gold)。シーン間は background transition で日没・夜明けのように繋がる |
+| `turn` / `winteamList` | `PhaseBackground.tsx` / `background.module.scss` | turn に応じ全画面背景を切替。0=待機(dusk クラス: 淡い空色→桜色の白昼グラデーション)、1=役職選択(night)、2=議論、3=投票(いずれも夜系バリエーション)、4=夜明け(dawn)+勝利陣営のグラデーションティント(wolf=rose / village=teal / third=gold)。シーン間は background transition で昼夜が切り替わるように繋がる |
 | body クラス | `useBodyClass.ts` | 役職選択(`RollSelectTurn`)・役職モーダル(`ModalRollCard`)の body クラス付与(スクロールロック等)を共通フックに集約。旧 `document.*` 直接操作は廃止し、開閉は React state から導出する |
 | `votingStartFlg` | `useWerewolfRoom.ts` / `VotingStart.tsx` | 一定時間後に `setVotingStartFlg(false)`。表示は開始演出(`WerewolfStart`)と同構造の `VotingStart` オーバーレイ(rose ティント) |
 | `cutInNo` | `useWerewolfRoom.ts` | 役職アクション cut-in 表示 |
@@ -140,9 +140,9 @@ stateDiagram-v2
 | フェーズ帯 | `TurnMessage.tsx` / `room.module.scss` | turn 1〜3 で「フェーズ名+残り時間+議論終了」を通常フローの sticky 帯として表示。帯自身が高さを持つためプレイヤーカードと重ならない。ゲーム中は `UserField` に `ingame` クラスを付け、浮遊アバター分の上マージンを確保する |
 | 勝利演出 | `VictoryOverlay.tsx` / `victory.ts` | 3幕構成(`VictoryAct`: reveal=種明かし → verdict=勝敗発表 → result=巻物結果 → closed)。幕遷移は純粋関数 `nextVictoryAct` で行い、表示層のローカル state だけで制御。第1幕 `RoleRevealAct` は `revealOrder`(人狼陣営を最後に回す)の順で1枚ずつ開示、第2幕 `VerdictAct` は陣営バナー+勝者前出し、第3幕 `ResultScroll` は巻物風の結果一覧+ロビー復帰ボタン |
 | 死亡者マーカー | `DeadMarker.tsx` / `isDeadUser` | `roll.punishmentFlg`(処刑・銃撃)から死亡を判定し、種明かし・勝敗発表・結果一覧で「散」帯+モノクロ化を重ねる |
-| 待機画面構成 | `[roomId].tsx` / `InvitePanel.tsx` / `LanternRow.tsx` / `MenuPanel.tsx` | ロビーは「招待行灯カード+遊び方 → 提灯列 → プレイヤー → お品書き → 操作ボタン」の縦構成。提灯列は入室人数プログレス(max 10・min 3)、お品書きはプリセット・役職±・議論時間を1枚に統合する |
-| 開始条件表示 | `lobby.ts`(`lobbyReadiness`) | 3人以上 / 役職合計 > 参加人数 / 人狼陣営(teamNo=1)を含む、の3条件を判定。不足メッセージをお品書きに表示し、GAME START を `disabled` にする |
-| 待機カード演出 | `userInfo.tsx` / `userinfo.module.scss` | ロビー時のみ登場アニメ(norenIn)と、他人アバタータップの「つつき」揺れ(ローカル state のみ・通信なし) |
+| 待機画面構成 | `[roomId].tsx` / `InvitePanel.tsx` / `StatusCard.tsx` / `MenuPanel.tsx` | ロビーは「ヘッダー(タイトル+状態バッジ) → 招待カード+開始ステータスカードの2カラム(モバイルは縦積み) → 集いし者たち(プレイヤー) → お品書き(ダークパネル) → 不足メッセージ → 下部固定バー(退出 / GAME START)」の構成。招待カードは `hero.webp` を右側に敷き、ルーム番号・URL コピー・遊び方を持つ。開始ステータスカードは蝋燭列(max 10・min 3、入室数だけ点灯)+入室人数+カード内 GAME START |
+| 開始条件表示 | `lobby.ts`(`lobbyReadiness`) | 3人以上 / 役職合計 > 参加人数 / 人狼陣営(teamNo=1)を含む、の3条件を判定。不足メッセージをお品書き直下のエラーパネルに表示し、GAME START(ステータスカード内・下部バーとも)を `disabled` にする。ヘッダーの状態バッジも readiness で「参加待ち/開始できます」を切り替える |
+| 待機カード演出 | `userInfo.tsx` / `userinfo.module.scss` | ロビー時のみ登場アニメ(norenIn)と、他人アバタータップの「つつき」揺れ(ローカル state のみ・通信なし)。ロビー中はカード枠をニュートラルにし、プレイヤーカラーはアバターの輪(CSS 変数 `--player-color`)で示す。`userList` 先頭のプレイヤーに「主」バッジを表示 |
 
 ## 注意点
 
@@ -153,7 +153,8 @@ stateDiagram-v2
 - `roomCode` は Room JSON から `WerewolfState.roomCode` に取り込み、待機中/終了後の `InvitePanel` で表示する。
 - status `650` のアイコン `obj` は従来のプリセット URL に加えて、アップロード画像から生成した JPEG Data URL も許容する。バックエンドは文字列として保存し、`userList` を broadcast する。
 - 勝利演出は reducer や backend の turn を変えず、overlay のローカル state で「種明かし → 勝敗発表 → 巻物結果 → 閉じる」の3幕を進める(`nextVictoryAct`)。閉じた後も turn `4` の夜明けロビー表示に戻る。
-- 待機中の桜パーティクルは `SakuraParticles` の `dusk` モード(夕暮れ palette、粒数は ambient と同じ)。勝利演出中は `celebration` に譲る。
+- 待機中の桜パーティクルは `SakuraParticles` の `ambient` モード(桜色 palette)。勝利演出中は `celebration` に譲る。
+- お品書き(`MenuPanel`)はダークパネル。役職はカード画像ではなく漢字一字バッジ付きチップ(`RollCustomize` の `ROLL_KANJI`)で並べ、名前タップで説明モーダルを開く。±はローカル state 更新のみで「設定」ボタン(status `150`)で送信、プリセット選択は即送信という従来動線を維持。議論時間はなし/3分/5分/7分のピル(送信値 0/180/300/420 は不変)。
 - ゲーム中画面(役職選択・議論・投票)と演出(cut-in・投票開始)は `tokens.scss` ベースの夜系デザインで統一している。色・フォント・余白はトークンを使い、role カードの陣営色ボーダーのみ `TEAM_COLOR_LIST` から tsx の inline style で付ける。
 - `Countdown` は fakeartist と共用。werewolf の議論画面では `variant="night"`(夜背景向け配色)と `inline`(absolute 配置を解除しフェーズ帯内に置く)を渡す。prop 未指定(fakeartist)では従来表示のまま。
 - プレイヤーカード(`userInfo.tsx`)は全員同一構造・同一高さ。名前ゾーンは2行分の固定高で、文字数に応じて4段階にフォントを縮小し(14文字以上は3行まで許容)最大20文字を全文表示する。自分のカードは上端バッジではなく「カード下辺中央の YOU タブ+ティール発光」で示す(上端はアバターと干渉するため)。

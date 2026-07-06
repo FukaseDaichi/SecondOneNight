@@ -97,10 +97,47 @@ div.main {
     padding: 1em 1em;
     box-sizing: border-box;
     background-color: $paper; /* 背景色 */
-    border: 3px solid; /*線の太さ・色(プレイヤーカラー)*/
+    border: 3px solid var(--player-color, $ink); /*線の太さ・色(プレイヤーカラー)*/
     border-radius: 16px;
     box-shadow: 0 14px 30px rgba(23, 69, 79, 0.22);
     width: 180px;
+
+    /* ロビー中(.enter)はニュートラルな白カードにし、
+       プレイヤーカラーはアバターの輪に移す */
+    &.enter {
+        border: 1px solid rgba($ink, 0.12);
+        box-shadow: 0 14px 30px rgba(23, 69, 79, 0.1);
+
+        div.imgdiv {
+            box-shadow:
+                0 0 0 3px var(--player-color, $teal),
+                0 6px 14px rgba(23, 69, 79, 0.25);
+        }
+
+        &.own {
+            box-shadow:
+                0 14px 30px rgba(23, 69, 79, 0.1),
+                0 0 0 3px rgba(53, 168, 180, 0.22),
+                0 0 18px rgba(53, 168, 180, 0.4);
+        }
+    }
+
+    /* 部屋主バッジ */
+    span.host {
+        position: absolute;
+        top: -10px;
+        left: -8px;
+        padding: 3px 10px;
+        font-family: $serif;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: $rose-deep;
+        background: #fff;
+        border: 1px solid rgba($rose, 0.6);
+        border-radius: 999px;
+        z-index: 5;
+    }
 
     @include mq(md) {
         width: 120px;

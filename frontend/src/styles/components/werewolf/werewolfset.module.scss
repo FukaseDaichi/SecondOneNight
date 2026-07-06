@@ -1,13 +1,9 @@
 @use '../../variables' as *;
 @use '../../tokens' as *;
 
+/* おすすめ役職セット: お品書き(ダーク)パネル内のセレクタ */
 div.werewolfset {
-    margin: 20px 0;
     font-family: $serif;
-    text-align: center;
-    line-height: 3;
-    font-size: 1.3rem;
-    color: $ink;
     letter-spacing: 0.06em;
 
     &.none {
@@ -15,12 +11,13 @@ div.werewolfset {
     }
 
     select {
-        padding: 0.5rem 1rem;
+        min-width: 200px;
+        padding: 0.6rem 1rem;
         font-family: $serif;
-        font-size: 1rem;
-        color: $ink;
-        background: rgba(255, 255, 255, 0.7);
-        border: 1px solid rgba(30, 59, 68, 0.3);
+        font-size: 0.9rem;
+        color: #e8f4f4;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(232, 244, 244, 0.25);
         border-radius: 8px;
         cursor: pointer;
         outline: 0;
@@ -28,7 +25,17 @@ div.werewolfset {
 
         &:hover,
         &:focus-visible {
-            border-color: $teal;
+            border-color: $teal-soft;
+        }
+
+        option {
+            color: $ink;
+            background: $paper;
+        }
+
+        @include mq(md) {
+            min-width: 0;
+            width: 100%;
         }
     }
 }

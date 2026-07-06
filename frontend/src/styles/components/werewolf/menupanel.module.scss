@@ -1,58 +1,307 @@
+@use '../../variables' as *;
 @use '../../tokens' as *;
 
-/* お品書きパネル: 夕暮れ下の紙色の品書き。設定 UI をひとまとめにする */
+/* お品書きパネル: 深い藍緑のダークカードに設定 UI をひとまとめにする */
 .panel {
-    background: $dusk-paper;
-    border: 1px solid rgba($ink, 0.15);
-    border-top: 3px double $gold;
-    border-radius: 6px;
-    padding: 18px 14px 20px;
-    max-width: 640px;
-    margin: 16px auto 0;
-    box-shadow: 0 8px 24px rgba(13, 34, 41, 0.35);
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(
+            60% 50% at 85% 20%,
+            rgba($teal, 0.12),
+            transparent 70%
+        ),
+        linear-gradient(160deg, #14343c 0%, $night 55%, $night-deep 100%);
+    border: 1px solid rgba($teal-soft, 0.16);
+    border-radius: 20px;
+    padding: clamp(24px, 4vw, 40px) clamp(16px, 4vw, 44px) clamp(28px, 4vw, 40px);
+    margin: 26px auto 0;
+    box-shadow: 0 24px 60px rgba(13, 34, 41, 0.35);
+}
+
+.eyebrow {
+    margin: 0;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.42em;
+    text-indent: 0.42em;
+    color: $teal-soft;
 }
 
 .title {
     font-family: $serif;
-    font-size: 1.2rem;
+    font-size: clamp(1.4rem, 3vw, 1.7rem);
     font-weight: 600;
     text-align: center;
     letter-spacing: 0.5em;
     text-indent: 0.5em;
-    color: $ink;
-    margin: 0 0 14px;
+    color: #f2fbfb;
+    margin: 10px 0 0;
+
+    /* 題字下の短い罫線 */
+    &::after {
+        content: '';
+        display: block;
+        width: 56px;
+        height: 1px;
+        margin: 16px auto 0;
+        background: rgba($teal-soft, 0.5);
+    }
 }
 
 .section {
-    margin-bottom: 14px;
-
-    &:last-of-type {
-        margin-bottom: 0;
-    }
+    margin-top: 26px;
 }
 
 .label {
     font-family: $serif;
-    font-size: 0.85rem;
-    letter-spacing: 0.15em;
-    color: $label;
-    margin: 0 0 6px;
-    border-bottom: 1px solid rgba($ink, 0.12);
-    padding-bottom: 4px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    color: $rose-soft;
+    margin: 0 0 14px;
 }
 
-/* 開始条件の不足メッセージ */
+/* 役職セクションの操作行: プリセット選択 + 設定 + 合計/必要枚数 */
+.rollHead {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.apply {
+    padding: 10px 22px;
+    border: 1px solid rgba($teal-soft, 0.5);
+    border-radius: 999px;
+    background: transparent;
+    font-family: $serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: $teal-soft;
+    cursor: pointer;
+    transition:
+        background 0.3s,
+        border-color 0.3s,
+        transform 0.1s;
+
+    &:hover {
+        background: rgba($teal, 0.16);
+        border-color: $teal-soft;
+    }
+    &:active {
+        transform: scale(0.95);
+    }
+    &:focus-visible {
+        outline: 2px solid $teal;
+        outline-offset: 2px;
+    }
+}
+
+.tally {
+    margin: 0 0 0 auto;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    color: rgba(232, 244, 244, 0.65);
+
+    strong {
+        font-family: $serif;
+        font-size: 1.25rem;
+        color: $rose-soft;
+        margin: 0 2px;
+    }
+}
+
+/* 役職チップの一覧 */
+.rollGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+
+    @include mq(md) {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 8px;
+    }
+}
+
+.rollChip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 9px 10px 9px 9px;
+    border: 1px solid rgba(232, 244, 244, 0.12);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    transition:
+        border-color 0.3s,
+        background 0.3s;
+
+    /* 1枚以上入っている役職はティールの灯でハイライト */
+    &.active {
+        border-color: rgba($teal-soft, 0.7);
+        background: rgba($teal, 0.1);
+    }
+}
+
+.rollName {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    font-family: $serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    color: #e8f4f4;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:hover {
+        color: $teal-soft;
+    }
+    &:focus-visible {
+        outline: 2px solid $teal;
+        outline-offset: 2px;
+        border-radius: 6px;
+    }
+}
+
+/* 漢字一字のバッジ */
+.rollBadge {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgba($rose-soft, 0.55);
+    border-radius: 50%;
+    font-size: 0.85rem;
+    color: $rose-soft;
+}
+
+.rollCounter {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.step {
+    user-select: none;
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgba($teal-soft, 0.4);
+    border-radius: 50%;
+    background: transparent;
+    font-size: 1rem;
+    line-height: 1;
+    color: $teal-soft;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition:
+        background 0.2s,
+        transform 0.1s;
+
+    &:hover {
+        background: rgba($teal, 0.18);
+    }
+    &:active {
+        transform: scale(0.9);
+    }
+    &:focus-visible {
+        outline: 2px solid $teal;
+        outline-offset: 2px;
+    }
+}
+
+.count {
+    min-width: 26px;
+    text-align: center;
+    font-family: $serif;
+    font-size: 1.15rem;
+    color: #f2fbfb;
+}
+
+/* 議論時間 */
+.timeLabel {
+    margin: 0 0 8px;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    color: rgba(232, 244, 244, 0.6);
+}
+
+.timePills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.timePill {
+    min-width: 76px;
+    padding: 11px 20px;
+    border: 1px solid rgba(232, 244, 244, 0.25);
+    border-radius: 999px;
+    background: transparent;
+    font-family: $serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    color: #e8f4f4;
+    cursor: pointer;
+    transition:
+        background 0.3s,
+        border-color 0.3s,
+        color 0.3s;
+
+    &:hover {
+        border-color: $teal-soft;
+    }
+    &:focus-visible {
+        outline: 2px solid $teal;
+        outline-offset: 2px;
+    }
+
+    &.selected {
+        background: rgba($rose-soft, 0.16);
+        border-color: rgba($rose-soft, 0.75);
+        color: #fdf3f5;
+    }
+}
+
+/* 開始条件の不足メッセージ(パネルの外・下部バーの手前に置く) */
 .notice {
     list-style: none;
+    max-width: none;
     margin: 14px 0 0;
-    padding: 10px 14px;
-    border-radius: 8px;
-    background: rgba($rose, 0.1);
+    padding: 14px 18px;
+    border: 1px solid rgba($rose, 0.35);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.72);
     color: $rose-deep;
     font-family: $sans;
     font-size: 0.85rem;
 
     > li {
-        line-height: 1.7;
+        line-height: 1.9;
+        letter-spacing: 0.06em;
+
+        &::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: $rose;
+            margin-right: 10px;
+            vertical-align: 2px;
+        }
     }
 }

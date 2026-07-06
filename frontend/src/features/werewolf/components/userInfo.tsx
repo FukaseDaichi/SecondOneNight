@@ -34,6 +34,7 @@ type UserInfoProps = {
     playerData: WerewolfUser;
     user: WerewolfUser;
     ownFlg: boolean;
+    hostFlg?: boolean;
     userColor: string;
     changeIcon: (string) => void;
     setModalRoll: (WerewolfRoll) => void;
@@ -46,10 +47,11 @@ type UserInfoProps = {
 };
 
 export default function UserInfo(props: UserInfoProps) {
+    // プレイヤーカラーは CSS 変数で渡す(通常時はカード枠、ロビー中はアバターの輪に使う)
     const divStyles = {
-        borderColor: props.userColor,
+        '--player-color': props.userColor,
         color: props.userColor,
-    };
+    } as React.CSSProperties;
     const lobby = props.turn === 0 || props.turn === 4;
 
     // つつき演出(ローカルのみ・通信なし)。ロビー中に他人のアバターをタップすると揺れる
@@ -70,6 +72,11 @@ export default function UserInfo(props: UserInfoProps) {
             style={divStyles}
         >
             {props.ownFlg && <span className={styles.you}>YOU</span>}
+            {props.hostFlg && lobby && (
+                <span className={styles.host} title="部屋主">
+                    主
+                </span>
+            )}
             {props.removeUser &&
                 !props.ownFlg &&
                 (props.turn === 0 || props.turn === 4) && (

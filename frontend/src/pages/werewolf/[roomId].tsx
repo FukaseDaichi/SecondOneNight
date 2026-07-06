@@ -14,7 +14,7 @@ import ConnectionStatus from '../../components/common/ConnectionStatus';
 import EntryCard from '../../features/werewolf/components/EntryCard';
 import InvitePanel from '../../features/werewolf/components/InvitePanel';
 import TurnMessage from '../../features/werewolf/components/TurnMessage';
-import LanternRow from '../../features/werewolf/components/LanternRow';
+import StatusCard from '../../features/werewolf/components/StatusCard';
 import MenuPanel from '../../features/werewolf/components/MenuPanel';
 import Overlays from '../../features/werewolf/components/Overlays';
 import UserField from '../../features/werewolf/components/UserField';
@@ -139,7 +139,7 @@ export default function WerewolfRoom() {
                 {`
                     body {
                         overflow-x: hidden;
-                        background-color: #2b2440;
+                        background-color: #eefaf9;
                     }
                 `}
             </style>
@@ -156,8 +156,8 @@ export default function WerewolfRoom() {
                 <title>セカンドワンナイト人狼</title>
             </Head>
             <PhaseBackground turn={turn} winteamList={winteamList} />
-            {/* 待機中は夕暮れ色の花びら(勝利演出中は celebration 側に譲る) */}
-            {lobby && !victoryVisible && <SakuraParticles mode="dusk" />}
+            {/* 待機中は桜色の花びら(勝利演出中は celebration 側に譲る) */}
+            {lobby && !victoryVisible && <SakuraParticles mode="ambient" />}
             {victoryVisible && (
                 <VictoryOverlay
                     winMessage={winMessage}
@@ -185,8 +185,8 @@ export default function WerewolfRoom() {
                 showRuleButton={!lobby}
             />
 
-            {/* ページ本文(中央カラム) */}
-            <div className={styles.room}>
+            {/* ページ本文(中央カラム)。ロビー中は下部固定バーの分だけ余白を取る */}
+            <div className={`${styles.room} ${lobby ? styles.lobbyRoom : ''}`}>
                 {/* メッセージエリア */}
                 <TurnMessage
                     turn={turn}
@@ -211,23 +211,48 @@ export default function WerewolfRoom() {
                     entered={entered}
                     onRoomIn={roomIn}
                 />
-                {/* ヘッダーゾーン: ルームコードカード + 遊び方 → 提灯列(入室人数) */}
+                {/* ロビーヘッダー: タイトル + 状態バッジ */}
                 {lobby && (
-                    <div className={styles.lobbyHead}>
+                    <header className={styles.lobbyHeader}>
+                        <div>
+                            <p className={styles.lobbyEyebrow}>
+                                SECOND ONE NIGHT WEREWOLF
+                            </p>
+                            <h1 className={styles.lobbyTitle}>ルーム設定</h1>
+                        </div>
+                        <span
+                            className={`${styles.statusBadge} ${
+                                readiness.ready ? styles.ready : ''
+                            }`}
+                        >
+                            {readiness.ready ? '開始できます' : '参加待ち'}
+                        </span>
+                    </header>
+                )}
+                {/* 招待カード + 開始ステータスカードの2カラム */}
+                {lobby && (
+                    <div className={styles.heroRow}>
                         <InvitePanel
                             roomId={roomId as string}
                             roomCode={roomCode}
+                            onShowRule={() => setRuleFlg(true)}
                         />
-                        <button
-                            className={styles.ruleLink}
-                            onClick={() => setRuleFlg(true)}
-                        >
-                            遊び方
-                        </button>
+                        <StatusCard
+                            count={userList.length}
+                            max={10}
+                            min={3}
+                            ready={readiness.ready}
+                            messages={readiness.messages}
+                            onStart={init}
+                        />
                     </div>
                 )}
+                {/* プレイヤーセクション見出し */}
                 {lobby && (
-                    <LanternRow count={userList.length} max={10} min={3} />
+                    <div className={styles.sectionHead}>
+                        <p className={styles.sectionEyebrow}>PLAYERS</p>
+                        <h2 className={styles.sectionTitle}>集いし者たち</h2>
+                    </div>
                 )}
                 {/* プレイヤーグリッド */}
                 {playerData && (
@@ -258,7 +283,7 @@ export default function WerewolfRoom() {
                     />
                 )}
 
-                {/* お品書き(設定統合パネル) + GAME START / 退出 */}
+                {/* お品書き(設定統合パネル) + 下部固定バー(退出 / GAME START) */}
                 {playerData && lobby ? (
                     <>
                         <MenuPanel
@@ -272,9 +297,33 @@ export default function WerewolfRoom() {
                             setModalOwnFlg={setModalOwnFlg}
                             limitTime={limitTime}
                             changeLimitTime={changeLimitTime}
-                            turn={turn}
                         />
-                        {actionButtons}
+                        <div className={styles.bottomBar}>
+                            <button
+                                className={styles.ghost}
+                                onClick={() => {
+                                    if (
+                                        window.confirm('部屋から退出しますか?')
+                                    ) {
+                                        leaveRoom();
+                                    }
+                                }}
+                            >
+                                退出
+                            </button>
+                            <button
+                                className={styles.primary}
+                                onClick={init}
+                                disabled={!readiness.ready}
+                                title={
+                                    !readiness.ready
+                                        ? readiness.messages.join(' / ')
+                                        : undefined
+                                }
+                            >
+                                GAME START
+                            </button>
+                        </div>
                     </>
                 ) : (
                     actionButtons
