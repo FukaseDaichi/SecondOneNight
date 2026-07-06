@@ -51,12 +51,16 @@ $animetiondelay: 2s;
     }
 }
 
-/* ロビー入室時の登場演出(暖簾をくぐるイメージ) */
+/* ロビー入室時の登場演出(暖簾をくぐるイメージ)。
+   fill-mode を both にしないこと: 最終フレームの clip-path が残留すると、
+   カード下へ大きく伸びるアイコンピッカーのポップオーバーが切り取られる。
+   to の値は自然状態(opacity 1 / translate 0)と一致するため、終了後に
+   clip-path が none へ戻っても見た目は変わらない */
 .enter {
-    animation: norenIn 0.6s $ease both;
+    animation: norenIn 0.6s $ease;
 }
-/* fill-mode both で最終値が残留するため、クリップ領域は負の inset で
-   カード外にはみ出す要素(浮遊アバター・YOUバッジ・発光)まで含めておく */
+/* クリップ領域は負の inset でカード外にはみ出す要素
+   (浮遊アバター・YOUバッジ・発光)まで含めておく */
 @keyframes norenIn {
     from {
         opacity: 0;
