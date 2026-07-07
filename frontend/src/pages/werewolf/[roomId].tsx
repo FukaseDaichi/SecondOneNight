@@ -137,8 +137,15 @@ export default function WerewolfRoom() {
         <Layout home={false}>
             <style jsx global>
                 {`
+                    /* スマホでの横パン防止。clip は hidden と違い
+                       スクロールコンテナ化しないため iOS でも確実に効く
+                       (未対応ブラウザは直前の hidden にフォールバック) */
+                    html,
                     body {
                         overflow-x: hidden;
+                        overflow-x: clip;
+                    }
+                    body {
                         background-color: #eefaf9;
                     }
                 `}

@@ -213,6 +213,10 @@ div.userfirld {
     left: 50%;
     transform: translateX(-50%);
     width: 100vw;
+    box-sizing: border-box;
+    /* カード外へ -8px はみ出す装飾(部屋主バッジ・キックボタン)が
+       画面端で viewport を越えないよう、内側に余白を確保する */
+    padding: 0 10px;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
