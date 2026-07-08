@@ -1,4 +1,4 @@
-# BoardGame frontend
+# セカンドワンナイト人狼　frontend
 
 Next.js / React / TypeScript で作られたフロントエンドです。5つのゲーム画面、ルーム入室、チャット、STOMP 接続、ゲームごとの UI 状態管理を担当します。
 
