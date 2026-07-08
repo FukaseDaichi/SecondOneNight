@@ -260,6 +260,8 @@
 }
 .playView {
     grid-area: 1 / 1;
+    /* 中身の intrinsic 幅でグリッドトラックがパネル幅を超えないように */
+    min-width: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -275,6 +277,10 @@
 .playCreateBtn {
     width: 100%;
     min-height: 54px;
+    /* 320px幅でもラベルが1行に収まるよう左右と字間を詰める */
+    padding-left: 12px;
+    padding-right: 12px;
+    letter-spacing: 0.1em;
 }
 .playDivider {
     display: flex;
@@ -308,6 +314,7 @@
 
     input {
         flex: 1;
+        width: 0; /* size属性由来の intrinsic 幅を無効化(実幅は flex が決める) */
         min-width: 0;
         min-height: 50px;
         padding: 10px 16px;
