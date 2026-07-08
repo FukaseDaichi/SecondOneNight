@@ -541,10 +541,18 @@
 }
 .heroCta {
     display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
+    gap: clamp(10px, 2.5vw, 14px);
     margin-top: clamp(26px, 4.5vh, 40px);
     animation: fadeUp 1.1s $ease both 2.05s;
+
+    /* 狭い画面でも折り返さず、2つを均等幅で横並びに保つ */
+    a {
+        flex: 1 1 0;
+        max-width: 220px;
+        padding-left: 12px;
+        padding-right: 12px;
+        white-space: nowrap;
+    }
 }
 .heroArt {
     position: relative;
