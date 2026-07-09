@@ -25,18 +25,24 @@ const STEPS = [
         color: '#35A8B4',
         title: 'えらぶ',
         text: 'スタートプレイヤーには2枚、ほかのプレイヤーには1枚の役職が配られます。2枚から好きなほうを選び、残りを次の人へ。最後まで選ばれなかった役職は、NPCのものになります。',
+        img: '/images/werewolf/howto-1',
+        alt: '2枚の役職カードから1枚を選び、もう1枚を隣へ渡す手元のイラスト',
     },
     {
         num: '弐',
         color: '#17454F',
         title: 'かたる',
         text: '決めた時間だけ話し合う。「最初に配られた役職」「渡された役職」「選んだ役職」は、語ってもいい大切な手がかり。占い・暗殺・独裁など、一部の役職は議論中に能力を使えます。',
+        img: '/images/werewolf/howto-2',
+        alt: '行灯を囲んで夜に語り合う村人たちと、背後に浮かぶ狼の影のイラスト',
     },
     {
         num: '参',
         color: '#C4646E',
         title: 'さす',
         text: '「せーの」で一斉に投票。最多票のプレイヤーが処刑され、それぞれの勝利条件で勝敗が決まります。全員に1票ずつなら、全員が処刑に。',
+        img: '/images/werewolf/howto-3',
+        alt: '円の中心へ一斉に指を差す複数の手のイラスト',
     },
 ];
 
@@ -330,14 +336,32 @@ export default function Homepage() {
                                     delay={`${0.05 + i * 0.08}s`}
                                 >
                                     <div className={styles.stepCard}>
-                                        <p
-                                            className={styles.stepNum}
-                                            style={{ color: step.color }}
-                                        >
-                                            {step.num}
-                                        </p>
-                                        <h3>{step.title}</h3>
-                                        <p>{step.text}</p>
+                                        <picture>
+                                            <source
+                                                srcSet={`${step.img}.webp`}
+                                                type="image/webp"
+                                            />
+                                            <img
+                                                src={`${step.img}.jpg`}
+                                                alt={step.alt}
+                                                loading="lazy"
+                                                className={styles.stepImg}
+                                            />
+                                        </picture>
+                                        <div className={styles.stepBody}>
+                                            <div className={styles.stepHead}>
+                                                <p
+                                                    className={styles.stepNum}
+                                                    style={{
+                                                        color: step.color,
+                                                    }}
+                                                >
+                                                    {step.num}
+                                                </p>
+                                                <h3>{step.title}</h3>
+                                            </div>
+                                            <p>{step.text}</p>
+                                        </div>
                                     </div>
                                 </Reveal>
                             ))}
