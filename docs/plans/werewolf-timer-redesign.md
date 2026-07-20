@@ -8,7 +8,10 @@
 ## 1. 背景・現状
 
 - 現在のタイマーは共通コンポーネント [Countdown.tsx](../../frontend/src/components/common/Countdown.tsx) + [countdown.module.scss](../../frontend/src/styles/components/werewolf/countdown.module.scss)。
-- 使用箇所は werewolf の [TurnMessage.tsx](../../frontend/src/features/werewolf/components/TurnMessage.tsx) のみ(turn 2 のフェーズ帯内に `inline` で配置)。SCSS も werewolf 配下にあり、実質 werewolf 専用。
+- 使用箇所は **2つ**:
+  - werewolf の [TurnMessage.tsx](../../frontend/src/features/werewolf/components/TurnMessage.tsx)(turn 2 のフェーズ帯内に `variant='night'` + `inline` で配置)
+  - fakeartist の [ProgressMessage.tsx](../../frontend/src/features/fakeartist/components/ProgressMessage.tsx)(`StatusMessage`。デフォルト=ライト面スタイルで使用)
+- **したがって共通 `Countdown` は削除できない**。fakeartist が引き続き使うため現状のまま残し、werewolf 側だけを新タイマーへ差し替える。
 - 表示は「残り時間 + 砂時計 PNG(`sunadokei_black.png` を CSS `invert` で反転)+ X分Y秒」のテキストのみ。
   - **課題1**: 残量の割合が図で分からず、数字を読まないと状況が掴めない。
   - **課題2**: 見た目がデザインシステム(和モダン・2色メタファー)から取り残されている。反転 PNG は暗背景で質感が崩れる。
@@ -48,7 +51,7 @@
 - `frontend/src/features/werewolf/components/MoonTimer.tsx`
 - `frontend/src/styles/components/werewolf/moontimer.module.scss`(`@use '../../tokens'` / `variables` で色・フォント・easing を共有)
 
-規約上、werewolf 固有 UI は feature 配下に置く方針。共通 `Countdown` は werewolf 専用だったため、werewolf feature 側へ実装が移る形になる。
+規約上、werewolf 固有 UI は feature 配下に置く方針。共通 `Countdown` は fakeartist も使い続けるため残置し、werewolf 専用の月相タイマーを feature 配下に新設する。
 
 ### 3.2 Props
 
@@ -101,8 +104,8 @@ type MoonTimerProps = {
 
 ## 5. 差し替え・削除
 
-- `TurnMessage.tsx`:`Countdown` import を `MoonTimer` に差し替え、`variant`/`inline` を除去。表示条件(`turn === 2 && limitTime > 0 && !votingStartFlg`)と `onDone={limittimeDone}` は現状維持。
-- 共通 [Countdown.tsx](../../frontend/src/components/common/Countdown.tsx) と [countdown.module.scss](../../frontend/src/styles/components/werewolf/countdown.module.scss) は werewolf 専用だったため削除する。他ファイルからの参照が無いことを確認済み(TurnMessage のみ)。
+- werewolf の `TurnMessage.tsx`:`Countdown` import を `MoonTimer` に差し替え、`variant`/`inline` を除去。表示条件(`turn === 2 && limitTime > 0 && !votingStartFlg`)と `onDone={limittimeDone}` は現状維持。
+- 共通 [Countdown.tsx](../../frontend/src/components/common/Countdown.tsx) と [countdown.module.scss](../../frontend/src/styles/components/werewolf/countdown.module.scss) は **fakeartist が使い続けるため削除しない**。今回の変更対象外。
 - 砂時計画像 `sunadokei_black.png` は fakeartist / timebomb が使用中のため**残す**。
 
 ## 6. 検証
