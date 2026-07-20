@@ -12,7 +12,7 @@
 | TypeScript | `frontend/tsconfig.json` は `strict: false`、`allowJs: true` | strict 化、サーバペイロード型の具体化 |
 | ESLint | `no-explicit-any` は warning、`no-img-element` は off | `any` 削減後に rule を強化 |
 | STOMP | 全ゲームが `useGameSocket` 経由。topic / destination は既存互換 | 契約を変える場合のみ frontend / backend / docs を同時更新 |
-| werewolf | LP、6桁ルームコード、退出/キック、カスタムアイコン、待機/終了 UI、勝利演出、ゲーム中画面(役職選択/議論/投票/演出)の夜系デザインが現在仕様 | ゲーム固有の追加タスクはなし。横断の CSS・DOM 整理に合流 |
+| werewolf | LP、6桁ルームコード、退出/キック、カスタムアイコン、待機/終了 UI、勝利演出、ゲーム中画面(役職選択/議論/投票/演出)の夜系デザイン、議論フェーズの月相タイマー(`MoonTimer`。残り時間は終了時刻基準で算出)が現在仕様 | ゲーム固有の追加タスクはなし。横断の CSS・DOM 整理に合流 |
 | decrypt | hook に制限時間系送信口があるが、画面からは使っていない。`DecryptRoom` は `LimitTimeInterface` 未実装 | 使うなら backend 対応、使わないなら hook から削除 |
 | CSS | `_app.tsx` が `bootstrap.min.css` を import。`row` / `d-flex` / `container` の使用が残る | Bootstrap 依存の削減 |
 | SCSS 配置 | ゲーム別 SCSS は `frontend/src/styles/components/<game>/` 配下 | feature 配下へ寄せるか判断 |
