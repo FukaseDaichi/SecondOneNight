@@ -24,6 +24,15 @@ export function formatTime(seconds: number): string {
     return `${m}:${String(sec).padStart(2, '0')}`;
 }
 
+// 残り秒を読み上げ用の自然文へ。負値は 0 秒扱い。SVG の aria-label 用。
+export function formatTimeSpoken(seconds: number): string {
+    const s = Math.max(0, Math.ceil(seconds));
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    if (m > 0) return `${m}分${sec}秒`;
+    return `${sec}秒`;
+}
+
 // 満月からの残量割合 p(0〜1)。月の欠けに使う。total<=0 は 0。
 export function phaseProgress(rem: number, total: number): number {
     if (total <= 0) return 0;

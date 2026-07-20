@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import styles from '../../../styles/components/werewolf/moontimer.module.scss';
 import {
     formatTime,
+    formatTimeSpoken,
     lerpColor,
     phaseProgress,
     warmth,
@@ -24,7 +25,11 @@ export default function MoonTimer({ timeLimit, onDone }: MoonTimerProps) {
     const onDoneRef = useRef(onDone);
     onDoneRef.current = onDone;
 
+    // clipPath id はインスタンスごとに一意化(複数描画時の DOM id 衝突を防ぐ)。
+    const clipId = `moonClip-${useId().replace(/:/g, '')}`;
+
     // 終了時刻基準で残り時間を計算(setInterval の drift とタブ復帰ずれを防ぐ)。
+    // 数字は 1 秒単位だが、月の欠け・色補間を滑らかに見せるため 200ms 間隔で更新する。
     useEffect(() => {
         endRef.current = performance.now() + timeLimit * 1000;
         doneRef.current = false;
@@ -37,7 +42,7 @@ export default function MoonTimer({ timeLimit, onDone }: MoonTimerProps) {
                 clearInterval(id);
                 onDoneRef.current();
             }
-        }, 100);
+        }, 200);
         return () => clearInterval(id);
     }, [timeLimit]);
 
@@ -49,10 +54,10 @@ export default function MoonTimer({ timeLimit, onDone }: MoonTimerProps) {
     const shadowCx = 32 + 54 * p; // p=1で影が右外へ退避(満月)、p=0で中央(新月)
     const isFinal = remaining <= 10 && remaining > 0;
     const isBlood = t >= 0.5;
-    const label = `残り ${formatTime(remaining)}`;
+    const label = `残り ${formatTimeSpoken(remaining)}`;
 
     return (
-        <div className={styles.moonTimer}>
+        <div className={styles.moonTimer} role="timer" aria-label={label}>
             <svg
                 className={`${styles.moon} ${isFinal ? styles.final : ''} ${
                     isBlood ? styles.blood : ''
@@ -60,11 +65,10 @@ export default function MoonTimer({ timeLimit, onDone }: MoonTimerProps) {
                 width="44"
                 height="44"
                 viewBox="0 0 64 64"
-                role="img"
-                aria-label={label}
+                aria-hidden="true"
             >
                 <defs>
-                    <clipPath id="moonClip">
+                    <clipPath id={clipId}>
                         <circle cx="32" cy="32" r="26" />
                     </clipPath>
                 </defs>
@@ -74,28 +78,28 @@ export default function MoonTimer({ timeLimit, onDone }: MoonTimerProps) {
                     cy="26"
                     r="4"
                     fill="rgba(20, 47, 55, 0.1)"
-                    clipPath="url(#moonClip)"
+                    clipPath={`url(#${clipId})`}
                 />
                 <circle
                     cx="38"
                     cy="36"
                     r="6"
                     fill="rgba(20, 47, 55, 0.08)"
-                    clipPath="url(#moonClip)"
+                    clipPath={`url(#${clipId})`}
                 />
                 <circle
                     cx="30"
                     cy="42"
                     r="3"
                     fill="rgba(20, 47, 55, 0.08)"
-                    clipPath="url(#moonClip)"
+                    clipPath={`url(#${clipId})`}
                 />
                 <circle
                     cx={shadowCx}
                     cy="32"
                     r="27"
                     fill={MOON_SHADOW}
-                    clipPath="url(#moonClip)"
+                    clipPath={`url(#${clipId})`}
                 />
                 <circle
                     cx="32"
@@ -107,7 +111,7 @@ export default function MoonTimer({ timeLimit, onDone }: MoonTimerProps) {
                     strokeOpacity="0.5"
                 />
             </svg>
-            <div className={styles.readout}>
+            <div className={styles.readout} aria-hidden="true">
                 <span className={styles.eyebrow}>残り時間</span>
                 <span className={styles.digits} style={{ color: digitColor }}>
                     {formatTime(remaining)}
