@@ -225,6 +225,7 @@ werewolf のルーム・進行画面で使う指針。
 - **背景**: `PhaseBackground` で turn / 勝利陣営に応じて、ロビー(day)、役職選択(night)、議論(discussion)、投票(voting)、結果(勝利陣営色)を切り替える
 - **花びら演出**: `SakuraParticles` は待機中は `ambient`、勝利演出では `celebration` を使う。勝利時は `victoryPalette` で陣営色を指定する
 - **勝利演出**: `VictoryOverlay` で「勝利演出 → 結果表示 → ロビー復帰」を全画面 overlay として出す。結果表は overlay 内に収め、招待カードと重ねない
+- **タイマー(議論フェーズ)**: `MoonTimer`。満月が経過とともに欠け、残り60秒からティール(`$teal-soft`)→ローズ(`#f0949b`)へ色が移ろい、残り約35秒からローズの柔らかいグローが差し、残り10秒で静かな鼓動パルス(scale 1.06、バウンス無し)が始まる。図形で残量・明朝 tabular の数字で正確な残り時間を二重表示する。残り時間は終了時刻基準で計算し drift を防ぐ。reduced-motion ではパルスを止め色・欠けは維持。SVG のみ(月面テクスチャ画像は使わない)。共通 `Countdown` は fakeartist が使うため別途残す
 
 ### 7.3 実装メモ
 
