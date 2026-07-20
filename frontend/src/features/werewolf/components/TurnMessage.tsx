@@ -1,4 +1,4 @@
-import Countdown from '../../../components/common/Countdown';
+import MoonTimer from './MoonTimer';
 import Loadingdod from '../../../components/text/loadingdod';
 import styles from '../../../styles/components/werewolf/room.module.scss';
 
@@ -30,11 +30,9 @@ export default function TurnMessage({
                         議論中 <Loadingdod color={'#f2fbfb'} />
                     </span>
                     {limitTime > 0 && !votingStartFlg && (
-                        <Countdown
+                        <MoonTimer
                             timeLimit={limitTime}
-                            limitDone={limittimeDone}
-                            variant="night"
-                            inline
+                            onDone={limittimeDone}
                         />
                     )}
                     <button className={styles.endbtn} onClick={limittimeDone}>
