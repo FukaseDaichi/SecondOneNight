@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
     formatTime,
+    formatTimeSpoken,
     lerpColor,
     phaseProgress,
     warmth,
@@ -20,6 +21,21 @@ describe('formatTime', () => {
     it('0 以下は 0:00', () => {
         expect(formatTime(0)).toBe('0:00');
         expect(formatTime(-3)).toBe('0:00');
+    });
+});
+
+describe('formatTimeSpoken', () => {
+    it('分がある時は N分M秒', () => {
+        expect(formatTimeSpoken(185)).toBe('3分5秒');
+        expect(formatTimeSpoken(60)).toBe('1分0秒');
+    });
+    it('1分未満は M秒 のみ', () => {
+        expect(formatTimeSpoken(9)).toBe('9秒');
+    });
+    it('小数は切り上げ、0 以下は 0秒', () => {
+        expect(formatTimeSpoken(4.2)).toBe('5秒');
+        expect(formatTimeSpoken(0)).toBe('0秒');
+        expect(formatTimeSpoken(-3)).toBe('0秒');
     });
 });
 
