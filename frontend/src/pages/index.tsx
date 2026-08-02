@@ -123,7 +123,10 @@ export default function Homepage() {
                     name="google-site-verification"
                     content="PL4mFXSOkoRJNiMOigMC2VmfdZ3X3nOMzuvZmMPmbmc"
                 />
-                <meta name="title" content="セカンドワンナイト人狼" />
+                <link
+                    rel="canonical"
+                    href={SystemConst.Server.SITE_URL + '/'}
+                />
                 <meta
                     name="description"
                     content="ブラウザで遊べる正体隠匿ゲーム「セカンドワンナイト人狼」。役職が選べて1プレイ約10分。GM不要・脱落なしで、はじめての人ともすぐ遊べます。"
@@ -134,6 +137,7 @@ export default function Homepage() {
                 />
                 <meta property="og:url" content={SystemConst.Server.SITE_URL} />
                 <meta property="og:type" content="website" />
+                <meta property="og:locale" content="ja_JP" />
                 <meta property="og:title" content="セカンドワンナイト人狼" />
                 <meta
                     property="og:site_name"
@@ -149,7 +153,38 @@ export default function Homepage() {
                     property="og:description"
                     content="ブラウザで遊べる正体隠匿ゲーム「セカンドワンナイト人狼」。役職が選べて1プレイ約10分。"
                 />
-                <title>セカンドワンナイト人狼</title>
+                <title>
+                    セカンドワンナイト人狼 |
+                    ブラウザで遊べるワンナイト人狼(GM不要・1プレイ約10分)
+                </title>
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            '@context': 'https://schema.org',
+                            '@type': 'VideoGame',
+                            name: 'セカンドワンナイト人狼',
+                            url: SystemConst.Server.SITE_URL,
+                            image:
+                                SystemConst.Server.SITE_URL + '/images/ogp.jpg',
+                            description:
+                                'ブラウザで遊べる正体隠匿ゲーム「セカンドワンナイト人狼」。役職が選べて1プレイ約10分。GM不要・脱落なしで、はじめての人ともすぐ遊べます。',
+                            inLanguage: 'ja',
+                            playMode: 'MultiPlayer',
+                            numberOfPlayers: {
+                                '@type': 'QuantitativeValue',
+                                minValue: 3,
+                            },
+                            gamePlatform: 'Web Browser',
+                            applicationCategory: 'Game',
+                            offers: {
+                                '@type': 'Offer',
+                                price: '0',
+                                priceCurrency: 'JPY',
+                            },
+                        }),
+                    }}
+                />
             </Head>
             <style jsx global>
                 {`

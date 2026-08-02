@@ -151,6 +151,7 @@ export default function WerewolfRoom() {
                 `}
             </style>
             <Head>
+                <meta name="robots" content="noindex, nofollow" />
                 <meta
                     property="og:image"
                     content={SystemConst.Server.SITE_URL + '/images/ogp.jpg'}
