@@ -176,16 +176,26 @@ div.rollselect {
                 > div {
                     margin: 0 10px;
                     width: 140px;
+                    position: relative;
 
+                    /* カード上端に重ねるバッジ。明るいカード絵の上でも読めるよう
+                       暗色地を自前で持つ(裸のテキスト+影では背景次第で潰れる) */
                     div.memo {
                         position: absolute;
-                        left: 16px;
-                        top: 0;
+                        left: 50%;
+                        top: -12px;
+                        transform: translateX(-50%);
+                        z-index: 1;
+                        white-space: nowrap;
+                        padding: 4px 14px;
+                        border-radius: 999px;
+                        background: rgba($night-deep, 0.9);
+                        border: 1px solid rgba($gold-soft, 0.55);
                         font-family: $serif;
-                        font-size: 1rem;
+                        font-size: 0.8rem;
                         letter-spacing: 0.12em;
                         color: $gold-soft;
-                        text-shadow: 0 2px 8px rgba(13, 34, 41, 0.8);
+                        box-shadow: 0 2px 8px rgba(13, 34, 41, 0.35);
                     }
                 }
 
