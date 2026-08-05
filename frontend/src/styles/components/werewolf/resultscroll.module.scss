@@ -59,7 +59,9 @@
 .modal {
 	position: fixed;
 	inset: 0;
-	z-index: 3;
+	/* ロビーからの再表示では下部固定バー(z-index 40)より前に出す。
+	   勝利演出中は .overlay(z-index 60)の重ね合わせ文脈に閉じるため影響しない */
+	z-index: 50;
 	display: flex;
 	align-items: flex-end;
 	justify-content: center;

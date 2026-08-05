@@ -9,6 +9,8 @@ type Props = {
     winteamList: number[];
     npcuser: WerewolfUser | null;
     onReturn: () => void;
+    // ロビーから再表示した場合は「閉じる」に差し替える
+    returnLabel?: string;
 };
 
 type Entry = {
@@ -74,6 +76,7 @@ export default function ResultModal({
     winteamList,
     npcuser,
     onReturn,
+    returnLabel = 'ロビーへ戻る',
 }: Props) {
     const isWin = (u: WerewolfUser) =>
         !!u.roll && winteamList.includes(u.roll.teamNo);
@@ -120,7 +123,7 @@ export default function ResultModal({
                 {group('勝', winners, true, 0)}
                 {group('負', losers, false, winners.length)}
                 <button className={styles.returnBtn} onClick={onReturn}>
-                    ロビーへ戻る
+                    {returnLabel}
                 </button>
             </div>
         </div>

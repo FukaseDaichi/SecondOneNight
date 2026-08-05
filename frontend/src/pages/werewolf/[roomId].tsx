@@ -20,8 +20,10 @@ import Overlays from '../../features/werewolf/components/Overlays';
 import UserField from '../../features/werewolf/components/UserField';
 import PhaseBackground from '../../features/werewolf/components/PhaseBackground';
 import VictoryOverlay from '../../features/werewolf/components/VictoryOverlay';
+import ResultModal from '../../features/werewolf/components/ResultModal';
 import { useWerewolfRoom } from '../../features/werewolf/useWerewolfRoom';
 import { lobbyReadiness } from '../../features/werewolf/lobby';
+import { victoryMessage } from '../../features/werewolf/victory';
 
 const SakuraParticles = dynamic(
     () => import('../../components/common/SakuraParticles'),
@@ -54,6 +56,7 @@ export default function WerewolfRoom() {
         setModalRoll,
         setModalOwnFlg,
         setRuleFlg,
+        setResultFlg,
         playerActionName,
         playerNPCActionName,
     } = useWerewolfRoom(roomId as string | undefined);
@@ -79,7 +82,7 @@ export default function WerewolfRoom() {
         votingStartFlg,
         cutInNo,
         ruleFlg,
-        winMessage,
+        resultFlg,
         roomCode,
     } = state;
 
@@ -91,9 +94,13 @@ export default function WerewolfRoom() {
         counterMap,
         staticRollList
     );
-    // 勝利演出: 全画面演出 → 結果テーブル → ロビー復帰(VictoryOverlay 内で遷移)
+    // 勝利演出: 全画面演出 → 結果テーブル → ロビー復帰(VictoryOverlay 内で遷移)。
+    // winteamList から同フレームで導出し、ロビーを経由せず即ステージ演出に入る
+    const winMessage = victoryMessage(winteamList);
     const victoryVisible =
         turn === 4 && winteamList.length > 0 && winMessage != null;
+    // 前回結果の再表示: state に結果が残っている間だけ(リロードすると消える)
+    const hasResult = turn === 4 && winteamList.length > 0;
 
     const actionButtons = (
         <div className={styles.btnarea}>
@@ -174,6 +181,16 @@ export default function WerewolfRoom() {
                     npcuser={npcuser}
                 />
             )}
+            {/* ロビーから再表示した結果(勝利演出とは独立に開閉する) */}
+            {resultFlg && hasResult && (
+                <ResultModal
+                    userList={userList}
+                    winteamList={winteamList}
+                    npcuser={npcuser}
+                    returnLabel="閉じる"
+                    onReturn={() => setResultFlg(false)}
+                />
+            )}
             <Overlays
                 startFlg={startFlg}
                 votingStartFlg={votingStartFlg}
@@ -228,13 +245,23 @@ export default function WerewolfRoom() {
                             </p>
                             <h1 className={styles.lobbyTitle}>ルーム設定</h1>
                         </div>
-                        <span
-                            className={`${styles.statusBadge} ${
-                                readiness.ready ? styles.ready : ''
-                            }`}
-                        >
-                            {readiness.ready ? '開始できます' : '参加待ち'}
-                        </span>
+                        <div className={styles.lobbyHeaderSide}>
+                            {hasResult && (
+                                <button
+                                    className={styles.resultBtn}
+                                    onClick={() => setResultFlg(true)}
+                                >
+                                    前回の結果
+                                </button>
+                            )}
+                            <span
+                                className={`${styles.statusBadge} ${
+                                    readiness.ready ? styles.ready : ''
+                                }`}
+                            >
+                                {readiness.ready ? '開始できます' : '参加待ち'}
+                            </span>
+                        </div>
                     </header>
                 )}
                 {/* 招待カード + 開始ステータスカードの2カラム */}

@@ -106,7 +106,10 @@ export function useWerewolfRoom(roomId: string | undefined) {
 
     const setRollSet = useCallback(
         (rollNoList: Array<number>) => {
-            conect('/app/werewolf-setrollregulation', buildInfo(150, rollNoList));
+            conect(
+                '/app/werewolf-setrollregulation',
+                buildInfo(150, rollNoList)
+            );
         },
         [conect, buildInfo]
     );
@@ -124,8 +127,14 @@ export function useWerewolfRoom(roomId: string | undefined) {
 
     const discussionAction = useCallback(
         (targetUsername: string) => {
-            const stringList: Array<string> = [state.playerName as string, targetUsername];
-            conect('/app/werewolf-discussionaction', buildInfo(500, stringList));
+            const stringList: Array<string> = [
+                state.playerName as string,
+                targetUsername,
+            ];
+            conect(
+                '/app/werewolf-discussionaction',
+                buildInfo(500, stringList)
+            );
         },
         [conect, buildInfo, state.playerName]
     );
@@ -175,7 +184,8 @@ export function useWerewolfRoom(roomId: string | undefined) {
 
     // --- ローカルUI操作 ---
     const counter = useCallback(
-        (rollNo: number, delta: 1 | -1) => dispatch({ type: 'counter', rollNo, delta }),
+        (rollNo: number, delta: 1 | -1) =>
+            dispatch({ type: 'counter', rollNo, delta }),
         []
     );
     const setModalRoll = useCallback(
@@ -219,32 +229,11 @@ export function useWerewolfRoom(roomId: string | undefined) {
         }
     }, [state.votingStartFlg]);
 
-    // 勝敗監視
+    // 勝敗決定時は先頭へスクロール(勝利演出は winteamList から同フレームで導出表示)
     useEffect(() => {
-        if (state.winteamList.length === 0) {
-            dispatch({ type: 'setWinMessage', message: null });
-        } else {
-            const winnner: number = state.winteamList[0];
-            let message: string | null = null;
-            switch (winnner) {
-                case 1:
-                    message = '人狼陣営';
-                    break;
-                case 2:
-                    message = '村人陣営';
-                    break;
-                case 3:
-                    message = 'てるてる';
-                    break;
-            }
-
-            const id = window.setTimeout(() => {
-                scrollTo(0, 0);
-                dispatch({ type: 'setWinMessage', message });
-            }, 3000);
-            return () => window.clearTimeout(id);
+        if (state.winteamList.length > 0) {
+            scrollTo(0, 0);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.winteamList.length]);
 
     // 入室検知 + アイコン初期設定(classList 操作は entered の導出に置換)
@@ -295,7 +284,10 @@ export function useWerewolfRoom(roomId: string | undefined) {
     // カットイン: 4秒後に解除
     useEffect(() => {
         if (state.cutInNo > 0) {
-            const id = window.setTimeout(() => dispatch({ type: 'clearCutIn' }), 4000);
+            const id = window.setTimeout(
+                () => dispatch({ type: 'clearCutIn' }),
+                4000
+            );
             return () => window.clearTimeout(id);
         }
     }, [state.cutInNo]);

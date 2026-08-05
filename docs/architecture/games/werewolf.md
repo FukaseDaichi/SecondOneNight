@@ -106,7 +106,7 @@ Werewolf は、役職選択、議論、投票を通じて勝利チームを決�
 | `550` | limit time | `limitTime` 更新 | 制限時間反映 |
 | `600` | `WerewolfRoom` | `dataSet` | 議論終了・投票移行 |
 | `650` | `userList` | `userList` のみ更新 | プリセット URL / Data URL のアイコン反映 |
-| `700` | `WerewolfRoom` | `dataSet`、`counterMap` | 投票状態・結果更新。hook が `winteamList` から `winMessage` を導出し、turn `4` なら `VictoryOverlay` 表示 |
+| `700` | `WerewolfRoom` | `dataSet`、`counterMap` | 投票状態・結果更新。ページが `winteamList` から `victoryMessage` を同フレームで導出し、turn `4` なら遅延なく `VictoryOverlay` 表示(ロビーを一瞬経由しない) |
 | `998` | message | `userName` が自分なら `messageList` 追記 | 個人エラー |
 | `999` | message | `messageList` 追記 | 全体エラー |
 
@@ -160,7 +160,8 @@ stateDiagram-v2
 | フェーズ帯 | `TurnMessage.tsx` / `room.module.scss` | turn 1〜3 で「フェーズ名+残り時間+議論終了」を通常フローの sticky 帯として表示。帯自身が高さを持つためプレイヤーカードと重ならない。ゲーム中は `UserField` に `ingame` クラスを付け、浮遊アバター分の上マージンを確保する |
 | 勝利演出 | `VictoryOverlay.tsx` / `victory.ts` | 3幕構成(`VictoryAct`: reveal=種明かし → verdict=勝敗発表 → result=巻物結果 → closed)。幕遷移は純粋関数 `nextVictoryAct` で行い、表示層のローカル state だけで制御。第1幕 `RoleRevealAct` はセンターステージ形式: `revealOrder`(人狼陣営を最後に回す)の順で中央に1人ずつ「アイコン+名前+キャラカード(フリップ開示)+投票先」を表示し、死亡者は銃声(`/se/snip.mp3`)+画面フラッシュ+銃痕(SVG)+モノクロ化の銃撃演出を挟む。開示済みは下部の列に縮小して並び、死亡者は銃痕が残る。フェーズは enter→open→(死亡者のみ shot)の3段階で、タップ短縮・自動送り・スキップ対応。verdict 以降も `RoleRevealAct` は `finished` プロップで最終盤面(全員開示済みの列)を残し、一枚絵の上で演出を続ける。第2幕 `VerdictBanner` は陣営色の「〇〇の勝利」バナーを盤面上に重ね(4秒 or タップで自動進行、result 中は縮小して残す)、第3幕 `ResultModal` は結果一覧(役職・投票先・得票・勝敗)+ロビー復帰ボタンを下からスライドインするモーダルで出す。スキップは verdict へ飛ぶ(盤面+勝敗発表は飛ばさない) |
 | 死亡者マーカー | `isDeadUser` | `roll.punishmentFlg`(処刑・銃撃)から死亡を判定。種明かしは銃痕(RoleRevealAct 内 `BulletHole`)+モノクロ化、結果一覧は「散」タグ+モノクロ化 |
-| 待機画面構成 | `[roomId].tsx` / `InvitePanel.tsx` / `StatusCard.tsx` / `MenuPanel.tsx` | ロビーは「ヘッダー(タイトル+状態バッジ) → 招待カード+開始ステータスカードの2カラム(モバイルは縦積み) → 集いし者たち(プレイヤー) → お品書き(ダークパネル) → 不足メッセージ → 下部固定バー(退出 / GAME START)」の構成。招待カードは `hero.webp` を右側に敷き、ルーム番号・URL コピー・遊び方を持つ。開始ステータスカードは蝋燭列(max 10・min 3、入室数だけ点灯)+入室人数+カード内 GAME START |
+| 前回結果の再表示 | `[roomId].tsx` / `ResultModal.tsx`(`resultFlg`) | 終了後ロビー(turn `4` かつ `winteamList` あり)ではヘッダーの状態バッジ左に「前回の結果」ボタンを出し、`resultFlg` で `ResultModal` を単体表示する(閉じるラベルは `returnLabel="閉じる"`)。勝利演出とは独立に開閉でき、次の status `300` で `resultFlg` が下りボタンも消える。state はクライアント保持のためリロードすると出ない |
+| 待機画面構成 | `[roomId].tsx` / `InvitePanel.tsx` / `StatusCard.tsx` / `MenuPanel.tsx` | ロビーは「ヘッダー(タイトル+前回結果ボタン+状態バッジ) → 招待カード+開始ステータスカードの2カラム(モバイルは縦積み) → 集いし者たち(プレイヤー) → お品書き(ダークパネル) → 不足メッセージ → 下部固定バー(退出 / GAME START)」の構成。招待カードは `hero.webp` を右側に敷き、ルーム番号・URL コピー・遊び方を持つ。開始ステータスカードは蝋燭列(max 10・min 3、入室数だけ点灯)+入室人数+カード内 GAME START |
 | 開始条件表示 | `lobby.ts`(`lobbyReadiness`) | 3人以上 / 役職合計 > 参加人数 / 人狼陣営(teamNo=1)を含む、の3条件を判定。不足メッセージをお品書き直下のエラーパネルに表示し、GAME START(ステータスカード内・下部バーとも)を `disabled` にする。ヘッダーの状態バッジも readiness で「参加待ち/開始できます」を切り替える |
 | 待機カード演出 | `userInfo.tsx` / `userinfo.module.scss` | ロビー時のみ登場アニメ(norenIn)と、他人アバタータップの「つつき」揺れ(ローカル state のみ・通信なし)。ロビー中はカード枠をニュートラルにし、プレイヤーカラーはアバターの輪(CSS 変数 `--player-color`)で示す。`userList` 先頭のプレイヤーに「主」バッジを表示 |
 
@@ -173,7 +174,7 @@ stateDiagram-v2
 - 退出ボタンと他プレイヤーへのキックボタンは待機中(`turn=0`)と終了後(`turn=4`)のみ表示する。どちらも status `130` で対象 userName を送り、削除後の Room 全体を受けて state を同期する。
 - `roomCode` は Room JSON から `WerewolfState.roomCode` に取り込み、待機中/終了後の `InvitePanel` で表示する。
 - status `650` のアイコン `obj` は従来のプリセット URL に加えて、アップロード画像から生成した JPEG Data URL も許容する。バックエンドは文字列として保存し、`userList` を broadcast する。
-- 勝利演出は reducer や backend の turn を変えず、overlay のローカル state で「種明かし → 勝敗発表 → 結果モーダル → 閉じる」の3幕を進める(`nextVictoryAct`)。種明かしの盤面は最後まで画面に残る。閉じた後も turn `4` の夜明けロビー表示に戻る。
+- 勝利演出は reducer や backend の turn を変えず、overlay のローカル state で「種明かし → 勝敗発表 → 結果モーダル → 閉じる」の3幕を進める(`nextVictoryAct`)。種明かしの盤面は最後まで画面に残る。閉じた後も turn `4` の夜明けロビー表示に戻る。`ResultModal` は z-index 50 で、ロビー下部固定バー(z-index 40)より前に出る(勝利演出中は `.overlay`(z-index 60)の重ね合わせ文脈に閉じるため影響しない)。
 - 暗殺による即時終了では status `500` の Room 更新で `turn=4` / `winteamList` を受け取り、既存の勝利演出へ進む。暗殺直後は対象の `punishmentFlg` だけを死亡情報として引き継ぎ、暗殺対象以外の役職へ投票数 0 を理由に `punishmentFlg` を追加しない。てるてるありで人狼系を暗殺した場合は turn `2` のまま継続し、通常の status `600` / `700` 経路で結果を確定する。
 - 待機中の桜パーティクルは `SakuraParticles` の `ambient` モード(桜色 palette)。勝利演出中は `celebration` に譲る。
 - お品書き(`MenuPanel`)はダークパネル。役職はカード画像ではなく漢字一字バッジ付きチップ(`RollCustomize` の `ROLL_KANJI`)で並べ、名前タップで説明モーダルを開く。±はローカル state 更新のみで「設定」ボタン(status `150`)で送信、プリセット選択は即送信という従来動線を維持。議論時間はなし/3分/5分/7分のピル(送信値 0/180/300/420 は不変)。

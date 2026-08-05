@@ -51,6 +51,21 @@ export const victoryTeam = (winteamList: number[]): VictoryTeam => {
     return 'third';
 };
 
+// 勝利メッセージ(旧: useEffect で3秒遅延セットしていた winMessage の純粋導出版。
+// 遅延をなくし、勝敗決定と同フレームで演出を出してロビーが一瞬映るのを防ぐ)
+export const victoryMessage = (winteamList: number[]): string | null => {
+    switch (winteamList[0]) {
+        case 1:
+            return '人狼陣営';
+        case 2:
+            return '村人陣営';
+        case 3:
+            return 'てるてる';
+        default:
+            return null;
+    }
+};
+
 // 陣営別の花びら palette(tokens.scss の色系統に合わせる)
 export const victoryPalette = (winteamList: number[]): string[] => {
     switch (victoryTeam(winteamList)) {
