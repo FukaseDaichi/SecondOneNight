@@ -2,7 +2,11 @@ import { describe, it, expect } from 'vitest';
 import { werewolfReducer, initialWerewolfState } from './reducer';
 import type { SocketInfo } from '../../type';
 
-const msg = (status: number, obj: unknown, over: Partial<SocketInfo> = {}): SocketInfo => ({
+const msg = (
+    status: number,
+    obj: unknown,
+    over: Partial<SocketInfo> = {}
+): SocketInfo => ({
     status,
     roomId: 'r1',
     userName: null,
@@ -38,7 +42,9 @@ describe('werewolfReducer: サーバメッセージ', () => {
                     })
                 ),
             });
-            expect(s.userList).toEqual([{ userName: 'a', userNo: 1, userIconUrl: null }]);
+            expect(s.userList).toEqual([
+                { userName: 'a', userNo: 1, userIconUrl: null },
+            ]);
             expect(s.turn).toBe(2);
             expect(s.limitTime).toBe(180);
             expect(s.counterMap).toEqual({ 1: 2, 2: 1 });
@@ -112,7 +118,11 @@ describe('werewolfReducer: サーバメッセージ', () => {
     });
 
     it('status 300(開始)で startFlg が立ち ruleFlg/resultFlg が下り dataSet が反映される', () => {
-        const before = { ...initialWerewolfState, ruleFlg: true, resultFlg: true };
+        const before = {
+            ...initialWerewolfState,
+            ruleFlg: true,
+            resultFlg: true,
+        };
         const s = werewolfReducer(before, {
             type: 'message',
             payload: msg(300, serverObj({ turn: 1 })),
@@ -352,7 +362,9 @@ describe('werewolfReducer: サーバメッセージ', () => {
             payload: msg(
                 100,
                 serverObj({
-                    userList: [{ userName: 'me', userNo: 1, userIconUrl: null }],
+                    userList: [
+                        { userName: 'me', userNo: 1, userIconUrl: null },
+                    ],
                 })
             ),
         });
@@ -363,7 +375,9 @@ describe('werewolfReducer: サーバメッセージ', () => {
             payload: msg(
                 100,
                 serverObj({
-                    userList: [{ userName: 'other', userNo: 2, userIconUrl: null }],
+                    userList: [
+                        { userName: 'other', userNo: 2, userIconUrl: null },
+                    ],
                 })
             ),
         });
@@ -381,19 +395,30 @@ describe('werewolfReducer: サーバメッセージ', () => {
 
 describe('werewolfReducer: ローカルアクション', () => {
     it('roomIn で playerName が設定される', () => {
-        const s = werewolfReducer(initialWerewolfState, { type: 'roomIn', userName: 'me' });
+        const s = werewolfReducer(initialWerewolfState, {
+            type: 'roomIn',
+            userName: 'me',
+        });
         expect(s.playerName).toBe('me');
     });
 
     it('chatSent / systemMessage で messageList に追記される', () => {
-        let s = werewolfReducer(initialWerewolfState, { type: 'chatSent', message: 'hi' });
-        s = werewolfReducer(s, { type: 'systemMessage', text: '通信エラー。再度試してください' });
+        let s = werewolfReducer(initialWerewolfState, {
+            type: 'chatSent',
+            message: 'hi',
+        });
+        s = werewolfReducer(s, {
+            type: 'systemMessage',
+            text: '通信エラー。再度試してください',
+        });
         expect(s.messageList).toEqual(['hi', '通信エラー。再度試してください']);
     });
 
     it('dismissStart で startFlg が下りる', () => {
         const on = { ...initialWerewolfState, startFlg: true };
-        expect(werewolfReducer(on, { type: 'dismissStart' }).startFlg).toBe(false);
+        expect(werewolfReducer(on, { type: 'dismissStart' }).startFlg).toBe(
+            false
+        );
     });
 
     it('counter でクランプされつつ増減する(15 で頭打ち、0 未満にならない)', () => {
@@ -409,9 +434,15 @@ describe('werewolfReducer: ローカルアクション', () => {
         expect(s.counterMap[1]).toBe(0);
     });
 
-    it('setModalRoll / setModalOwnFlg / setRuleFlg / setResultFlg / setRollSelectTurnFlg / setVotingStartFlg / clearCutIn / setWinMessage が各値を更新する', () => {
-        const roll = { rollNo: 1, teamNo: 1 } as unknown as import('../../type/werewolf').WerewolfRoll;
-        let s = werewolfReducer(initialWerewolfState, { type: 'setModalRoll', roll });
+    it('setModalRoll / setModalOwnFlg / setRuleFlg / setResultFlg / setRollSelectTurnFlg / setVotingStartFlg / clearCutIn が各値を更新する', () => {
+        const roll = {
+            rollNo: 1,
+            teamNo: 1,
+        } as unknown as import('../../type/werewolf').WerewolfRoll;
+        let s = werewolfReducer(initialWerewolfState, {
+            type: 'setModalRoll',
+            roll,
+        });
         expect(s.modalRoll).toEqual(roll);
         s = werewolfReducer(s, { type: 'setModalOwnFlg', value: true });
         expect(s.modalOwnFlg).toBe(true);
@@ -425,7 +456,5 @@ describe('werewolfReducer: ローカルアクション', () => {
         expect(s.votingStartFlg).toBe(true);
         s = werewolfReducer({ ...s, cutInNo: 6 }, { type: 'clearCutIn' });
         expect(s.cutInNo).toBe(0);
-        s = werewolfReducer(s, { type: 'setWinMessage', message: '人狼陣営' });
-        expect(s.winMessage).toBe('人狼陣営');
     });
 });

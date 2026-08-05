@@ -30,7 +30,6 @@ export type WerewolfState = {
     snipeSeq: number; // 銃声再生トリガ(独裁者/暗殺者アクションごとに +1)
     resultFlg: boolean;
     ruleFlg: boolean;
-    winMessage: string | null;
 };
 
 export type WerewolfAction =
@@ -46,5 +45,4 @@ export type WerewolfAction =
     | { type: 'setResultFlg'; value: boolean }
     | { type: 'setRollSelectTurnFlg'; value: boolean }
     | { type: 'setVotingStartFlg'; value: boolean }
-    | { type: 'clearCutIn' }
-    | { type: 'setWinMessage'; message: string | null };
+    | { type: 'clearCutIn' };

@@ -3,6 +3,7 @@ import {
     isDeadUser,
     nextVictoryAct,
     revealOrder,
+    victoryMessage,
     victoryPalette,
     victoryTeam,
 } from './victory';
@@ -28,6 +29,21 @@ describe('victoryTeam', () => {
     });
     it('未知の teamNo は第三陣営扱い', () => {
         expect(victoryTeam([99])).toBe('third');
+    });
+});
+
+describe('victoryMessage', () => {
+    it('teamNo 1 は人狼陣営', () => {
+        expect(victoryMessage([1])).toBe('人狼陣営');
+    });
+    it('teamNo 2 は村人陣営', () => {
+        expect(victoryMessage([2])).toBe('村人陣営');
+    });
+    it('teamNo 3 はてるてる', () => {
+        expect(victoryMessage([3])).toBe('てるてる');
+    });
+    it('勝敗未決定(空)は null', () => {
+        expect(victoryMessage([])).toBe(null);
     });
 });
 

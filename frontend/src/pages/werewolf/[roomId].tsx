@@ -22,6 +22,7 @@ import PhaseBackground from '../../features/werewolf/components/PhaseBackground'
 import VictoryOverlay from '../../features/werewolf/components/VictoryOverlay';
 import { useWerewolfRoom } from '../../features/werewolf/useWerewolfRoom';
 import { lobbyReadiness } from '../../features/werewolf/lobby';
+import { victoryMessage } from '../../features/werewolf/victory';
 
 const SakuraParticles = dynamic(
     () => import('../../components/common/SakuraParticles'),
@@ -79,7 +80,6 @@ export default function WerewolfRoom() {
         votingStartFlg,
         cutInNo,
         ruleFlg,
-        winMessage,
         roomCode,
     } = state;
 
@@ -91,7 +91,9 @@ export default function WerewolfRoom() {
         counterMap,
         staticRollList
     );
-    // 勝利演出: 全画面演出 → 結果テーブル → ロビー復帰(VictoryOverlay 内で遷移)
+    // 勝利演出: 全画面演出 → 結果テーブル → ロビー復帰(VictoryOverlay 内で遷移)。
+    // winteamList から同フレームで導出し、ロビーを経由せず即ステージ演出に入る
+    const winMessage = victoryMessage(winteamList);
     const victoryVisible =
         turn === 4 && winteamList.length > 0 && winMessage != null;
 

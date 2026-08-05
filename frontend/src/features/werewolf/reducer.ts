@@ -26,7 +26,6 @@ export const initialWerewolfState: WerewolfState = {
     snipeSeq: 0,
     resultFlg: false,
     ruleFlg: false,
-    winMessage: null,
 };
 
 // rollNoList(例 [1,1,2]) → counterMap(例 {1:2, 2:1})。旧 setRollCustum の置換
@@ -65,7 +64,10 @@ const dataSet = (state: WerewolfState, obj: any): WerewolfState => {
     return next;
 };
 
-const onMessage = (state: WerewolfState, socketInfo: SocketInfo): WerewolfState => {
+const onMessage = (
+    state: WerewolfState,
+    socketInfo: SocketInfo
+): WerewolfState => {
     switch (socketInfo.status) {
         case 100: // ルーム入室
         case 200: // ルーム入室(同一名ユーザ入室)
@@ -97,7 +99,10 @@ const onMessage = (state: WerewolfState, socketInfo: SocketInfo): WerewolfState 
         case 400: // 役職選択
             return dataSet(state, socketInfo.obj);
         case 404: // 例外
-            return { ...state, messageList: [...state.messageList, socketInfo.message] };
+            return {
+                ...state,
+                messageList: [...state.messageList, socketInfo.message],
+            };
         case 500: {
             // 議論アクション
             let next = dataSet(state, socketInfo.obj);
@@ -120,7 +125,11 @@ const onMessage = (state: WerewolfState, socketInfo: SocketInfo): WerewolfState 
 
             switch (actionUser.roll?.rollNo) {
                 case 6: // 独裁者
-                    next = { ...next, cutInNo: 6, snipeSeq: state.snipeSeq + 1 };
+                    next = {
+                        ...next,
+                        cutInNo: 6,
+                        snipeSeq: state.snipeSeq + 1,
+                    };
                     break;
                 case 8: // 占い師
                     if (actionUser.userName === state.playerName) {
@@ -133,7 +142,11 @@ const onMessage = (state: WerewolfState, socketInfo: SocketInfo): WerewolfState 
                     }
                     break;
                 case 10: // 暗殺者
-                    next = { ...next, cutInNo: 10, snipeSeq: state.snipeSeq + 1 };
+                    next = {
+                        ...next,
+                        cutInNo: 10,
+                        snipeSeq: state.snipeSeq + 1,
+                    };
                     break;
                 default:
                     break;
@@ -153,11 +166,17 @@ const onMessage = (state: WerewolfState, socketInfo: SocketInfo): WerewolfState 
             };
         case 998: // エラーメッセージ表示(個人)
             if (socketInfo.userName === state.playerName) {
-                return { ...state, messageList: [...state.messageList, socketInfo.message] };
+                return {
+                    ...state,
+                    messageList: [...state.messageList, socketInfo.message],
+                };
             }
             return state;
         case 999: // エラーメッセージ表示(全員)
-            return { ...state, messageList: [...state.messageList, socketInfo.message] };
+            return {
+                ...state,
+                messageList: [...state.messageList, socketInfo.message],
+            };
         default:
             return state;
     }
@@ -173,9 +192,15 @@ export const werewolfReducer = (
         case 'roomIn':
             return { ...state, playerName: action.userName };
         case 'chatSent':
-            return { ...state, messageList: [...state.messageList, action.message] };
+            return {
+                ...state,
+                messageList: [...state.messageList, action.message],
+            };
         case 'systemMessage':
-            return { ...state, messageList: [...state.messageList, action.text] };
+            return {
+                ...state,
+                messageList: [...state.messageList, action.text],
+            };
         case 'dismissStart':
             return { ...state, startFlg: false };
         case 'counter': {
@@ -200,8 +225,6 @@ export const werewolfReducer = (
             return { ...state, votingStartFlg: action.value };
         case 'clearCutIn':
             return { ...state, cutInNo: 0 };
-        case 'setWinMessage':
-            return { ...state, winMessage: action.message };
         default:
             return state;
     }
