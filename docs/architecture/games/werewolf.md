@@ -102,7 +102,7 @@ Werewolf は、役職選択、議論、投票を通じて勝利チームを決�
 | `300` | `WerewolfRoom` | `startFlg=true`、`ruleFlg=false`、`resultFlg=false`、`dataSet` | 開始 overlay |
 | `400` | `WerewolfRoom` | `dataSet` | 役職選択進行 |
 | `404` | message | `messageList` 追記 | エラー表示 |
-| `500` | `WerewolfRoom` + action user no | `dataSet`、役職に応じて `cutInNo` / `snipeSeq` | 議論アクション演出 |
+| `500` | `WerewolfRoom` + action user no | `dataSet`、役職に応じて `cutInNo` / `snipeSeq` | 議論アクション演出。暗殺対象が勝敗確定条件に該当する場合は、この status で `turn=4` / `winteamList` も反映 |
 | `550` | limit time | `limitTime` 更新 | 制限時間反映 |
 | `600` | `WerewolfRoom` | `dataSet` | 議論終了・投票移行 |
 | `650` | `userList` | `userList` のみ更新 | プリセット URL / Data URL のアイコン反映 |
@@ -118,9 +118,29 @@ stateDiagram-v2
     Waiting --> RoleSelect: status 300 / turn 1
     RoleSelect --> Discussion: status 400 / turn 2
     Discussion --> Voting: status 600 or timeout / turn 3
+    Discussion --> Finished: status 500 / 暗殺による勝敗確定
     Voting --> Finished: status 700 / turn 4
     Finished --> RoleSelect: status 300 / new game
 ```
+
+### 暗殺者による勝敗判定
+
+暗殺者が議論中に対象を殺害した場合、対象へ `punishmentFlg=true`、`votingAbleFlg=false`、`votingSize=0` を設定する。対象の役職と、ゲーム内にてるてるが配役されているかによって、次のように処理する。
+
+| 暗殺対象 | 動作 |
+| --- | --- |
+| てるてる | その場で終了。`turn=4`、`winteamList=[TEAM_NO_TERUTERU]` |
+| 人狼 / 白狼 + てるてるなし | その場で終了。`turn=4`、`winteamList=[TEAM_NO_VILLAGER]` |
+| 人狼 / 白狼 + てるてるあり | 終了せず、議論・投票を継続。暗殺対象だけが死亡扱いになり、`turn` と `winteamList` は更新しない |
+| その他 | 終了せず、議論・投票を継続。暗殺対象は議論・投票に参加できない |
+
+人狼系は `ROLL_NO_WEREWOLF` / `ROLL_NO_WHITEWEREWOLF` で判定する。付き人など、能力によって `teamNo` が変わる役職は人狼系として扱わない。
+
+「てるてるあり」は、現在のゲーム状態で `userList` または `npcuser` に `ROLL_NO_TERUTERU` が配役されていることを指す。役職設定には含まれていても、今回のゲームで役欠けになったてるてるは「てるてるなし」として扱う。この結果、暗殺後にゲームが終了するか継続するかから、てるてるが役欠けだったかを全員が推測できる。
+
+てるてるありで人狼 / 白狼を暗殺した場合、後続の投票でてるてるが最多票になればてるてる勝利、てるてるが処刑されなければ暗殺済みの人狼系が残るため村人陣営勝利となる。暗殺直後の即時終了では投票数から追加の `punishmentFlg` を設定せず、暗殺対象だけを死亡扱いにする。
+
+怪盗がその後 NPC と役職交換する場合は、怪盗の既存能力をそのまま適用する。暗殺対象が NPC だった場合も、役職交換による役職・死亡フラグの引き継ぎは許容する。
 
 ## 副作用・UI 表示
 
@@ -148,11 +168,13 @@ stateDiagram-v2
 
 - `WereWolfController` には `/app/werewolf-changeturn` があるが、現在の frontend hook からは直接使っていない。
 - 議論アクション status `500` は `message` に action user の番号を入れて返す。reducer はこの番号から action user を引く。
+- 暗殺者の status `500` は、てるてる暗殺または「てるてるなしで人狼 / 白狼を暗殺」した場合に `turn=4` / `winteamList` を含む。てるてるありで人狼 / 白狼を暗殺した場合は `turn=2` / `winteamList=[]` のまま議論を継続する。
 - 役職設定エラーは `998` または `999` として返ることがある。
 - 退出ボタンと他プレイヤーへのキックボタンは待機中(`turn=0`)と終了後(`turn=4`)のみ表示する。どちらも status `130` で対象 userName を送り、削除後の Room 全体を受けて state を同期する。
 - `roomCode` は Room JSON から `WerewolfState.roomCode` に取り込み、待機中/終了後の `InvitePanel` で表示する。
 - status `650` のアイコン `obj` は従来のプリセット URL に加えて、アップロード画像から生成した JPEG Data URL も許容する。バックエンドは文字列として保存し、`userList` を broadcast する。
 - 勝利演出は reducer や backend の turn を変えず、overlay のローカル state で「種明かし → 勝敗発表 → 結果モーダル → 閉じる」の3幕を進める(`nextVictoryAct`)。種明かしの盤面は最後まで画面に残る。閉じた後も turn `4` の夜明けロビー表示に戻る。
+- 暗殺による即時終了では status `500` の Room 更新で `turn=4` / `winteamList` を受け取り、既存の勝利演出へ進む。暗殺直後は対象の `punishmentFlg` だけを死亡情報として引き継ぎ、暗殺対象以外の役職へ投票数 0 を理由に `punishmentFlg` を追加しない。てるてるありで人狼系を暗殺した場合は turn `2` のまま継続し、通常の status `600` / `700` 経路で結果を確定する。
 - 待機中の桜パーティクルは `SakuraParticles` の `ambient` モード(桜色 palette)。勝利演出中は `celebration` に譲る。
 - お品書き(`MenuPanel`)はダークパネル。役職はカード画像ではなく漢字一字バッジ付きチップ(`RollCustomize` の `ROLL_KANJI`)で並べ、名前タップで説明モーダルを開く。±はローカル state 更新のみで「設定」ボタン(status `150`)で送信、プリセット選択は即送信という従来動線を維持。議論時間はなし/3分/5分/7分のピル(送信値 0/180/300/420 は不変)。
 - ゲーム中画面(役職選択・議論・投票)と演出(cut-in・投票開始)は `tokens.scss` ベースの夜系デザインで統一している。色・フォント・余白はトークンを使い、role カードの陣営色ボーダーのみ `TEAM_COLOR_LIST` から tsx の inline style で付ける。
@@ -163,4 +185,5 @@ stateDiagram-v2
 ## テスト・確認観点
 
 - `frontend/src/features/werewolf/reducer.test.ts` で status `100/101/130/150/300/400/500/550/600/650/700/998/999`、ローカル action を検証。
+- `backend/src/test/java/com/boardgame/app/entity/werewolf/WerewolfRoomTest.java` で、暗殺対象が人狼 / 白狼 / てるてるの場合の即時終了・継続、対象以外の死亡フラグが増えないこと、通常投票の判定を検証する。
 - 手動確認は3人以上の複数タブで、役職設定、開始、役職選択、議論アクション、時間切れ、投票、結果、チャット、退出/キック、アイコン変更を確認する。

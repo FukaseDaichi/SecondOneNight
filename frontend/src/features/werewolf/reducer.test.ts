@@ -186,6 +186,33 @@ describe('werewolfReducer: サーバメッセージ', () => {
         expect(s.snipeSeq).toBe(initialWerewolfState.snipeSeq + 1);
     });
 
+    it('status 500(人狼暗殺・てるてるなし)で終了状態と村人勝利を反映する', () => {
+        const s = werewolfReducer(initialWerewolfState, {
+            type: 'message',
+            payload: msg(
+                500,
+                serverObj({
+                    turn: 4,
+                    winteamList: [2],
+                    userList: [
+                        {
+                            userName: 'a',
+                            userNo: 0,
+                            userIconUrl: null,
+                            roll: { rollNo: 10 },
+                            lastMessage: '「b」を暗殺した',
+                        },
+                    ],
+                }),
+                { message: '0' }
+            ),
+        });
+        expect(s.turn).toBe(4);
+        expect(s.winteamList).toEqual([2]);
+        expect(s.cutInNo).toBe(10);
+        expect(s.snipeSeq).toBe(initialWerewolfState.snipeSeq + 1);
+    });
+
     it('status 500(占い師・本人)で cutInNo=8 が立ち snipeSeq は変化しない', () => {
         const before = { ...initialWerewolfState, playerName: 'me' };
         const s = werewolfReducer(before, {
