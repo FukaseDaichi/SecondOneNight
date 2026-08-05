@@ -299,6 +299,46 @@ span.statusBadge {
     }
 }
 
+/* 状態バッジと前回結果ボタンの並び(バッジは右端に据える) */
+div.lobbyHeaderSide {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 前回結果の再表示。結果画面と同じ金系にして状態バッジと役割を分ける */
+button.resultBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border: 1px solid rgba($gold, 0.55);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.75);
+    font-family: $serif;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: $ink-deep;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition:
+        transform 0.1s,
+        background 0.35s,
+        border-color 0.35s;
+
+    &:hover {
+        border-color: $gold;
+        background: rgba($gold, 0.1);
+    }
+    &:active {
+        transform: scale(0.95);
+    }
+    &:focus-visible {
+        outline: 2px solid $teal;
+        outline-offset: 2px;
+    }
+}
+
 /* 招待カード + 開始ステータスカードの2カラム */
 div.heroRow {
     position: relative;
