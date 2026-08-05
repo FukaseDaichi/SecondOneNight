@@ -427,9 +427,6 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 	}
 
 	public void judgement() {
-		// ターン設定
-		turn = 4;
-
 		// 最大値取得
 		int maxVotingCount = rollList.stream().max(Comparator.comparing(WerewolfRoll::getVotingCount)).get()
 				.getVotingCount();
@@ -437,18 +434,51 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 		// 処刑フラグ設定
 		rollList.stream().filter(o -> o.getVotingCount() == maxVotingCount).forEach(o -> o.setPunishmentFlg(true));
 
-		if (0 < rollList.stream().filter(o -> o.getRollNo() == WereWolfConst.ROLL_NO_TERUTERU && o.isPunishmentFlg())
+		finishJudgement();
+	}
+
+	/**
+	 * 暗殺者の行動後に、勝敗が確定するかを判定する。
+	 *
+	 * 暗殺による死亡フラグは対象へ設定済みのため、通常投票の最多得票判定は行わない。
+	 * てるてるが実際に配役されている場合は、人狼を暗殺しても議論・投票を継続する。
+	 */
+	public void judgeAfterAssassination(WerewolfUser targetUser) {
+		if (targetUser == null || targetUser.getRoll() == null) {
+			return;
+		}
+
+		WerewolfRoll targetRoll = targetUser.getRoll();
+		if (!targetRoll.isPunishmentFlg()) {
+			return;
+		}
+
+		boolean teruteruTarget = isTeruteruRole(targetRoll);
+		boolean werewolfTarget = isWerewolfRole(targetRoll);
+
+		if (teruteruTarget || (werewolfTarget && !hasAssignedTeruteru())) {
+			finishJudgement();
+		}
+	}
+
+	/**
+	 * 既に設定済みの punishmentFlg を正として勝敗を確定する共通処理。
+	 * 通常投票のように投票数 0 の役職へ処刑フラグを追加しない。
+	 */
+	private void finishJudgement() {
+		// ターン設定
+		turn = 4;
+		winteamList.clear();
+
+		if (0 < rollList.stream().filter(o -> isTeruteruRole(o) && o.isPunishmentFlg())
 				.count()) {
-			// てるてるがつられていた場合
+			// てるてるが死亡扱いの場合
 			winteamList.add(WereWolfConst.TEAM_NO_TERUTERU);
-		} else if (0 < rollList.stream()
-				.filter(o -> (o.getRollNo() == WereWolfConst.ROLL_NO_WEREWOLF && o.isPunishmentFlg())
-						|| (o.getRollNo() == WereWolfConst.ROLL_NO_WHITEWEREWOLF && o.isPunishmentFlg()))
-				.count()) {
-			// 人狼がつられていた場合
+		} else if (0 < rollList.stream().filter(o -> isWerewolfRole(o) && o.isPunishmentFlg()).count()) {
+			// 人狼系が死亡扱いの場合
 			winteamList.add(WereWolfConst.TEAM_NO_VILLAGER);
 		} else {
-			// 人狼がつられていない場合
+			// 人狼系が死亡扱いでない場合
 			winteamList.add(WereWolfConst.TEAM_NO_WEREWOLF);
 		}
 
@@ -464,6 +494,28 @@ public class WerewolfRoom extends ChatRoom implements LimitTimeInterface {
 			}
 		}
 
+	}
+
+	private boolean hasAssignedTeruteru() {
+		if (npcuser != null && isTeruteruRole(npcuser.getRoll())) {
+			return true;
+		}
+
+		return userList != null && userList.stream().map(user -> (WerewolfUser) user)
+				.anyMatch(user -> isTeruteruRole(user.getRoll()));
+	}
+
+	private boolean isTeruteruRole(WerewolfRoll roll) {
+		return roll != null && roll.getRollNo() == WereWolfConst.ROLL_NO_TERUTERU;
+	}
+
+	private boolean isWerewolfRole(WerewolfRoll roll) {
+		if (roll == null) {
+			return false;
+		}
+
+		return roll.getRollNo() == WereWolfConst.ROLL_NO_WEREWOLF
+				|| roll.getRollNo() == WereWolfConst.ROLL_NO_WHITEWEREWOLF;
 	}
 
 	public WerewolfUser getWerewolfUser(String username) {
