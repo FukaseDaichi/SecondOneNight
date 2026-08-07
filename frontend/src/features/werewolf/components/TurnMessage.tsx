@@ -24,9 +24,6 @@ export default function TurnMessage({
                     <span className={styles.phasename}>
                         選択中 <Loadingdod color={'#f2fbfb'} />
                     </span>
-                    <button className={styles.rulepill} onClick={onShowRule}>
-                        遊び方
-                    </button>
                 </div>
             )}
             {turn === 2 && (

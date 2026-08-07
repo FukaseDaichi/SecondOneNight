@@ -23,6 +23,7 @@ type RollSelectTurnProps = {
     roll: WerewolfRoll;
     userList: Array<WerewolfUser>;
     setModalOwnFlg: (boolean) => void;
+    onShowRule: () => void;
 };
 
 export default function RollSelectTurn(props: RollSelectTurnProps) {
@@ -168,6 +169,13 @@ export default function RollSelectTurn(props: RollSelectTurnProps) {
                     )}
                 </div>
                 <div className={styles.rollinfo}>
+                    <button
+                        type="button"
+                        className={styles.rulebtn}
+                        onClick={props.onShowRule}
+                    >
+                        遊び方
+                    </button>
                     <h2>他の役職を確認する</h2>
                     <button
                         type="button"

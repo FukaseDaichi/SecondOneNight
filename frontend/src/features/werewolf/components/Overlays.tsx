@@ -73,6 +73,7 @@ export default function Overlays({
                     userList={userList}
                     rollList={rollList}
                     setModalOwnFlg={setModalOwnFlg}
+                    onShowRule={() => setRuleFlg(true)}
                 />
             )}
             {ruleFlg && <Rule endFnc={() => setRuleFlg(false)} />}
