@@ -197,6 +197,7 @@ export default function RollSelectTurn(props: RollSelectTurnProps) {
                             userList={props.userList}
                             turn={props.turn}
                             setModalOwnFlg={props.setModalOwnFlg}
+                            onDark
                         />
                     </div>
                 </div>

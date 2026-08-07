@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styles from '../../../styles/components/werewolf/modalrollcard.module.scss';
 import { WerewolfRoll } from '../../../type/werewolf';
 import { SystemConst } from '../../../const/next.config';
@@ -44,13 +44,41 @@ export default function ModalRollCard(props: ModalRollCardProps) {
         }`,
     };
 
-    const unView = () => {
+    const hidden = props.hidden;
+    const unView = useCallback(() => {
         setClosing(true);
-        props.hidden();
-    };
+        hidden();
+    }, [hidden]);
+
+    // Esc で閉じる(背景タップ・✕・カード面タップと同じ導線)
+    useEffect(() => {
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                unView();
+            }
+        };
+        window.addEventListener('keydown', onKeyDown);
+        return () => window.removeEventListener('keydown', onKeyDown);
+    }, [unView]);
+
+    const rollName = getParam(
+        props.roll,
+        'name',
+        props.roll.fakeRollList,
+        props.turn,
+        props.ownFlg
+    );
 
     return (
-        <div className={styles.modal}>
+        // 背景(オーバーレイ)タップで閉じる。カード面のタップも従来どおり
+        // ここまでバブリングして閉じるため、内側に個別のハンドラは持たせない
+        <div
+            className={styles.modal}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${rollName}の詳細`}
+            onClick={unView}
+        >
             <div
                 className={closing ? styles['flip-out-hor-top'] : ''}
                 style={{
@@ -65,8 +93,18 @@ export default function ModalRollCard(props: ModalRollCardProps) {
                             )
                         ],
                 }}
-                onClick={unView}
             >
+                <button
+                    type="button"
+                    className={styles.close}
+                    aria-label="閉じる"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        unView();
+                    }}
+                >
+                    ✕
+                </button>
                 <div
                     className={styles.imgdiv}
                     style={{
@@ -79,15 +117,7 @@ export default function ModalRollCard(props: ModalRollCardProps) {
                         )}.jpg)`,
                     }}
                 >
-                    <div className={styles.rollname}>
-                        {getParam(
-                            props.roll,
-                            'name',
-                            props.roll.fakeRollList,
-                            props.turn,
-                            props.ownFlg
-                        )}
-                    </div>
+                    <div className={styles.rollname}>{rollName}</div>
                 </div>
 
                 <div className={styles.info}>

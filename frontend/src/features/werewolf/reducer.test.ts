@@ -146,7 +146,7 @@ describe('werewolfReducer: サーバメッセージ', () => {
             type: 'message',
             payload: msg(404, null, { message: 'err' }),
         });
-        expect(s.messageList).toEqual(['err']);
+        expect(s.messageList).toEqual([{ text: 'err', kind: 'error' }]);
         expect(s.userList).toEqual(initialWerewolfState.userList);
     });
 
@@ -335,7 +335,7 @@ describe('werewolfReducer: サーバメッセージ', () => {
             type: 'message',
             payload: msg(998, null, { userName: 'me', message: '本人' }),
         });
-        expect(s.messageList).toEqual(['本人']);
+        expect(s.messageList).toEqual([{ text: '本人', kind: 'error' }]);
     });
 
     it('status 998(個人エラー)は他人宛のとき state が不変', () => {
@@ -352,7 +352,7 @@ describe('werewolfReducer: サーバメッセージ', () => {
             type: 'message',
             payload: msg(999, null, { message: 'all' }),
         });
-        expect(s.messageList).toEqual(['all']);
+        expect(s.messageList).toEqual([{ text: 'all', kind: 'error' }]);
     });
 
     it('playerData は userList 内の自分が見つかった時のみ更新され、見つからない場合は据え置かれる', () => {
@@ -470,7 +470,7 @@ describe('werewolfReducer: ローカルアクション', () => {
         expect(s.playerName).toBe('me');
     });
 
-    it('chatSent / systemMessage で messageList に追記される', () => {
+    it('chatSent は info / systemMessage は error として messageList に追記される', () => {
         let s = werewolfReducer(initialWerewolfState, {
             type: 'chatSent',
             message: 'hi',
@@ -479,7 +479,10 @@ describe('werewolfReducer: ローカルアクション', () => {
             type: 'systemMessage',
             text: '通信エラー。再度試してください',
         });
-        expect(s.messageList).toEqual(['hi', '通信エラー。再度試してください']);
+        expect(s.messageList).toEqual([
+            { text: 'hi', kind: 'info' },
+            { text: '通信エラー。再度試してください', kind: 'error' },
+        ]);
     });
 
     it('dismissStart で startFlg が下りる', () => {

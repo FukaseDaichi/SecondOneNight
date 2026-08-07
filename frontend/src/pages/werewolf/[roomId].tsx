@@ -9,7 +9,7 @@ import ChatComponent from '../../components/chatcomponent';
 import styles from '../../styles/components/werewolf/room.module.scss';
 import Router from 'next/router';
 import RollInfo from '../../features/werewolf/components/rollinfo';
-import Socialbtn from '../../components/button/sosialbtn';
+import Socialbtn from '../../components/button/socialbtn';
 import ConnectionStatus from '../../components/common/ConnectionStatus';
 import EntryCard from '../../features/werewolf/components/EntryCard';
 import InvitePanel from '../../features/werewolf/components/InvitePanel';
@@ -106,6 +106,8 @@ export default function WerewolfRoom() {
     const hasResult = turn === 4 && winteamList.length > 0;
     // ゲーム中(turn 1〜3)は GAME RESET。全員のゲームを破棄する不可逆操作のため確認を挟む
     const isReset = turn > 0 && turn < 4;
+    // 背景コンテキスト: 役職選択〜投票は夜背景(暗)、ロビー・終了後は淡背景
+    const nightPhase = turn >= 1 && turn <= 3;
 
     const actionButtons = (
         <div className={styles.btnarea}>
@@ -239,8 +241,8 @@ export default function WerewolfRoom() {
                     if (index === messageList.length - 1) {
                         return (
                             <Chatmessage
-                                value={value}
-                                type="info"
+                                value={value.text}
+                                type={value.kind}
                                 key={index}
                             />
                         );
@@ -331,6 +333,7 @@ export default function WerewolfRoom() {
                         userList={userList}
                         turn={turn}
                         setModalOwnFlg={setModalOwnFlg}
+                        onDark={nightPhase}
                     />
                 )}
 

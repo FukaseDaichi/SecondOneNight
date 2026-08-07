@@ -1,5 +1,8 @@
 $message-color: #28a745;
 $message-second: 3s;
+/* エラー種別。白背景に対し 6.52:1(AA 達成)。読み落としを減らすため表示も延長する */
+$error-color: #b3252f;
+$error-second: 8s;
 div.chatmessage {
     position: fixed;
     left: 0;
@@ -54,6 +57,26 @@ div.chatmessage {
                 transform: scale(0);
                 transform-origin: 0 0;
                 animation: bounce 500ms linear both;
+            }
+        }
+    }
+
+    /* エラー種別(werewolf の kind:'error' のみ)。
+       他ゲームは常に type="info" のため見た目は従来のまま */
+    &.error {
+        animation: fadeout-keyframes $error-second ease 0s 1 forwards;
+
+        div {
+            .title {
+                color: $error-color;
+            }
+
+            .message {
+                border-color: $error-color;
+
+                p {
+                    color: $error-color;
+                }
             }
         }
     }

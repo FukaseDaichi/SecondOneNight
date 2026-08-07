@@ -3,8 +3,8 @@ import styles from '../../styles/components/button/socialbtn.module.scss';
 import {
     FacebookShareButton,
     FacebookIcon,
-    TwitterShareButton,
-    TwitterIcon,
+    XShareButton,
+    XIcon,
     LineShareButton,
     LineIcon,
 } from 'react-share';
@@ -20,28 +20,21 @@ interface SocialProps {
 }
 
 export default function Socialbtn(props: SocialProps) {
+    const size = props.size ? props.size : config.size;
     return (
         <div className={styles.socialbtnarea}>
+            <p className={styles.label}>この部屋をシェア</p>
             <div>
                 <FacebookShareButton url={props.url}>
-                    <FacebookIcon
-                        size={props.size ? props.size : config.size}
-                        round
-                    />
+                    <FacebookIcon size={size} round />
                 </FacebookShareButton>
 
-                <TwitterShareButton url={props.url} title={props.title}>
-                    <TwitterIcon
-                        size={props.size ? props.size : config.size}
-                        round
-                    />
-                </TwitterShareButton>
+                <XShareButton url={props.url} title={props.title}>
+                    <XIcon size={size} round />
+                </XShareButton>
 
                 <LineShareButton url={props.url} title={props.title}>
-                    <LineIcon
-                        size={props.size ? props.size : config.size}
-                        round
-                    ></LineIcon>
+                    <LineIcon size={size} round></LineIcon>
                 </LineShareButton>
             </div>
         </div>

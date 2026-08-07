@@ -7,7 +7,7 @@ import ChatComponent from '../../components/chatcomponent';
 import styles from '../../styles/components/hideout/room.module.scss';
 import Router from 'next/router';
 import Start from '../../components/common/Start';
-import Socialbtn from '../../components/button/sosialbtn';
+import Socialbtn from '../../components/button/socialbtn';
 import ConnectionStatus from '../../components/common/ConnectionStatus';
 import RoomInForm from '../../components/common/RoomInForm';
 import WinnerModals from '../../features/hideout/components/WinnerModals';

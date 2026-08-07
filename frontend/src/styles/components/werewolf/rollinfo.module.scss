@@ -1,3 +1,8 @@
+@use '../../tokens' as *;
+
+/* 役職一覧はロビー(淡背景)とゲーム中(夜背景)の両方で使う。
+   文字色は継承に頼らず、背景コンテキスト(.onDark)で明示的に切り替える。
+   淡背景 $ink #1e3b44 → 10.6〜11.5:1 / 夜背景 #f2fbfb → 7.8〜15.6:1 */
 div.rollinfo {
     display: flex;
     justify-content: center;
@@ -12,7 +17,12 @@ div.rollinfo {
             margin-right: 20px;
             font-family: 'Patrick Hand SC', cursive;
             font-size: 2rem;
+            color: $ink;
         }
+    }
+
+    &.onDark div.content div.rollSize {
+        color: #f2fbfb;
     }
 }
 
@@ -20,8 +30,13 @@ div.rollmissing {
     text-align: right;
     font-family: 'APJapanesefont', sans-seri;
     font-size: 2.3rem;
+    color: $ink;
     span {
         font-size: 2.4rem;
         font-family: 'Patrick Hand SC', cursive;
+    }
+
+    &.onDark {
+        color: #f2fbfb;
     }
 }

@@ -59,7 +59,7 @@ Werewolf は、役職選択、議論、投票を通じて勝利チームを決�
 | 分類 | フィールド |
 | --- | --- |
 | room | `playerName`, `playerData`, `roomCode` |
-| message | `messageList`, `chatList` |
+| message | `messageList`(`{ text, kind: 'info' \| 'error' }` の配列), `chatList` |
 | game | `userList`, `turn`, `winteamList`, `staticRollList`, `rollList`, `npcuser`, `limitTime`, `rollInfoList`, `counterMap`, `appliedCounterMap` |
 | view | `startFlg`, `modalRoll`, `modalOwnFlg`, `rollSelectTurnFlg`, `votingStartFlg`, `cutInNo`, `snipeSeq`, `resultFlg`, `ruleFlg`, `winMessage` |
 
@@ -101,14 +101,14 @@ Werewolf は、役職選択、議論、投票を通じて勝利チームを決�
 | `200` | `WerewolfRoom` | status `100` と同等 | 同一名入室時の状態同期 |
 | `300` | `WerewolfRoom` | `startFlg=true`、`ruleFlg=false`、`resultFlg=false`、`dataSet` | 開始 overlay |
 | `400` | `WerewolfRoom` | `dataSet` | 役職選択進行 |
-| `404` | message | `messageList` 追記 | エラー表示 |
+| `404` | message | `messageList` 追記(`kind: 'error'`) | エラー表示 |
 | `500` | `WerewolfRoom` + action user no | `dataSet`、役職に応じて `cutInNo` / `snipeSeq` | 議論アクション演出。暗殺対象が勝敗確定条件に該当する場合は、この status で `turn=4` / `winteamList` も反映 |
 | `550` | limit time | `limitTime` 更新 | 制限時間反映 |
 | `600` | `WerewolfRoom` | `dataSet` | 議論終了・投票移行 |
 | `650` | `userList` | `userList` のみ更新 | プリセット URL / Data URL のアイコン反映 |
 | `700` | `WerewolfRoom` | `dataSet`、`counterMap`、`appliedCounterMap` | 投票状態・結果更新。ページが `winteamList` から `victoryMessage` を同フレームで導出し、turn `4` なら遅延なく `VictoryOverlay` 表示(ロビーを一瞬経由しない) |
-| `998` | message | `userName` が自分なら `messageList` 追記 | 個人エラー |
-| `999` | message | `messageList` 追記 | 全体エラー |
+| `998` | message | `userName` が自分なら `messageList` 追記(`kind: 'error'`) | 個人エラー |
+| `999` | message | `messageList` 追記(`kind: 'error'`) | 全体エラー |
 
 ## 状態遷移
 

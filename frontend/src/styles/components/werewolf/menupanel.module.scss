@@ -291,6 +291,8 @@
 }
 
 %card-mini-button {
+    /* ::before の当たり判定を載せるため基準を明示する */
+    position: relative;
     user-select: none;
     width: 28px;
     height: 28px;
@@ -304,6 +306,23 @@
         background 0.2s,
         opacity 0.2s,
         transform 0.1s;
+
+    /* 見た目は 28px のまま、当たり判定だけ 44px 四方へ広げる。
+       −/+ は同じカードの左右端にあり中心間が 80px(md 56px)離れているため、
+       44px 同士でも重ならない */
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 44px;
+        height: 44px;
+        transform: translate(-50%, -50%);
+    }
+    /* 無効時は透明領域もタップを吸わない(隣の要素へ通す) */
+    &:disabled::before {
+        content: none;
+    }
 
     &:active:not(:disabled) {
         transform: scale(0.9);
@@ -399,7 +418,9 @@
     border: 1px solid rgba($rose, 0.35);
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.72);
-    color: $rose-deep;
+    /* 開始条件の不足は必ず読ませたい文言。$rose-deep は白プレート上で 3.85:1 と
+       AA 未達のため、より濃い $rose-ink(5.75:1)を使う */
+    color: $rose-ink;
     font-family: $sans;
     font-size: 0.85rem;
 
