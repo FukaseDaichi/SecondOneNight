@@ -299,6 +299,12 @@ span.statusBadge {
         background: $gold;
         box-shadow: 0 0 8px rgba($gold, 0.8);
     }
+
+    /* 役職構成の未反映(設定ボタン未押下)。「参加待ち」と混同されないよう
+       お品書きの未反映表示と同系の金色にする(点灯はしない) */
+    &.dirty::before {
+        background: $gold-soft;
+    }
 }
 
 /* 状態バッジと前回結果ボタンの並び(バッジは右端に据える) */

@@ -141,7 +141,7 @@ export default function WerewolfRoom() {
                     if (isReset) {
                         if (
                             window.confirm(
-                                'ゲームをリセットして全員をロビーに戻しますか?'
+                                'ゲームを中断して役職を配り直しますか?(全員が役職選択からやり直します)'
                             )
                         ) {
                             init();
@@ -283,10 +283,18 @@ export default function WerewolfRoom() {
                             )}
                             <span
                                 className={`${styles.statusBadge} ${
-                                    readiness.ready ? styles.ready : ''
+                                    readiness.ready
+                                        ? styles.ready
+                                        : readiness.dirty
+                                          ? styles.dirty
+                                          : ''
                                 }`}
                             >
-                                {readiness.ready ? '開始できます' : '参加待ち'}
+                                {readiness.ready
+                                    ? '開始できます'
+                                    : readiness.dirty
+                                      ? '設定未反映'
+                                      : '参加待ち'}
                             </span>
                         </div>
                     </header>

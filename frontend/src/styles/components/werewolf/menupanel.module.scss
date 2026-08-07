@@ -73,6 +73,8 @@
 }
 
 .apply {
+    /* ::after の glow を絶対配置で重ねるための基準 */
+    position: relative;
     padding: 10px 22px;
     border: 1px solid rgba($teal-soft, 0.5);
     border-radius: 999px;
@@ -101,24 +103,36 @@
     }
 }
 
-/* 未反映(dirty): まだサーバへ送っていない構成であることを金の灯でやわらかく知らせる */
+/* 未反映(dirty): まだサーバへ送っていない構成であることを金の灯でやわらかく知らせる。
+   box-shadow は compositor 非対応(毎フレーム再描画)なので、灯そのものは静的な
+   ::after に固定し、その opacity だけを compositor アニメーションで点滅させる */
 .applyDirty {
     border-color: rgba($gold, 0.85);
     color: $gold-soft;
-    animation: apply-glow 2s ease-in-out infinite alternate;
 
     &:hover {
         background: rgba($gold, 0.16);
         border-color: $gold;
     }
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        box-shadow: 0 0 14px rgba($gold, 0.45);
+        opacity: 0;
+        pointer-events: none;
+        animation: apply-glow 2s ease-in-out infinite alternate;
+    }
 }
 
 @keyframes apply-glow {
     from {
-        box-shadow: 0 0 0 rgba($gold, 0);
+        opacity: 0;
     }
     to {
-        box-shadow: 0 0 14px rgba($gold, 0.45);
+        opacity: 1;
     }
 }
 
@@ -359,8 +373,11 @@
     }
     /* 点滅の代わりに静的な金枠で未反映を示す(「未反映」ラベルは常時表示) */
     .applyDirty {
-        animation: none;
         box-shadow: 0 0 0 2px rgba($gold, 0.55);
+
+        &::after {
+            content: none;
+        }
     }
 }
 
