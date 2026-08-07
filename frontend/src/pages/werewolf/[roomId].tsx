@@ -75,6 +75,7 @@ export default function WerewolfRoom() {
         limitTime,
         rollInfoList,
         counterMap,
+        appliedCounterMap,
         startFlg,
         modalRoll,
         modalOwnFlg,
@@ -88,10 +89,12 @@ export default function WerewolfRoom() {
 
     // 待機中(ロビー): turn 0 と、終了後にロビーへ戻った turn 4
     const lobby = entered && (turn === 0 || turn === 4);
-    // 開始条件(3人以上 / 役職合計 > 人数 / 人狼系あり)。MenuPanel 内でも同じ純粋関数で表示する
+    // 開始条件(3人以上 / 役職合計 > 人数 / 人狼系あり / 役職構成が反映済み)。
+    // MenuPanel 内でも同じ純粋関数・同じ引数で評価するため判定がズレない
     const readiness = lobbyReadiness(
         userList.length,
         counterMap,
+        appliedCounterMap,
         staticRollList
     );
     // 勝利演出: 全画面演出 → 結果テーブル → ロビー復帰(VictoryOverlay 内で遷移)。
@@ -337,6 +340,7 @@ export default function WerewolfRoom() {
                         <MenuPanel
                             userCount={userList.length}
                             counterMap={counterMap}
+                            appliedCounterMap={appliedCounterMap}
                             staticRollList={staticRollList}
                             counter={counter}
                             setRoll={setRoll}

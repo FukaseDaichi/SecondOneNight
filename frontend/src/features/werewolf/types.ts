@@ -20,6 +20,8 @@ export type WerewolfState = {
     rollInfoList: WerewolfRoll[];
     // 役職カスタマイズ(旧 #cunter_N DOM。rollNo → 人数)
     counterMap: Record<number, number>;
+    // サーバが最後に受理した役職構成。counterMap と食い違う間は「未反映(dirty)」
+    appliedCounterMap: Record<number, number>;
     // view
     startFlg: boolean;
     modalRoll: WerewolfRoll | null;

@@ -101,6 +101,40 @@
     }
 }
 
+/* 未反映(dirty): まだサーバへ送っていない構成であることを金の灯でやわらかく知らせる */
+.applyDirty {
+    border-color: rgba($gold, 0.85);
+    color: $gold-soft;
+    animation: apply-glow 2s ease-in-out infinite alternate;
+
+    &:hover {
+        background: rgba($gold, 0.16);
+        border-color: $gold;
+    }
+}
+
+@keyframes apply-glow {
+    from {
+        box-shadow: 0 0 0 rgba($gold, 0);
+    }
+    to {
+        box-shadow: 0 0 14px rgba($gold, 0.45);
+    }
+}
+
+.dirtyTag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba($gold, 0.22);
+    font-family: $sans;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: $gold-soft;
+}
+
 .tally {
     margin: 0 0 0 auto;
     font-size: 0.8rem;
@@ -303,6 +337,11 @@
     }
     .rollCard.active {
         transform: none;
+    }
+    /* 点滅の代わりに静的な金枠で未反映を示す(「未反映」ラベルは常時表示) */
+    .applyDirty {
+        animation: none;
+        box-shadow: 0 0 0 2px rgba($gold, 0.55);
     }
 }
 

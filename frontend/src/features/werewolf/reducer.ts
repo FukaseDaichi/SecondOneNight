@@ -17,6 +17,7 @@ export const initialWerewolfState: WerewolfState = {
     limitTime: 0,
     rollInfoList: [],
     counterMap: {},
+    appliedCounterMap: {},
     startFlg: false,
     modalRoll: null,
     modalOwnFlg: false,
@@ -70,25 +71,37 @@ const onMessage = (
 ): WerewolfState => {
     switch (socketInfo.status) {
         case 100: // ルーム入室
-        case 200: // ルーム入室(同一名ユーザ入室)
+        case 200: {
+            // ルーム入室(同一名ユーザ入室)
+            const applied = toCounterMap(socketInfo.obj.rollNoList);
             return {
                 ...dataSet(state, socketInfo.obj),
                 limitTime: socketInfo.obj.limitTime,
-                counterMap: toCounterMap(socketInfo.obj.rollNoList),
+                counterMap: applied,
+                appliedCounterMap: applied,
                 rollInfoList: socketInfo.obj.rollList,
             };
-        case 130: // 退出(userList から対象を除去した room が届く)
+        }
+        case 130: {
+            // 退出(userList から対象を除去した room が届く)
+            const applied = toCounterMap(socketInfo.obj.rollNoList);
             return {
                 ...dataSet(state, socketInfo.obj),
-                counterMap: toCounterMap(socketInfo.obj.rollNoList),
+                counterMap: applied,
+                appliedCounterMap: applied,
                 rollInfoList: socketInfo.obj.rollList,
             };
-        case 150: // 役職設定
+        }
+        case 150: {
+            // 役職設定(サーバが受理した構成。ここで未反映状態が解消される)
+            const applied = toCounterMap(socketInfo.obj.rollNoList);
             return {
                 ...dataSet(state, socketInfo.obj),
-                counterMap: toCounterMap(socketInfo.obj.rollNoList),
+                counterMap: applied,
+                appliedCounterMap: applied,
                 rollInfoList: socketInfo.obj.rollList,
             };
+        }
         case 101: // チャット
             return { ...state, chatList: socketInfo.obj };
         case 300: // ゲーム開始
@@ -159,11 +172,15 @@ const onMessage = (
             return dataSet(state, socketInfo.obj);
         case 650: // アイコン変更
             return { ...state, userList: socketInfo.obj };
-        case 700: // 投票
+        case 700: {
+            // 投票
+            const applied = toCounterMap(socketInfo.obj.rollNoList);
             return {
                 ...dataSet(state, socketInfo.obj),
-                counterMap: toCounterMap(socketInfo.obj.rollNoList),
+                counterMap: applied,
+                appliedCounterMap: applied,
             };
+        }
         case 998: // エラーメッセージ表示(個人)
             if (socketInfo.userName === state.playerName) {
                 return {

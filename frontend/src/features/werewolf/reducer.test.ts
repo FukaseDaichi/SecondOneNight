@@ -393,6 +393,74 @@ describe('werewolfReducer: サーバメッセージ', () => {
     });
 });
 
+// 「+/- しただけ(未反映)」と「サーバが受理済み」を区別するための同期テスト
+describe('werewolfReducer: appliedCounterMap', () => {
+    it.each([100, 200, 130, 150, 700])(
+        'status %i でサーバ構成が counterMap と appliedCounterMap の両方に反映される',
+        (status) => {
+            const before = {
+                ...initialWerewolfState,
+                counterMap: { 9: 5 },
+                appliedCounterMap: { 8: 4 },
+            };
+            const s = werewolfReducer(before, {
+                type: 'message',
+                payload: msg(status, serverObj({ rollNoList: [1, 1, 2] })),
+            });
+            expect(s.counterMap).toEqual({ 1: 2, 2: 1 });
+            expect(s.appliedCounterMap).toEqual({ 1: 2, 2: 1 });
+        }
+    );
+
+    it('counter(ローカルの +/-)では appliedCounterMap が変わらない', () => {
+        const before = {
+            ...initialWerewolfState,
+            counterMap: { 1: 2 },
+            appliedCounterMap: { 1: 2 },
+        };
+        const s = werewolfReducer(before, {
+            type: 'counter',
+            rollNo: 1,
+            delta: 1,
+        });
+        expect(s.counterMap).toEqual({ 1: 3 });
+        expect(s.appliedCounterMap).toEqual({ 1: 2 });
+    });
+
+    it('ローカル編集後に status 150 を受けると両者が再び一致する', () => {
+        const edited = werewolfReducer(
+            { ...initialWerewolfState, counterMap: { 1: 2 } },
+            { type: 'counter', rollNo: 1, delta: 1 }
+        );
+        expect(edited.counterMap).not.toEqual(edited.appliedCounterMap);
+
+        const s = werewolfReducer(edited, {
+            type: 'message',
+            payload: msg(150, serverObj({ rollNoList: [1, 1, 1] })),
+        });
+        expect(s.counterMap).toEqual({ 1: 3 });
+        expect(s.appliedCounterMap).toEqual({ 1: 3 });
+    });
+
+    it('status 998(役職設定の拒否)では appliedCounterMap が更新されない', () => {
+        const before = {
+            ...initialWerewolfState,
+            playerName: 'me',
+            counterMap: { 1: 3 },
+            appliedCounterMap: { 1: 2 },
+        };
+        const s = werewolfReducer(before, {
+            type: 'message',
+            payload: msg(998, null, {
+                userName: 'me',
+                message: '役職が重複しています',
+            }),
+        });
+        expect(s.counterMap).toEqual({ 1: 3 });
+        expect(s.appliedCounterMap).toEqual({ 1: 2 });
+    });
+});
+
 describe('werewolfReducer: ローカルアクション', () => {
     it('roomIn で playerName が設定される', () => {
         const s = werewolfReducer(initialWerewolfState, {
