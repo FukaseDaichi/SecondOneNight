@@ -108,6 +108,9 @@ export default function WerewolfRoom() {
     const isReset = turn > 0 && turn < 4;
     // 背景コンテキスト: 役職選択〜投票は夜背景(暗)、ロビー・終了後は淡背景
     const nightPhase = turn >= 1 && turn <= 3;
+    // 通知は常に最新の1件だけを出す(トースト表示 + 常設ライブリージョンの読み上げ)
+    const latestMessage =
+        messageList.length > 0 ? messageList[messageList.length - 1] : null;
 
     const actionButtons = (
         <div className={styles.btnarea}>
@@ -227,6 +230,12 @@ export default function WerewolfRoom() {
                 setRuleFlg={setRuleFlg}
             />
 
+            {/* 常設のライブリージョン: ページと同時にマウントし、以後は中身の
+                テキストだけが差し替わるのでスクリーンリーダーが変化を読み上げる */}
+            <div role="status" aria-live="polite" className={styles.srOnly}>
+                {latestMessage ? latestMessage.text : ''}
+            </div>
+
             {/* ページ本文(中央カラム)。ロビー中は下部固定バーの分だけ余白を取る */}
             <div className={`${styles.room} ${lobby ? styles.lobbyRoom : ''}`}>
                 {/* メッセージエリア */}
@@ -237,17 +246,17 @@ export default function WerewolfRoom() {
                     limittimeDone={limittimeDone}
                     onShowRule={() => setRuleFlg(true)}
                 />
-                {messageList.map((value, index) => {
-                    if (index === messageList.length - 1) {
-                        return (
-                            <Chatmessage
-                                value={value.text}
-                                type={value.kind}
-                                key={index}
-                            />
-                        );
-                    }
-                })}
+                {/* トーストはメッセージと同時にマウントされるため live region として
+                    機能しない。読み上げは上の常設リージョンが担い、トースト自体は
+                    aria-hidden の表示専用にして二重読み上げを避ける */}
+                {latestMessage && (
+                    <Chatmessage
+                        value={latestMessage.text}
+                        type={latestMessage.kind}
+                        key={messageList.length - 1}
+                        srHidden
+                    />
+                )}
                 <ConnectionStatus status={status} />
                 <EntryCard
                     connected={connected}

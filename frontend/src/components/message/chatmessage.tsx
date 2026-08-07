@@ -6,6 +6,10 @@ import styles from '../../styles/components/message/chatmessage.module.scss';
 type ChatMessageProps = {
     value: string;
     type: 'info' | 'error';
+    // ページ側に常設のライブリージョンがある場合(werewolf)に true。
+    // このトーストはメッセージと同時にマウントされるためライブリージョンとしては
+    // 機能せず、読み上げは常設側に任せて二重読み上げを避ける
+    srHidden?: boolean;
 };
 
 export default function ChatMessage(props: ChatMessageProps) {
@@ -13,8 +17,7 @@ export default function ChatMessage(props: ChatMessageProps) {
     return (
         <div
             className={`${styles.chatmessage} ${isError ? styles.error : ''}`}
-            role="status"
-            aria-live="polite"
+            aria-hidden={props.srHidden ? true : undefined}
         >
             <div className="container">
                 <div className={`${styles.message} ${styles.new}`}>

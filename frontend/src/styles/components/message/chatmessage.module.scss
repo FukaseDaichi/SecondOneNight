@@ -9,6 +9,10 @@ div.chatmessage {
     top: 0;
     width: 100%;
     z-index: 100;
+    /* 画面上部を全幅で覆う通知。中に操作要素は無いので、
+       フェードアウトし切るまでの間、下のUI(werewolf のフェーズ帯の
+       「議論終了」「遊び方」等)のタップを塞がないようにする */
+    pointer-events: none;
     animation: fadeout-keyframes $message-second ease 0s 1 forwards;
 
     div {
