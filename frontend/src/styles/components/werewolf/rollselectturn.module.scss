@@ -168,6 +168,39 @@ div.rollselect {
                 }
             }
 
+            /* 「待機中」の下に手番ユーザー名を添える一行。存在しない
+               (=手番ユーザーが見つからない一瞬)場合は呼び出し側で描画しない */
+            div.pickername {
+                margin-top: -20px;
+                font-family: $serif;
+                font-size: 1rem;
+                letter-spacing: 0.1em;
+                color: rgba(242, 251, 251, 0.6);
+
+                @include mq(md) {
+                    font-size: 0.85rem;
+                }
+            }
+
+            /* 手札2枚が見えている本人向けの一行ガイド。カード群の直前に置く */
+            div.pickguide {
+                display: inline-block;
+                margin: 0 auto 10px;
+                padding: 4px 16px;
+                border-radius: 999px;
+                background: rgba($night-deep, 0.75);
+                border: 1px solid rgba($gold-soft, 0.4);
+                font-family: $serif;
+                font-size: 0.85rem;
+                letter-spacing: 0.08em;
+                color: rgba(242, 251, 251, 0.85);
+
+                @include mq(md) {
+                    font-size: 0.7rem;
+                    padding: 3px 12px;
+                }
+            }
+
             div.handrollarea {
                 display: flex;
                 justify-content: center;

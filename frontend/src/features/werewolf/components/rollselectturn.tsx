@@ -32,6 +32,11 @@ export default function RollSelectTurn(props: RollSelectTurnProps) {
 
     const handRollFlg: boolean =
         props.user.handRollList && props.user.handRollList.length > 0;
+    // 現在手番のユーザー(手札2枚を持っている人)。全員選択済みの一瞬など
+    // 見つからないタイミングもあるため、呼び出し側で必ず存在チェックする
+    const currentPicker = props.userList.find(
+        (element) => element.handRollList && element.handRollList.length === 2
+    );
     return (
         <div
             className={`${styles.rollselect} ${
@@ -87,7 +92,19 @@ export default function RollSelectTurn(props: RollSelectTurnProps) {
                             待機中 <Loadingdod color={'white'} />
                         </span>
                     )}
+                    {handRollFlg &&
+                        props.user.handRollList.length === 1 &&
+                        currentPicker && (
+                            <div className={styles.pickername}>
+                                {currentPicker.userName}さんが選んでいます
+                            </div>
+                        )}
 
+                    {handRollFlg && props.user.handRollList.length === 2 && (
+                        <div className={styles.pickguide}>
+                            1つ選ぶと、残りは次の人へ渡ります
+                        </div>
+                    )}
                     {handRollFlg && (
                         <div className={styles.handrollarea}>
                             {props.user.handRollList.map(

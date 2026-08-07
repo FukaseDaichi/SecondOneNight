@@ -223,7 +223,6 @@ export default function WerewolfRoom() {
                 setModalOwnFlg={setModalOwnFlg}
                 ruleFlg={ruleFlg}
                 setRuleFlg={setRuleFlg}
-                showRuleButton={!lobby}
             />
 
             {/* ページ本文(中央カラム)。ロビー中は下部固定バーの分だけ余白を取る */}
@@ -234,6 +233,7 @@ export default function WerewolfRoom() {
                     limitTime={limitTime}
                     votingStartFlg={votingStartFlg}
                     limittimeDone={limittimeDone}
+                    onShowRule={() => setRuleFlg(true)}
                 />
                 {messageList.map((value, index) => {
                     if (index === messageList.length - 1) {

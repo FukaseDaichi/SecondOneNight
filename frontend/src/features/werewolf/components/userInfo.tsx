@@ -129,6 +129,13 @@ export default function UserInfo(props: UserInfoProps) {
                     >
                         <label>{props.user.userName}</label>
                     </div>
+                    {props.ownFlg &&
+                        props.turn === 3 &&
+                        props.playerData.votingUserName != null && (
+                            <div className={styles.votedbadge}>
+                                投票済 → {props.playerData.votingUserName}
+                            </div>
+                        )}
                 </div>
             </div>
 

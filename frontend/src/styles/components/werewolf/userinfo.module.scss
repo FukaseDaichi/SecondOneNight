@@ -292,6 +292,32 @@ div.main {
                     }
                 }
             }
+
+            /* 投票済みバッジ(自分のカード・投票中のみ)。名前の下に収まる
+               インフローの控えめなピルにして、下端に浮く you バッジや
+               その下の役職カードと重ならないようにする */
+            div.votedbadge {
+                display: inline-block;
+                max-width: 100%;
+                margin-top: 4px;
+                padding: 2px 10px;
+                font-family: $serif;
+                font-size: 0.62rem;
+                font-weight: 700;
+                letter-spacing: 0.04em;
+                color: $ink-deep;
+                background: rgba($gold, 0.14);
+                border: 1px solid rgba($gold, 0.55);
+                border-radius: 999px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                @include mq(md) {
+                    font-size: 0.56rem;
+                    padding: 2px 8px;
+                }
+            }
         }
     }
 
