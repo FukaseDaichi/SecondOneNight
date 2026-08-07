@@ -9,6 +9,7 @@ type Props = {
 
 export default function EntryCard({ connected, entered, onRoomIn }: Props) {
     const [name, setName] = useState('');
+    const canSubmit = connected && name.trim() !== '';
 
     if (entered) {
         return null;
@@ -36,14 +37,16 @@ export default function EntryCard({ connected, entered, onRoomIn }: Props) {
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                                 e.preventDefault();
-                                onRoomIn(name);
+                                if (canSubmit) {
+                                    onRoomIn(name);
+                                }
                             }
                         }}
                     />
                 </div>
                 <button
                     className={styles.submit}
-                    disabled={!connected}
+                    disabled={!canSubmit}
                     onClick={() => onRoomIn(name)}
                 >
                     入室する

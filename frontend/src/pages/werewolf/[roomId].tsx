@@ -101,6 +101,8 @@ export default function WerewolfRoom() {
         turn === 4 && winteamList.length > 0 && winMessage != null;
     // 前回結果の再表示: state に結果が残っている間だけ(リロードすると消える)
     const hasResult = turn === 4 && winteamList.length > 0;
+    // ゲーム中(turn 1〜3)は GAME RESET。全員のゲームを破棄する不可逆操作のため確認を挟む
+    const isReset = turn > 0 && turn < 4;
 
     const actionButtons = (
         <div className={styles.btnarea}>
@@ -126,8 +128,20 @@ export default function WerewolfRoom() {
                 </button>
             )}
             <button
-                className={styles.primary}
-                onClick={init}
+                className={isReset ? styles.ghost : styles.primary}
+                onClick={() => {
+                    if (isReset) {
+                        if (
+                            window.confirm(
+                                'ゲームをリセットして全員をロビーに戻しますか?'
+                            )
+                        ) {
+                            init();
+                        }
+                    } else {
+                        init();
+                    }
+                }}
                 disabled={lobby && !readiness.ready}
                 title={
                     lobby && !readiness.ready
@@ -135,7 +149,7 @@ export default function WerewolfRoom() {
                         : undefined
                 }
             >
-                {turn > 0 && turn < 4 ? 'GAME RESET' : 'GAME START'}
+                {isReset ? 'GAME RESET' : 'GAME START'}
             </button>
         </div>
     );
@@ -367,9 +381,6 @@ export default function WerewolfRoom() {
                 <Socialbtn
                     url={SystemConst.Server.SITE_URL + '/werewolf/' + roomId}
                     title={'セカンドワンナイト人狼'}
-                    via={
-                        'セカンドワンナイト人狼　リアルタイムに能力が使えるオンラインならではのスタイリッシュアクション招待隠匿ゲーム！'
-                    }
                 />
             </div>
         </Layout>

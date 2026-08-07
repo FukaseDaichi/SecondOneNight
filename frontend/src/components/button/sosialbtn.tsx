@@ -10,7 +10,6 @@ import {
 } from 'react-share';
 
 const config = {
-    via: 'kara_d',
     size: 32,
 };
 
@@ -18,7 +17,6 @@ interface SocialProps {
     url: string;
     title: string;
     size?: number;
-    via?: string;
 }
 
 export default function Socialbtn(props: SocialProps) {
@@ -32,11 +30,7 @@ export default function Socialbtn(props: SocialProps) {
                     />
                 </FacebookShareButton>
 
-                <TwitterShareButton
-                    url={props.url}
-                    title={props.title}
-                    via={props.via ? props.via : config.via}
-                >
+                <TwitterShareButton url={props.url} title={props.title}>
                     <TwitterIcon
                         size={props.size ? props.size : config.size}
                         round

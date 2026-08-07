@@ -43,7 +43,7 @@ export function useWerewolfRoom(roomId: string | undefined) {
     // --- 送信系(現行ページの各関数と同一 payload) ---
     const roomIn = useCallback(
         (userName: string) => {
-            if (userName === '') {
+            if (!userName.trim()) {
                 return;
             }
             dispatch({ type: 'roomIn', userName });

@@ -176,9 +176,6 @@ export default function Room() {
             <Socialbtn
                 url={SystemConst.Server.SITE_URL + '/timebomb/' + roomId}
                 title={'タイムボム'}
-                via={
-                    'タイムボムオンライン！　ゲームデザイナー佐藤雄介様の招待隠匿ゲーム'
-                }
             />
         </Layout>
     );

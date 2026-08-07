@@ -244,8 +244,7 @@ export default function FakeArtistRoom() {
             </div>
             <Socialbtn
                 url={SystemConst.Server.SITE_URL + '/fakeartist/' + roomId}
-                title={'セカンドワンナイト人狼'}
-                via={'ブラウザ上で正体隠匿ゲームが遊べます。'}
+                title={'エセ芸術家ニューヨークへ行く'}
             />
         </Layout>
     );

@@ -35,7 +35,18 @@ export default function TurnMessage({
                             onDone={limittimeDone}
                         />
                     )}
-                    <button className={styles.endbtn} onClick={limittimeDone}>
+                    <button
+                        className={styles.endbtn}
+                        onClick={() => {
+                            if (
+                                window.confirm(
+                                    '議論を終了して投票に進みますか?'
+                                )
+                            ) {
+                                limittimeDone();
+                            }
+                        }}
+                    >
                         議論終了
                     </button>
                 </div>

@@ -134,9 +134,6 @@ export default function HideoutRoom() {
             <Socialbtn
                 url={SystemConst.Server.SITE_URL + '/hideout/' + roomId}
                 title={'ハイドアウト'}
-                via={
-                    'ハイドアウトオンライン！　ゲームデザイナー佐藤雄介様の招待隠匿ゲーム'
-                }
             />
         </Layout>
     );
