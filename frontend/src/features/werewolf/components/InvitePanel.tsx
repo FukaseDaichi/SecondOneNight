@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../../../styles/components/werewolf/invite.module.scss';
 
 type Props = {
@@ -14,6 +14,15 @@ export default function InvitePanel({ roomId, roomCode, onShowRule }: Props) {
         typeof window !== 'undefined'
             ? `${location.origin}/werewolf/${roomId}`
             : '';
+
+    // 「コピーしました」表示を2秒後に元へ戻す
+    useEffect(() => {
+        if (!copied) {
+            return;
+        }
+        const id = window.setTimeout(() => setCopied(false), 2000);
+        return () => window.clearTimeout(id);
+    }, [copied]);
 
     const copyUrl = async () => {
         try {

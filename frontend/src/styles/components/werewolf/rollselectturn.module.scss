@@ -168,6 +168,39 @@ div.rollselect {
                 }
             }
 
+            /* 「待機中」の下に手番ユーザー名を添える一行。存在しない
+               (=手番ユーザーが見つからない一瞬)場合は呼び出し側で描画しない */
+            div.pickername {
+                margin-top: -20px;
+                font-family: $serif;
+                font-size: 1rem;
+                letter-spacing: 0.1em;
+                color: rgba(242, 251, 251, 0.6);
+
+                @include mq(md) {
+                    font-size: 0.85rem;
+                }
+            }
+
+            /* 手札2枚が見えている本人向けの一行ガイド。カード群の直前に置く */
+            div.pickguide {
+                display: inline-block;
+                margin: 0 auto 10px;
+                padding: 4px 16px;
+                border-radius: 999px;
+                background: rgba($night-deep, 0.75);
+                border: 1px solid rgba($gold-soft, 0.4);
+                font-family: $serif;
+                font-size: 0.85rem;
+                letter-spacing: 0.08em;
+                color: rgba(242, 251, 251, 0.85);
+
+                @include mq(md) {
+                    font-size: 0.7rem;
+                    padding: 3px 12px;
+                }
+            }
+
             div.handrollarea {
                 display: flex;
                 justify-content: center;
@@ -230,6 +263,40 @@ div.rollselect {
             bottom: 5px;
             @include mq(md) {
                 bottom: 50px;
+            }
+
+            /* 遊び方への導線。役職選択オーバーレイ(z:10)が全画面を覆う turn 1 の
+               あいだ、フェーズ帯側のピルはこの下に隠れてタップできないため、
+               オーバーレイ内のこの位置に置く(常時表示、モバイル/デスクトップ問わず) */
+            button.rulebtn {
+                display: inline-block;
+                margin: 0 auto 8px;
+                padding: 6px 24px;
+                font-family: $serif;
+                font-size: 0.9rem;
+                letter-spacing: 0.16em;
+                border-radius: 999px;
+                background: rgba(251, 254, 254, 0.1);
+                color: #f2fbfb;
+                border: 1px solid rgba(242, 251, 251, 0.4);
+                cursor: pointer;
+                transition:
+                    background 0.3s,
+                    border-color 0.3s;
+
+                &:hover {
+                    background: rgba(53, 168, 180, 0.25);
+                    border-color: $teal-soft;
+                }
+                &:focus-visible {
+                    outline: 2px solid $teal;
+                    outline-offset: 2px;
+                }
+
+                @include mq(md) {
+                    font-size: 0.8rem;
+                    padding: 5px 18px;
+                }
             }
 
             > h2 {

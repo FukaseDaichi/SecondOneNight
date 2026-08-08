@@ -1,6 +1,6 @@
 import type { SocketInfo } from '../../type';
 import type { WerewolfUser } from '../../type/werewolf';
-import type { WerewolfAction, WerewolfState } from './types';
+import type { WerewolfAction, WerewolfMessage, WerewolfState } from './types';
 
 export const initialWerewolfState: WerewolfState = {
     playerName: null,
@@ -17,6 +17,7 @@ export const initialWerewolfState: WerewolfState = {
     limitTime: 0,
     rollInfoList: [],
     counterMap: {},
+    appliedCounterMap: {},
     startFlg: false,
     modalRoll: null,
     modalOwnFlg: false,
@@ -27,6 +28,16 @@ export const initialWerewolfState: WerewolfState = {
     resultFlg: false,
     ruleFlg: false,
 };
+
+// トースト追記(表示専用 state。サーバへ送る payload には影響しない)
+const pushMessage = (
+    state: WerewolfState,
+    text: string,
+    kind: WerewolfMessage['kind']
+): WerewolfState => ({
+    ...state,
+    messageList: [...state.messageList, { text, kind }],
+});
 
 // rollNoList(例 [1,1,2]) → counterMap(例 {1:2, 2:1})。旧 setRollCustum の置換
 const toCounterMap = (rollNoList: number[] | null): Record<number, number> => {
@@ -70,25 +81,37 @@ const onMessage = (
 ): WerewolfState => {
     switch (socketInfo.status) {
         case 100: // ルーム入室
-        case 200: // ルーム入室(同一名ユーザ入室)
+        case 200: {
+            // ルーム入室(同一名ユーザ入室)
+            const applied = toCounterMap(socketInfo.obj.rollNoList);
             return {
                 ...dataSet(state, socketInfo.obj),
                 limitTime: socketInfo.obj.limitTime,
-                counterMap: toCounterMap(socketInfo.obj.rollNoList),
+                counterMap: applied,
+                appliedCounterMap: applied,
                 rollInfoList: socketInfo.obj.rollList,
             };
-        case 130: // 退出(userList から対象を除去した room が届く)
+        }
+        case 130: {
+            // 退出(userList から対象を除去した room が届く)
+            const applied = toCounterMap(socketInfo.obj.rollNoList);
             return {
                 ...dataSet(state, socketInfo.obj),
-                counterMap: toCounterMap(socketInfo.obj.rollNoList),
+                counterMap: applied,
+                appliedCounterMap: applied,
                 rollInfoList: socketInfo.obj.rollList,
             };
-        case 150: // 役職設定
+        }
+        case 150: {
+            // 役職設定(サーバが受理した構成。ここで未反映状態が解消される)
+            const applied = toCounterMap(socketInfo.obj.rollNoList);
             return {
                 ...dataSet(state, socketInfo.obj),
-                counterMap: toCounterMap(socketInfo.obj.rollNoList),
+                counterMap: applied,
+                appliedCounterMap: applied,
                 rollInfoList: socketInfo.obj.rollList,
             };
+        }
         case 101: // チャット
             return { ...state, chatList: socketInfo.obj };
         case 300: // ゲーム開始
@@ -99,10 +122,7 @@ const onMessage = (
         case 400: // 役職選択
             return dataSet(state, socketInfo.obj);
         case 404: // 例外
-            return {
-                ...state,
-                messageList: [...state.messageList, socketInfo.message],
-            };
+            return pushMessage(state, socketInfo.message, 'error');
         case 500: {
             // 議論アクション
             let next = dataSet(state, socketInfo.obj);
@@ -159,24 +179,22 @@ const onMessage = (
             return dataSet(state, socketInfo.obj);
         case 650: // アイコン変更
             return { ...state, userList: socketInfo.obj };
-        case 700: // 投票
+        case 700: {
+            // 投票
+            const applied = toCounterMap(socketInfo.obj.rollNoList);
             return {
                 ...dataSet(state, socketInfo.obj),
-                counterMap: toCounterMap(socketInfo.obj.rollNoList),
+                counterMap: applied,
+                appliedCounterMap: applied,
             };
+        }
         case 998: // エラーメッセージ表示(個人)
             if (socketInfo.userName === state.playerName) {
-                return {
-                    ...state,
-                    messageList: [...state.messageList, socketInfo.message],
-                };
+                return pushMessage(state, socketInfo.message, 'error');
             }
             return state;
         case 999: // エラーメッセージ表示(全員)
-            return {
-                ...state,
-                messageList: [...state.messageList, socketInfo.message],
-            };
+            return pushMessage(state, socketInfo.message, 'error');
         default:
             return state;
     }
@@ -192,15 +210,9 @@ export const werewolfReducer = (
         case 'roomIn':
             return { ...state, playerName: action.userName };
         case 'chatSent':
-            return {
-                ...state,
-                messageList: [...state.messageList, action.message],
-            };
+            return pushMessage(state, action.message, 'info');
         case 'systemMessage':
-            return {
-                ...state,
-                messageList: [...state.messageList, action.text],
-            };
+            return pushMessage(state, action.text, 'error');
         case 'dismissStart':
             return { ...state, startFlg: false };
         case 'counter': {

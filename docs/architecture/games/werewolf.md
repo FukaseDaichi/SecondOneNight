@@ -59,11 +59,11 @@ Werewolf は、役職選択、議論、投票を通じて勝利チームを決�
 | 分類 | フィールド |
 | --- | --- |
 | room | `playerName`, `playerData`, `roomCode` |
-| message | `messageList`, `chatList` |
-| game | `userList`, `turn`, `winteamList`, `staticRollList`, `rollList`, `npcuser`, `limitTime`, `rollInfoList`, `counterMap` |
+| message | `messageList`(`{ text, kind: 'info' \| 'error' }` の配列), `chatList` |
+| game | `userList`, `turn`, `winteamList`, `staticRollList`, `rollList`, `npcuser`, `limitTime`, `rollInfoList`, `counterMap`, `appliedCounterMap` |
 | view | `startFlg`, `modalRoll`, `modalOwnFlg`, `rollSelectTurnFlg`, `votingStartFlg`, `cutInNo`, `snipeSeq`, `resultFlg`, `ruleFlg`, `winMessage` |
 
-`counterMap` は旧 DOM ベースの役職人数カウンタを reducer state 化したもの。
+`counterMap` は旧 DOM ベースの役職人数カウンタを reducer state 化したもの。`appliedCounterMap` は「サーバが最後に受理した役職構成」で、Room を伴う status(`100`/`200`/`130`/`150`/`700`)でのみ `counterMap` と同時に更新する。ローカルの ± は `counterMap` だけを動かすため、両者の差分が「未反映(dirty)」を表す。判定は純粋関数 `isRollRegulationDirty`(`lobby.ts`)で行い、`counterMap` に残る 0 枚の key(± の往復で発生する)は「無し」として比較する。
 
 ## 通信
 
@@ -94,21 +94,21 @@ Werewolf は、役職選択、議論、投票を通じて勝利チームを決�
 
 | status | payload | reducer の反映 | UI への影響 |
 | --- | --- | --- | --- |
-| `100` | `WerewolfRoom` | `dataSet`、`limitTime`、`counterMap`、`rollInfoList` | 入室・役職設定状態を反映 |
+| `100` | `WerewolfRoom` | `dataSet`、`limitTime`、`counterMap`、`appliedCounterMap`、`rollInfoList` | 入室・役職設定状態を反映 |
 | `101` | `chatList` | `chatList` 更新 | チャット欄更新 |
-| `130` | `WerewolfRoom` | `dataSet`、`counterMap`、`rollInfoList` | 退出/キック反映。自分が `userList` から消えた場合はトップへ戻る |
-| `150` | `WerewolfRoom` | `dataSet`、`counterMap`、`rollInfoList` | 役職カスタマイズ更新 |
+| `130` | `WerewolfRoom` | `dataSet`、`counterMap`、`appliedCounterMap`、`rollInfoList` | 退出/キック反映。自分が `userList` から消えた場合はトップへ戻る |
+| `150` | `WerewolfRoom` | `dataSet`、`counterMap`、`appliedCounterMap`、`rollInfoList` | 役職カスタマイズ更新(受理された構成なので未反映状態が解消される) |
 | `200` | `WerewolfRoom` | status `100` と同等 | 同一名入室時の状態同期 |
 | `300` | `WerewolfRoom` | `startFlg=true`、`ruleFlg=false`、`resultFlg=false`、`dataSet` | 開始 overlay |
 | `400` | `WerewolfRoom` | `dataSet` | 役職選択進行 |
-| `404` | message | `messageList` 追記 | エラー表示 |
+| `404` | message | `messageList` 追記(`kind: 'error'`) | エラー表示 |
 | `500` | `WerewolfRoom` + action user no | `dataSet`、役職に応じて `cutInNo` / `snipeSeq` | 議論アクション演出。暗殺対象が勝敗確定条件に該当する場合は、この status で `turn=4` / `winteamList` も反映 |
 | `550` | limit time | `limitTime` 更新 | 制限時間反映 |
 | `600` | `WerewolfRoom` | `dataSet` | 議論終了・投票移行 |
 | `650` | `userList` | `userList` のみ更新 | プリセット URL / Data URL のアイコン反映 |
-| `700` | `WerewolfRoom` | `dataSet`、`counterMap` | 投票状態・結果更新。ページが `winteamList` から `victoryMessage` を同フレームで導出し、turn `4` なら遅延なく `VictoryOverlay` 表示(ロビーを一瞬経由しない) |
-| `998` | message | `userName` が自分なら `messageList` 追記 | 個人エラー |
-| `999` | message | `messageList` 追記 | 全体エラー |
+| `700` | `WerewolfRoom` | `dataSet`、`counterMap`、`appliedCounterMap` | 投票状態・結果更新。ページが `winteamList` から `victoryMessage` を同フレームで導出し、turn `4` なら遅延なく `VictoryOverlay` 表示(ロビーを一瞬経由しない) |
+| `998` | message | `userName` が自分なら `messageList` 追記(`kind: 'error'`) | 個人エラー |
+| `999` | message | `messageList` 追記(`kind: 'error'`) | 全体エラー |
 
 ## 状態遷移
 
@@ -162,7 +162,13 @@ stateDiagram-v2
 | 死亡者マーカー | `isDeadUser` | `roll.punishmentFlg`(処刑・銃撃)から死亡を判定。種明かしは銃痕(RoleRevealAct 内 `BulletHole`)+モノクロ化、結果一覧は「散」タグ+モノクロ化 |
 | 前回結果の再表示 | `[roomId].tsx` / `ResultModal.tsx`(`resultFlg`) | 終了後ロビー(turn `4` かつ `winteamList` あり)ではヘッダーの状態バッジ左に「前回の結果」ボタンを出し、`resultFlg` で `ResultModal` を単体表示する(閉じるラベルは `returnLabel="閉じる"`)。勝利演出とは独立に開閉でき、次の status `300` で `resultFlg` が下りボタンも消える。state はクライアント保持のためリロードすると出ない |
 | 待機画面構成 | `[roomId].tsx` / `InvitePanel.tsx` / `StatusCard.tsx` / `MenuPanel.tsx` | ロビーは「ヘッダー(タイトル+前回結果ボタン+状態バッジ) → 招待カード+開始ステータスカードの2カラム(モバイルは縦積み) → 集いし者たち(プレイヤー) → お品書き(ダークパネル) → 不足メッセージ → 下部固定バー(退出 / GAME START)」の構成。招待カードは `hero.webp` を右側に敷き、ルーム番号・URL コピー・遊び方を持つ。開始ステータスカードは蝋燭列(max 10・min 3、入室数だけ点灯)+入室人数+カード内 GAME START |
-| 開始条件表示 | `lobby.ts`(`lobbyReadiness`) | 3人以上 / 役職合計 > 参加人数 / 人狼陣営(teamNo=1)を含む、の3条件を判定。不足メッセージをお品書き直下のエラーパネルに表示し、GAME START(ステータスカード内・下部バーとも)を `disabled` にする。ヘッダーの状態バッジも readiness で「参加待ち/開始できます」を切り替える |
+| 開始条件表示 | `lobby.ts`(`lobbyReadiness`) | 3人以上 / 役職合計 > 参加人数 / 人狼陣営(teamNo=1)を含む / 役職構成が反映済み、の4条件を判定。不足メッセージをお品書き直下のエラーパネルに表示し、GAME START(ステータスカード内・下部バーとも)を `disabled` にする。ヘッダーの状態バッジも readiness で「参加待ち/設定未反映/開始できます」を切り替える(`readiness.dirty` のときは人数不足等より優先して「設定未反映」を出す。原因を人数不足と混同させないため) |
+| 遊び方導線 | `TurnMessage.tsx` / `rollselectturn.tsx` | turn 2/3 は `TurnMessage` のフェーズ帯内に明色ピルとして表示する。turn 1 だけ `RollSelectTurn` 内に個別のボタンを置く(役職選択オーバーレイが z-index `10`、フェーズ帯が z-index `9` のため、フェーズ帯に置くとオーバーレイに覆われてタップできない)。旧 `Overlays.tsx` の絶対配置 `rulebtn` と `showRuleButton` prop は廃止済み |
+| 投票済み表示 | `userInfo.tsx` | turn `3` で自分が投票済み(`playerData.votingUserName != null`)のとき、自分のカードに「投票済 → ○○」バッジを表示する。最後の1人が投票すると turn が即座に `4` になり結果画面へ遷移するため、このバッジは「自分が投票済みで他を待っている間」にのみ見える |
+| 役職選択ガイド | `rollselectturn.tsx` | 手札2枚のときは「1つ選ぶと、残りは次の人へ渡ります」を表示する。手札1枚で待機中は「{現在手番のuserName}さんが選んでいます」を表示し、手番ユーザーは `userList.find(u => u.handRollList?.length === 2)` から導出する |
+| 役職モーダルの閉じる導線 | `modalrollcard.tsx` | ✕ボタン / 背景(オーバーレイ)タップ / Esc キーのいずれでも閉じる。`role="dialog"` + `aria-modal="true"` + `aria-label` を付与する |
+| 通知トースト | `[roomId].tsx` / `chatmessage.tsx` | `messageList` の最新1件をトースト表示する。`kind: 'error'`(404/998/999/systemMessage)は赤系スタイル+8秒表示、`info` は従来どおりの表示時間。読み上げはページに常設した `role="status" aria-live="polite"` のライブリージョンが担い、トーストはメッセージと同時にマウントされ live region として機能しないため `aria-hidden` にして二重読み上げを避ける。トーストには `pointer-events: none` を付け、フェーズ帯のボタン操作を塞がないようにする |
+| 確認ダイアログ | `[roomId].tsx` / `TurnMessage.tsx` | GAME RESET(ゲーム中の `init` 呼び出し)と「議論終了」ボタンに `window.confirm` を追加している。`MoonTimer` の時間切れ自動終了は同じ `limittimeDone` を呼ぶが、confirm はボタンの `onClick` 側にのみ付けているため自動終了時には出ない |
 | 待機カード演出 | `userInfo.tsx` / `userinfo.module.scss` | ロビー時のみ登場アニメ(norenIn)と、他人アバタータップの「つつき」揺れ(ローカル state のみ・通信なし)。ロビー中はカード枠をニュートラルにし、プレイヤーカラーはアバターの輪(CSS 変数 `--player-color`)で示す。`userList` 先頭のプレイヤーに「主」バッジを表示 |
 
 ## 注意点
@@ -177,7 +183,8 @@ stateDiagram-v2
 - 勝利演出は reducer や backend の turn を変えず、overlay のローカル state で「種明かし → 勝敗発表 → 結果モーダル → 閉じる」の3幕を進める(`nextVictoryAct`)。種明かしの盤面は最後まで画面に残る。閉じた後も turn `4` の夜明けロビー表示に戻る。`ResultModal` は z-index 50 で、ロビー下部固定バー(z-index 40)より前に出る(勝利演出中は `.overlay`(z-index 60)の重ね合わせ文脈に閉じるため影響しない)。
 - 暗殺による即時終了では status `500` の Room 更新で `turn=4` / `winteamList` を受け取り、既存の勝利演出へ進む。暗殺直後は対象の `punishmentFlg` だけを死亡情報として引き継ぎ、暗殺対象以外の役職へ投票数 0 を理由に `punishmentFlg` を追加しない。てるてるありで人狼系を暗殺した場合は turn `2` のまま継続し、通常の status `600` / `700` 経路で結果を確定する。
 - 待機中の桜パーティクルは `SakuraParticles` の `ambient` モード(桜色 palette)。勝利演出中は `celebration` に譲る。
-- お品書き(`MenuPanel`)はダークパネル。役職はカード画像ではなく漢字一字バッジ付きチップ(`RollCustomize` の `ROLL_KANJI`)で並べ、名前タップで説明モーダルを開く。±はローカル state 更新のみで「設定」ボタン(status `150`)で送信、プリセット選択は即送信という従来動線を維持。議論時間はなし/3分/5分/7分のピル(送信値 0/180/300/420 は不変)。
+- お品書き(`MenuPanel`)はダークパネル。役職は `RollCustomize` が `/images/werewolf/roll/{rollNo}.jpg` の正方形サムネイル画像+名前で並べたカードで表示し、カードタップで説明モーダルを開く。±はローカル state 更新のみで「設定」ボタン(status `150`)で送信、プリセット選択は即送信という従来動線を維持。送信していないあいだ(dirty)は「設定」ボタンを金の灯で淡く点滅させ「未反映」ラベルを添える(`prefers-reduced-motion: reduce` では点滅を止め静的な金枠にする)。dirty は `lobbyReadiness` の不足メッセージにも加わるため、GAME START(`StatusCard`・下部固定バーとも)は「設定」を押すまで disabled になる。backend が status `998` で構成を拒否した場合は `appliedCounterMap` が更新されないので、点滅と GAME START の抑止が残り続ける。議論時間はなし/3分/5分/7分のピル(送信値 0/180/300/420 は不変)。
+- 役職構成の ± は「即時送信」ではなく、ローカル state + 「設定」ボタンでの明示送信を採用している。即時送信案は、backend に総数15枚超・てるてる/付き人/怪盗の重複禁止などフロント未検証の制約がありこれらの違反時の status `998` は Room を返さず乖離が残ること、`useGameSocket.send` に debounce/ack がなく連打のたびに毎回ブロードキャストされること、`setRollRegulation` に turn ガードがなく GAME START との順序次第で開始後に rollList が差し替わり得ることから見送った。dirty 可視化(上記)はこれらの通信タイミング・頻度・エラー処理を一切変えずに、表示と実際の役職構成のズレというトラップだけを解消する対策として採用している。
 - ゲーム中画面(役職選択・議論・投票)と演出(cut-in・投票開始)は `tokens.scss` ベースの夜系デザインで統一している。色・フォント・余白はトークンを使い、role カードの陣営色ボーダーのみ `TEAM_COLOR_LIST` から tsx の inline style で付ける。
 - `Countdown` は fakeartist と共用。werewolf の議論画面では `variant="night"`(夜背景向け配色)と `inline`(absolute 配置を解除しフェーズ帯内に置く)を渡す。prop 未指定(fakeartist)では従来表示のまま。
 - プレイヤーカード(`userInfo.tsx`)は全員同一構造・同一高さ。名前ゾーンは2行分の固定高で、文字数に応じて4段階にフォントを縮小し(14文字以上は3行まで許容)最大20文字を全文表示する。自分のカードは上端バッジではなく「カード下辺中央の YOU タブ+ティール発光」で示す(上端はアバターと干渉するため)。
@@ -185,6 +192,8 @@ stateDiagram-v2
 
 ## テスト・確認観点
 
-- `frontend/src/features/werewolf/reducer.test.ts` で status `100/101/130/150/300/400/500/550/600/650/700/998/999`、ローカル action を検証。
+- `frontend/src/features/werewolf/reducer.test.ts` で status `100/101/130/150/300/400/500/550/600/650/700/998/999`、ローカル action、`appliedCounterMap` の同期(Room 付き status では更新、± と `998` では据え置き)を検証。
+- `frontend/src/features/werewolf/lobby.test.ts` で `isRollRegulationDirty`(0 枚 key の扱いを含む)と `lobbyReadiness`(未反映時に ready にならないこと)を検証。
 - `backend/src/test/java/com/boardgame/app/entity/werewolf/WerewolfRoomTest.java` で、暗殺対象が人狼 / 白狼 / てるてるの場合の即時終了・継続、対象以外の死亡フラグが増えないこと、通常投票の判定を検証する。
 - 手動確認は3人以上の複数タブで、役職設定、開始、役職選択、議論アクション、時間切れ、投票、結果、チャット、退出/キック、アイコン変更を確認する。
+- 役職構成については「± 直後に設定ボタンが点滅し GAME START が押せないこと」「『設定』押下で解消すること」「プリセット選択では点滅しないこと」「未反映のあいだはヘッダーの状態バッジが『設定未反映』になること」も確認する。

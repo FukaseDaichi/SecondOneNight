@@ -9,13 +9,16 @@ type RollInfoProps = {
     userList: Array<WerewolfUser>;
     turn: number;
     setModalOwnFlg: (boolean) => void;
+    // 夜背景(役職選択〜投票)の上に置くとき true。枚数表記の文字色を明色へ切り替える
+    onDark?: boolean;
 };
 
 export default function RollInfo(props: RollInfoProps) {
     const rollNoList: Array<number> = [];
+    const darkClass = props.onDark ? styles.onDark : '';
     return (
         <>
-            <div className={styles.rollinfo}>
+            <div className={`${styles.rollinfo} ${darkClass}`}>
                 {props.rollList.map((value: WerewolfRoll, index: number) => {
                     const rollNo = value.fakeRollList
                         ? value.fakeRollList[props.turn].rollNo
@@ -68,7 +71,7 @@ export default function RollInfo(props: RollInfoProps) {
                 })}
             </div>
             {props.userList.length + 1 < props.rollList.length && (
-                <div className={styles.rollmissing}>
+                <div className={`${styles.rollmissing} ${darkClass}`}>
                     役欠け{' '}
                     <span>
                         {props.rollList.length - props.userList.length - 1}

@@ -11,7 +11,7 @@ import Router from 'next/router';
 import Canvas from '../../features/fakeartist/components/canvas';
 import UserInfoShortList from '../../features/fakeartist/components/UserInfoShortList';
 import UserInfoList from '../../features/fakeartist/components/UserInfoList';
-import Socialbtn from '../../components/button/sosialbtn';
+import Socialbtn from '../../components/button/socialbtn';
 import ConnectionStatus from '../../components/common/ConnectionStatus';
 import RoomInForm from '../../components/common/RoomInForm';
 import GameHeader from '../../features/fakeartist/components/GameHeader';
@@ -244,8 +244,7 @@ export default function FakeArtistRoom() {
             </div>
             <Socialbtn
                 url={SystemConst.Server.SITE_URL + '/fakeartist/' + roomId}
-                title={'セカンドワンナイト人狼'}
-                via={'ブラウザ上で正体隠匿ゲームが遊べます。'}
+                title={'エセ芸術家ニューヨークへ行く'}
             />
         </Layout>
     );

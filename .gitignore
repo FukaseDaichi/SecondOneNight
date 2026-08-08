@@ -1,3 +1,5 @@
 .DS_Store
 Thumbs.db
 .playwright-mcp
+# SDD 作業用スクラッチ(計画ごとの台帳・ブリーフ・レビューパッケージ)
+.superpowers/

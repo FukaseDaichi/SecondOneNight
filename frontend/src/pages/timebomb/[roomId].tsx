@@ -8,7 +8,7 @@ import styles from '../../styles/components/timebomb/room.module.scss';
 import HeaderInfo from '../../features/timebomb/components/headInfo';
 import CountdownClock from '../../components/countdownclock';
 import Head from 'next/head';
-import Socialbtn from '../../components/button/sosialbtn';
+import Socialbtn from '../../components/button/socialbtn';
 import ConnectionStatus from '../../components/common/ConnectionStatus';
 import RoomInForm from '../../components/common/RoomInForm';
 import ResultModals from '../../features/timebomb/components/ResultModals';
@@ -176,9 +176,6 @@ export default function Room() {
             <Socialbtn
                 url={SystemConst.Server.SITE_URL + '/timebomb/' + roomId}
                 title={'タイムボム'}
-                via={
-                    'タイムボムオンライン！　ゲームデザイナー佐藤雄介様の招待隠匿ゲーム'
-                }
             />
         </Layout>
     );

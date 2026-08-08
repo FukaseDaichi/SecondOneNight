@@ -44,10 +44,16 @@ export default function StatusCard({
                             ></span>
                         ))}
                     </div>
-                    <p className={styles.caption}>
-                        {count >= min
+                    {/* 蝋燭は入室人数、キャプションは開始可否。
+                        未達のときは不足理由の先頭を出す(title 頼みにしない) */}
+                    <p
+                        className={`${styles.caption} ${
+                            ready ? '' : styles.captionAlert
+                        }`}
+                    >
+                        {ready
                             ? '開始できます'
-                            : `あと${min - count}人で開始できます`}
+                            : (messages[0] ?? 'まだ開始できません')}
                     </p>
                 </div>
             </div>

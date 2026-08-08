@@ -33,6 +33,7 @@ div.modal {
     justify-content: center;
 
     > div {
+        position: relative;
         cursor: pointer;
         z-index: 2;
         width: 300px;
@@ -43,6 +44,37 @@ div.modal {
 
         &.flip-out-hor-top {
             animation: flip-out-hor-top 0.35s $ease both;
+        }
+
+        /* 閉じるボタン。役職イラストの上に載るため、
+           どんな絵柄でも読めるよう暗い半透明の円で敷く(白背景でも 6.9:1) */
+        > button.close {
+            position: absolute;
+            top: 26px;
+            right: 26px;
+            z-index: 3;
+            width: 44px;
+            height: 44px;
+            border: 1px solid rgba(242, 251, 251, 0.55);
+            border-radius: 50%;
+            background: rgba(13, 34, 41, 0.75);
+            font-size: 16px;
+            line-height: 1;
+            color: #f2fbfb;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition:
+                background 0.3s,
+                border-color 0.3s;
+
+            &:hover {
+                background: rgba(13, 34, 41, 0.9);
+                border-color: #f2fbfb;
+            }
+            &:focus-visible {
+                outline: 2px solid $teal;
+                outline-offset: 2px;
+            }
         }
 
         > div.imgdiv {

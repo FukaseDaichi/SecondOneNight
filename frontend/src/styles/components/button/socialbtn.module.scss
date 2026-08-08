@@ -1,6 +1,22 @@
 @use '../../variables' as *;
+@use '../../tokens' as *;
 
 .socialbtnarea {
     margin-top: 100px;
     text-align: right;
+}
+
+/* 4ゲーム共用。ライト面(hideout/timebomb/fakeartist)と
+   夜背景(werewolf のゲーム中)のどちらでも読めるよう、
+   半透明の白いプレートに $ink を載せる(最悪ケースでも 8.2:1) */
+.label {
+    display: inline-block;
+    margin: 0 0 8px;
+    padding: 4px 12px;
+    border: 1px solid rgba($ink, 0.14);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    color: $ink;
 }
