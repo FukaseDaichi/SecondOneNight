@@ -146,7 +146,7 @@ describe('werewolfReducer: サーバメッセージ', () => {
             type: 'message',
             payload: msg(404, null, { message: 'err' }),
         });
-        expect(s.messageList).toEqual(['err']);
+        expect(s.messageList).toEqual([{ text: 'err', kind: 'error' }]);
         expect(s.userList).toEqual(initialWerewolfState.userList);
     });
 
@@ -335,7 +335,7 @@ describe('werewolfReducer: サーバメッセージ', () => {
             type: 'message',
             payload: msg(998, null, { userName: 'me', message: '本人' }),
         });
-        expect(s.messageList).toEqual(['本人']);
+        expect(s.messageList).toEqual([{ text: '本人', kind: 'error' }]);
     });
 
     it('status 998(個人エラー)は他人宛のとき state が不変', () => {
@@ -352,7 +352,7 @@ describe('werewolfReducer: サーバメッセージ', () => {
             type: 'message',
             payload: msg(999, null, { message: 'all' }),
         });
-        expect(s.messageList).toEqual(['all']);
+        expect(s.messageList).toEqual([{ text: 'all', kind: 'error' }]);
     });
 
     it('playerData は userList 内の自分が見つかった時のみ更新され、見つからない場合は据え置かれる', () => {
@@ -393,6 +393,74 @@ describe('werewolfReducer: サーバメッセージ', () => {
     });
 });
 
+// 「+/- しただけ(未反映)」と「サーバが受理済み」を区別するための同期テスト
+describe('werewolfReducer: appliedCounterMap', () => {
+    it.each([100, 200, 130, 150, 700])(
+        'status %i でサーバ構成が counterMap と appliedCounterMap の両方に反映される',
+        (status) => {
+            const before = {
+                ...initialWerewolfState,
+                counterMap: { 9: 5 },
+                appliedCounterMap: { 8: 4 },
+            };
+            const s = werewolfReducer(before, {
+                type: 'message',
+                payload: msg(status, serverObj({ rollNoList: [1, 1, 2] })),
+            });
+            expect(s.counterMap).toEqual({ 1: 2, 2: 1 });
+            expect(s.appliedCounterMap).toEqual({ 1: 2, 2: 1 });
+        }
+    );
+
+    it('counter(ローカルの +/-)では appliedCounterMap が変わらない', () => {
+        const before = {
+            ...initialWerewolfState,
+            counterMap: { 1: 2 },
+            appliedCounterMap: { 1: 2 },
+        };
+        const s = werewolfReducer(before, {
+            type: 'counter',
+            rollNo: 1,
+            delta: 1,
+        });
+        expect(s.counterMap).toEqual({ 1: 3 });
+        expect(s.appliedCounterMap).toEqual({ 1: 2 });
+    });
+
+    it('ローカル編集後に status 150 を受けると両者が再び一致する', () => {
+        const edited = werewolfReducer(
+            { ...initialWerewolfState, counterMap: { 1: 2 } },
+            { type: 'counter', rollNo: 1, delta: 1 }
+        );
+        expect(edited.counterMap).not.toEqual(edited.appliedCounterMap);
+
+        const s = werewolfReducer(edited, {
+            type: 'message',
+            payload: msg(150, serverObj({ rollNoList: [1, 1, 1] })),
+        });
+        expect(s.counterMap).toEqual({ 1: 3 });
+        expect(s.appliedCounterMap).toEqual({ 1: 3 });
+    });
+
+    it('status 998(役職設定の拒否)では appliedCounterMap が更新されない', () => {
+        const before = {
+            ...initialWerewolfState,
+            playerName: 'me',
+            counterMap: { 1: 3 },
+            appliedCounterMap: { 1: 2 },
+        };
+        const s = werewolfReducer(before, {
+            type: 'message',
+            payload: msg(998, null, {
+                userName: 'me',
+                message: '役職が重複しています',
+            }),
+        });
+        expect(s.counterMap).toEqual({ 1: 3 });
+        expect(s.appliedCounterMap).toEqual({ 1: 2 });
+    });
+});
+
 describe('werewolfReducer: ローカルアクション', () => {
     it('roomIn で playerName が設定される', () => {
         const s = werewolfReducer(initialWerewolfState, {
@@ -402,7 +470,7 @@ describe('werewolfReducer: ローカルアクション', () => {
         expect(s.playerName).toBe('me');
     });
 
-    it('chatSent / systemMessage で messageList に追記される', () => {
+    it('chatSent は info / systemMessage は error として messageList に追記される', () => {
         let s = werewolfReducer(initialWerewolfState, {
             type: 'chatSent',
             message: 'hi',
@@ -411,7 +479,10 @@ describe('werewolfReducer: ローカルアクション', () => {
             type: 'systemMessage',
             text: '通信エラー。再度試してください',
         });
-        expect(s.messageList).toEqual(['hi', '通信エラー。再度試してください']);
+        expect(s.messageList).toEqual([
+            { text: 'hi', kind: 'info' },
+            { text: '通信エラー。再度試してください', kind: 'error' },
+        ]);
     });
 
     it('dismissStart で startFlg が下りる', () => {

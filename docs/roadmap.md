@@ -17,7 +17,7 @@
 | CSS | `_app.tsx` が `bootstrap.min.css` を import。`row` / `d-flex` / `container` の使用が残る | Bootstrap 依存の削減 |
 | SCSS 配置 | ゲーム別 SCSS は `frontend/src/styles/components/<game>/` 配下 | feature 配下へ寄せるか判断 |
 | DOM 直接操作 | 共通 `modal.tsx`、icon menu、fakeartist canvas、timebomb/hideout の一部に `document.*` が残る(werewolf の役職選択・役職モーダルは `useBodyClass` + state 導出へ移行済み) | 残りを React state / ref へ段階移行。`useBodyClass` を共通 `modal.tsx` にも展開できるか判断 |
-| 重複・命名 | `countdownclock.tsx` と `clock/countdownClock.tsx` が併存。`sosialbtn` / `caroucel` など旧綴りが残る | 統合・リネーム |
+| 重複・命名 | `countdownclock.tsx` と `clock/countdownClock.tsx` が併存。`caroucel` など旧綴りが残る(`sosialbtn` → `socialbtn` は対応済み) | 統合・リネーム |
 | ページ分割 | `index.tsx` 451行、`werewolf/[roomId].tsx` 273行、`fakeartist/[roomId].tsx` 252行 | 画面単位コンポーネントへ追加分割 |
 
 ## 今後やること
@@ -46,7 +46,7 @@
 5. CSS とコンポーネントを整理する
    - Bootstrap utility の実使用を洗い出し、自前 CSS へ置き換える。
    - `countdownclock` の重複を統合する。
-   - `sosialbtn` / `caroucel` などの旧綴りを、import 追従込みで整理する。
+   - `caroucel` などの旧綴りを、import 追従込みで整理する。
    - ゲーム固有 SCSS を feature 側へ移すか判断する。
 
 6. decrypt の制限時間機能を決める

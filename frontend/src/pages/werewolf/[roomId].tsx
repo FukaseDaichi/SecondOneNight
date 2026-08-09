@@ -9,7 +9,7 @@ import ChatComponent from '../../components/chatcomponent';
 import styles from '../../styles/components/werewolf/room.module.scss';
 import Router from 'next/router';
 import RollInfo from '../../features/werewolf/components/rollinfo';
-import Socialbtn from '../../components/button/sosialbtn';
+import Socialbtn from '../../components/button/socialbtn';
 import ConnectionStatus from '../../components/common/ConnectionStatus';
 import EntryCard from '../../features/werewolf/components/EntryCard';
 import InvitePanel from '../../features/werewolf/components/InvitePanel';
@@ -75,6 +75,7 @@ export default function WerewolfRoom() {
         limitTime,
         rollInfoList,
         counterMap,
+        appliedCounterMap,
         startFlg,
         modalRoll,
         modalOwnFlg,
@@ -88,10 +89,12 @@ export default function WerewolfRoom() {
 
     // 待機中(ロビー): turn 0 と、終了後にロビーへ戻った turn 4
     const lobby = entered && (turn === 0 || turn === 4);
-    // 開始条件(3人以上 / 役職合計 > 人数 / 人狼系あり)。MenuPanel 内でも同じ純粋関数で表示する
+    // 開始条件(3人以上 / 役職合計 > 人数 / 人狼系あり / 役職構成が反映済み)。
+    // MenuPanel 内でも同じ純粋関数・同じ引数で評価するため判定がズレない
     const readiness = lobbyReadiness(
         userList.length,
         counterMap,
+        appliedCounterMap,
         staticRollList
     );
     // 勝利演出: 全画面演出 → 結果テーブル → ロビー復帰(VictoryOverlay 内で遷移)。
@@ -101,6 +104,13 @@ export default function WerewolfRoom() {
         turn === 4 && winteamList.length > 0 && winMessage != null;
     // 前回結果の再表示: state に結果が残っている間だけ(リロードすると消える)
     const hasResult = turn === 4 && winteamList.length > 0;
+    // ゲーム中(turn 1〜3)は GAME RESET。全員のゲームを破棄する不可逆操作のため確認を挟む
+    const isReset = turn > 0 && turn < 4;
+    // 背景コンテキスト: 役職選択〜投票は夜背景(暗)、ロビー・終了後は淡背景
+    const nightPhase = turn >= 1 && turn <= 3;
+    // 通知は常に最新の1件だけを出す(トースト表示 + 常設ライブリージョンの読み上げ)
+    const latestMessage =
+        messageList.length > 0 ? messageList[messageList.length - 1] : null;
 
     const actionButtons = (
         <div className={styles.btnarea}>
@@ -126,8 +136,20 @@ export default function WerewolfRoom() {
                 </button>
             )}
             <button
-                className={styles.primary}
-                onClick={init}
+                className={isReset ? styles.ghost : styles.primary}
+                onClick={() => {
+                    if (isReset) {
+                        if (
+                            window.confirm(
+                                'ゲームを中断して役職を配り直しますか?(全員が役職選択からやり直します)'
+                            )
+                        ) {
+                            init();
+                        }
+                    } else {
+                        init();
+                    }
+                }}
                 disabled={lobby && !readiness.ready}
                 title={
                     lobby && !readiness.ready
@@ -135,7 +157,7 @@ export default function WerewolfRoom() {
                         : undefined
                 }
             >
-                {turn > 0 && turn < 4 ? 'GAME RESET' : 'GAME START'}
+                {isReset ? 'GAME RESET' : 'GAME START'}
             </button>
         </div>
     );
@@ -207,8 +229,13 @@ export default function WerewolfRoom() {
                 setModalOwnFlg={setModalOwnFlg}
                 ruleFlg={ruleFlg}
                 setRuleFlg={setRuleFlg}
-                showRuleButton={!lobby}
             />
+
+            {/* 常設のライブリージョン: ページと同時にマウントし、以後は中身の
+                テキストだけが差し替わるのでスクリーンリーダーが変化を読み上げる */}
+            <div role="status" aria-live="polite" className={styles.srOnly}>
+                {latestMessage ? latestMessage.text : ''}
+            </div>
 
             {/* ページ本文(中央カラム)。ロビー中は下部固定バーの分だけ余白を取る */}
             <div className={`${styles.room} ${lobby ? styles.lobbyRoom : ''}`}>
@@ -218,18 +245,19 @@ export default function WerewolfRoom() {
                     limitTime={limitTime}
                     votingStartFlg={votingStartFlg}
                     limittimeDone={limittimeDone}
+                    onShowRule={() => setRuleFlg(true)}
                 />
-                {messageList.map((value, index) => {
-                    if (index === messageList.length - 1) {
-                        return (
-                            <Chatmessage
-                                value={value}
-                                type="info"
-                                key={index}
-                            />
-                        );
-                    }
-                })}
+                {/* トーストはメッセージと同時にマウントされるため live region として
+                    機能しない。読み上げは上の常設リージョンが担い、トースト自体は
+                    aria-hidden の表示専用にして二重読み上げを避ける */}
+                {latestMessage && (
+                    <Chatmessage
+                        value={latestMessage.text}
+                        type={latestMessage.kind}
+                        key={messageList.length - 1}
+                        srHidden
+                    />
+                )}
                 <ConnectionStatus status={status} />
                 <EntryCard
                     connected={connected}
@@ -256,10 +284,18 @@ export default function WerewolfRoom() {
                             )}
                             <span
                                 className={`${styles.statusBadge} ${
-                                    readiness.ready ? styles.ready : ''
+                                    readiness.ready
+                                        ? styles.ready
+                                        : readiness.dirty
+                                          ? styles.dirty
+                                          : ''
                                 }`}
                             >
-                                {readiness.ready ? '開始できます' : '参加待ち'}
+                                {readiness.ready
+                                    ? '開始できます'
+                                    : readiness.dirty
+                                      ? '設定未反映'
+                                      : '参加待ち'}
                             </span>
                         </div>
                     </header>
@@ -315,6 +351,7 @@ export default function WerewolfRoom() {
                         userList={userList}
                         turn={turn}
                         setModalOwnFlg={setModalOwnFlg}
+                        onDark={nightPhase}
                     />
                 )}
 
@@ -324,6 +361,7 @@ export default function WerewolfRoom() {
                         <MenuPanel
                             userCount={userList.length}
                             counterMap={counterMap}
+                            appliedCounterMap={appliedCounterMap}
                             staticRollList={staticRollList}
                             counter={counter}
                             setRoll={setRoll}
@@ -368,9 +406,6 @@ export default function WerewolfRoom() {
                 <Socialbtn
                     url={SystemConst.Server.SITE_URL + '/werewolf/' + roomId}
                     title={'セカンドワンナイト人狼'}
-                    via={
-                        'セカンドワンナイト人狼　リアルタイムに能力が使えるオンラインならではのスタイリッシュアクション招待隠匿ゲーム！'
-                    }
                 />
             </div>
         </Layout>

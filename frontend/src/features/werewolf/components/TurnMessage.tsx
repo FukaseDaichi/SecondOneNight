@@ -7,6 +7,7 @@ type Props = {
     limitTime: number;
     votingStartFlg: boolean;
     limittimeDone: () => void;
+    onShowRule: () => void;
 };
 
 export default function TurnMessage({
@@ -14,6 +15,7 @@ export default function TurnMessage({
     limitTime,
     votingStartFlg,
     limittimeDone,
+    onShowRule,
 }: Props) {
     return (
         <>
@@ -35,8 +37,22 @@ export default function TurnMessage({
                             onDone={limittimeDone}
                         />
                     )}
-                    <button className={styles.endbtn} onClick={limittimeDone}>
+                    <button
+                        className={styles.endbtn}
+                        onClick={() => {
+                            if (
+                                window.confirm(
+                                    '議論を終了して投票に進みますか?'
+                                )
+                            ) {
+                                limittimeDone();
+                            }
+                        }}
+                    >
                         議論終了
+                    </button>
+                    <button className={styles.rulepill} onClick={onShowRule}>
+                        遊び方
                     </button>
                 </div>
             )}
@@ -46,6 +62,9 @@ export default function TurnMessage({
                     <span className={styles.phasename}>
                         投票中 <Loadingdod color={'#f2fbfb'} />
                     </span>
+                    <button className={styles.rulepill} onClick={onShowRule}>
+                        遊び方
+                    </button>
                 </div>
             )}
         </>

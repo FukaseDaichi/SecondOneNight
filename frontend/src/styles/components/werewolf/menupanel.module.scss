@@ -73,6 +73,8 @@
 }
 
 .apply {
+    /* ::after の glow を絶対配置で重ねるための基準 */
+    position: relative;
     padding: 10px 22px;
     border: 1px solid rgba($teal-soft, 0.5);
     border-radius: 999px;
@@ -99,6 +101,52 @@
         outline: 2px solid $teal;
         outline-offset: 2px;
     }
+}
+
+/* 未反映(dirty): まだサーバへ送っていない構成であることを金の灯でやわらかく知らせる。
+   box-shadow は compositor 非対応(毎フレーム再描画)なので、灯そのものは静的な
+   ::after に固定し、その opacity だけを compositor アニメーションで点滅させる */
+.applyDirty {
+    border-color: rgba($gold, 0.85);
+    color: $gold-soft;
+
+    &:hover {
+        background: rgba($gold, 0.16);
+        border-color: $gold;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        box-shadow: 0 0 14px rgba($gold, 0.45);
+        opacity: 0;
+        pointer-events: none;
+        animation: apply-glow 2s ease-in-out infinite alternate;
+    }
+}
+
+@keyframes apply-glow {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.dirtyTag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba($gold, 0.22);
+    font-family: $sans;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: $gold-soft;
 }
 
 .tally {
@@ -257,6 +305,8 @@
 }
 
 %card-mini-button {
+    /* ::before の当たり判定を載せるため基準を明示する */
+    position: relative;
     user-select: none;
     width: 28px;
     height: 28px;
@@ -270,6 +320,23 @@
         background 0.2s,
         opacity 0.2s,
         transform 0.1s;
+
+    /* 見た目は 28px のまま、当たり判定だけ 44px 四方へ広げる。
+       −/+ は同じカードの左右端にあり中心間が 80px(md 56px)離れているため、
+       44px 同士でも重ならない */
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 44px;
+        height: 44px;
+        transform: translate(-50%, -50%);
+    }
+    /* 無効時は透明領域もタップを吸わない(隣の要素へ通す) */
+    &:disabled::before {
+        content: none;
+    }
 
     &:active:not(:disabled) {
         transform: scale(0.9);
@@ -303,6 +370,14 @@
     }
     .rollCard.active {
         transform: none;
+    }
+    /* 点滅の代わりに静的な金枠で未反映を示す(「未反映」ラベルは常時表示) */
+    .applyDirty {
+        box-shadow: 0 0 0 2px rgba($gold, 0.55);
+
+        &::after {
+            content: none;
+        }
     }
 }
 
@@ -360,7 +435,9 @@
     border: 1px solid rgba($rose, 0.35);
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.72);
-    color: $rose-deep;
+    /* 開始条件の不足は必ず読ませたい文言。$rose-deep は白プレート上で 3.85:1 と
+       AA 未達のため、より濃い $rose-ink(5.75:1)を使う */
+    color: $rose-ink;
     font-family: $sans;
     font-size: 0.85rem;
 

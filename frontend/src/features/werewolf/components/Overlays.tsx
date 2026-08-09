@@ -4,7 +4,6 @@ import CutIn from './cutin';
 import ModalRollCard from './modalrollcard';
 import RollSelectTurn from './rollselectturn';
 import Rule from './rule';
-import styles from '../../../styles/components/werewolf/room.module.scss';
 import { WerewolfRoll, WerewolfUser } from '../../../type/werewolf';
 
 type Props = {
@@ -23,8 +22,6 @@ type Props = {
     setModalOwnFlg: (value: boolean) => void;
     ruleFlg: boolean;
     setRuleFlg: (value: boolean) => void;
-    // ロビーではヘッダーゾーン側に遊び方ボタンを置くため非表示にする
-    showRuleButton: boolean;
 };
 
 export default function Overlays({
@@ -43,7 +40,6 @@ export default function Overlays({
     setModalOwnFlg,
     ruleFlg,
     setRuleFlg,
-    showRuleButton,
 }: Props) {
     return (
         <>
@@ -77,12 +73,8 @@ export default function Overlays({
                     userList={userList}
                     rollList={rollList}
                     setModalOwnFlg={setModalOwnFlg}
+                    onShowRule={() => setRuleFlg(true)}
                 />
-            )}
-            {showRuleButton && (
-                <div className={styles.rulebtn}>
-                    <button onClick={() => setRuleFlg(true)}>遊び方</button>
-                </div>
             )}
             {ruleFlg && <Rule endFnc={() => setRuleFlg(false)} />}
         </>

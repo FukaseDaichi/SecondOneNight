@@ -75,9 +75,11 @@ div.messagearea {
     }
 
     > button {
+        &.rulepill,
         &.endbtn {
             outline: none;
             margin: 0;
+            min-height: 44px;
             padding: 4px 18px;
             font-family: $serif;
             font-size: 1.1rem;
@@ -296,6 +298,12 @@ span.statusBadge {
     &.ready::before {
         background: $gold;
         box-shadow: 0 0 8px rgba($gold, 0.8);
+    }
+
+    /* 役職構成の未反映(設定ボタン未押下)。「参加待ち」と混同されないよう
+       お品書きの未反映表示と同系の金色にする(点灯はしない) */
+    &.dirty::before {
+        background: $gold-soft;
     }
 }
 
@@ -629,30 +637,6 @@ div.rollselect {
     }
 }
 
-div.rulebtn {
-    position: absolute;
-    right: 20%;
-    top: 30px;
-    font-family: 'APJapanesefont', sans-seri;
-
-    @include mq(md) {
-        right: 5px;
-    }
-    > button {
-        color: rgb(27, 25, 25);
-        background: none;
-        outline: none;
-        border: rgb(91, 88, 88, 0.8) solid 1px;
-        outline: none;
-        border-radius: 30px;
-        box-shadow: 0px 0px 10px -6px rgba(0, 0, 0, 0.6);
-
-        &:active {
-            transform: scale(0.9);
-        }
-    }
-}
-
 // 制限時間設定のラジオボタン
 .limittimeinputarea {
     display: flex;
@@ -710,4 +694,19 @@ div.rulebtn {
             }
         }
     }
+}
+
+/* 常設のスクリーンリーダー用ライブリージョン。
+   視覚的には隠すが display:none / visibility:hidden にはしない
+   (どちらも読み上げ対象から外れるため) */
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }

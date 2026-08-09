@@ -9,6 +9,7 @@ import { WerewolfRoll } from '../../../type/werewolf';
 type MenuPanelProps = {
     userCount: number;
     counterMap: { [rollNo: number]: number };
+    appliedCounterMap: { [rollNo: number]: number };
     staticRollList: Array<WerewolfRoll>;
     counter: (rollNo: number, delta: 1 | -1) => void;
     setRoll: () => void;
@@ -24,6 +25,7 @@ export default function MenuPanel(props: MenuPanelProps) {
     const readiness = lobbyReadiness(
         props.userCount,
         props.counterMap,
+        props.appliedCounterMap,
         props.staticRollList
     );
     const total = Object.values(props.counterMap).reduce((a, b) => a + b, 0);
@@ -42,11 +44,17 @@ export default function MenuPanel(props: MenuPanelProps) {
                             userSize={props.userCount}
                             changeFnc={props.setRollSet}
                         />
+                        {/* 未反映(dirty)のあいだは金の灯で点滅させ、押すべきことを示す */}
                         <button
-                            className={styles.apply}
+                            className={`${styles.apply} ${
+                                readiness.dirty ? styles.applyDirty : ''
+                            }`}
                             onClick={props.setRoll}
                         >
                             設定
+                            {readiness.dirty && (
+                                <span className={styles.dirtyTag}>未反映</span>
+                            )}
                         </button>
                         <p className={styles.tally}>
                             合計 <strong>{total}</strong> / 必要 {required} 枚
