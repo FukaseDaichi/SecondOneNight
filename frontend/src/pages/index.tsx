@@ -465,9 +465,28 @@ export default function Homepage() {
                             <a href="#howto">遊び方</a>
                             <a href="#roles">役職紹介</a>
                             <a href="#cta">あそぶ</a>
+                            <a href="#credits">配信・動画について</a>
                         </nav>
                         <p className={styles.copyright}>
                             © 2026 SECOND ONE NIGHT WEREWOLF
+                        </p>
+                    </div>
+                    <div id="credits" className={styles.footerNote}>
+                        <p>
+                            イラスト:「
+                            <a
+                                href="https://fromtheasia.com/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                ノーコピーライトガール
+                            </a>
+                            」(fromtheasia.com)— 素敵なイラストに感謝を。
+                        </p>
+                        <p>
+                            配信・動画づくりはご自由にどうぞ。収益化もOKです。
+                            <br />
+                            あなたの村の夜を、みんなに見せてあげてください。
                         </p>
                     </div>
                 </footer>
