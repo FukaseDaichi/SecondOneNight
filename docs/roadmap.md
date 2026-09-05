@@ -2,7 +2,7 @@
 
 この文書は**これから行う作業だけ**を置く。完了済みの変更履歴は git / PR に任せ、必要な現在仕様は `docs/architecture/` と `docs/design.md` に反映する。
 
-このリポジトリは future 側として扱う。アクティブなリポジトリは main / future の2本に整理し、安定運用・本番反映を担う main とは分けて、future では次期 UI、設計整理、モダナイズを進める。
+単一リポジトリ(`FukaseDaichi/SecondOneNight`)を `master` / `future` の2ブランチで運用する。安定運用・本番反映を担う `master` とは分けて、`future` では次期 UI、設計整理、モダナイズを進める。作業ブランチは `future` から切る。
 
 ## 現在のコード確認
 
@@ -22,12 +22,12 @@
 
 ## 今後やること
 
-1. リポジトリ運用を main / future の2本に固定する
-   - main は安定版・本番反映用、future は次期開発用として扱う。
-   - 本番 Vercel / Heroku へ接続するのは main 側に限定する。
-   - 旧 backend 専用リポジトリは運用対象から外し、アクティブな開発対象を main / future の2本に絞る。
-   - GitHub / Vercel / Heroku の接続先が main を向き、future が本番へ直接デプロイされないことを確認する。
-   - future の成果を取り込む時は、契約変更と検証結果を確認して main へ昇格する。
+1. ブランチ運用を `master` / `future` の2本に固定する
+   - `master` は安定版・本番反映用、`future` は次期開発用として扱う。
+   - 本番 Vercel / Heroku へ接続するのは `master` に限定する。
+   - 旧 backend 専用リポジトリは運用対象から外し、アクティブな開発対象をこのモノレポに絞る。
+   - Vercel / Heroku の接続先が `master` を向き、`future` が本番へ直接デプロイされないことを確認する。
+   - `future` の成果を取り込む時は、契約変更と検証結果を確認して `master` へマージする。
 
 2. App Router へ移行する
    - ゲームページはクライアント主体なので、必要な入口に `'use client'` を付ける。
