@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path' | { read -r f; case \"$f\" in */frontend/src/*.ts|*/frontend/src/*.tsx) (cd \"$CLAUDE_PROJECT_DIR/frontend\" && npx prettier --write \"$f\" && npx eslint --fix \"$f\") ;; esac; } 2>/dev/null || true",
+            "command": "jq -r '.tool_input.file_path' | { read -r f; case \"$f\" in */frontend/src/*.ts|*/frontend/src/*.tsx) cd \"$CLAUDE_PROJECT_DIR/frontend\" || { echo \"frontend へ移動できません\" >&2; exit 2; }; npx prettier --write \"$f\" >/dev/null || { echo \"prettier に失敗: $f\" >&2; exit 2; }; npx eslint --fix \"$f\" >&2 || { echo \"eslint --fix 後も error が残っています: $f\" >&2; exit 2; } ;; esac; }",
             "statusMessage": "frontend を整形中 (prettier + eslint)"
           }
         ]

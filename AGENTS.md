@@ -25,14 +25,16 @@
 | [docs/architecture/communication.md](docs/architecture/communication.md) | フロント・バック間の通信契約の詳細(REST / SockJS / STOMP) |
 | [docs/architecture/games/](docs/architecture/games/) | ゲーム別の状態・通信 status・frontend/backend 対応 |
 | [docs/architecture/deployment.md](docs/architecture/deployment.md) | Vercel / Heroku のデプロイ構成 |
+| [docs/design.md](docs/design.md) | LP と werewolf 画面のデザインシステム(色・タイポ・余白・モーション) |
 | [docs/roadmap.md](docs/roadmap.md) | future 側の未完了タスク・残課題バックログ |
 | [docs/plans/](docs/plans/) | **進行中・未着手の実装計画のみ**を置く(完了したら現在仕様を architecture に反映し、計画書は削除) |
 
 ### ドキュメント運用ルール
 
 - `docs/architecture/` は「常に現在の実装を説明する」文書。**実装を変えたら同じ PR で更新する**
+- `docs/design.md` は LP / werewolf の見た目の正本。同じ範囲の UI を変えたら同じ PR で更新する
 - 実装計画は `docs/plans/<topic>.md`。日付をファイル名に入れない(時系列は git が持つ)
-- 作業完了時: 完了済みの計画書は削除する。現在仕様は `docs/architecture/`、未完了の残課題は `docs/roadmap.md` に反映する
+- 作業完了時: 完了済みの計画書は削除する。現在仕様は `docs/architecture/`(見た目は `docs/design.md`)、未完了の残課題は `docs/roadmap.md` に反映する
 
 ## 通信契約(フロント・バック間。変更時は両方の修正 + communication.md の更新が必要)
 
@@ -56,13 +58,16 @@ cd frontend && npm install && npm run dev  # localhost:3000
 
 ## デプロイ
 
-- main リポジトリ: 本番反映用。frontend は master への push で Vercel が自動デプロイ、backend は Heroku ダッシュボードの GitHub 連携でデプロイ
-- future リポジトリ: この作業ツリー。次期 UI・設計整理・モダナイズを進め、main へ昇格する前に検証する
+単一リポジトリ(`FukaseDaichi/SecondOneNight`)を `master` / `future` の2ブランチで運用する。
+
+- `master`: 本番反映用。frontend は `master` への push で Vercel が自動デプロイ、backend は Heroku ダッシュボードの GitHub 連携でデプロイ
+- `future`: 次期 UI・設計整理・モダナイズを進めるブランチ。作業ブランチはここから切り、`master` へマージする前に検証する
 
 詳細(monorepo buildpack、Root Directory 設定等)は [docs/architecture/deployment.md](docs/architecture/deployment.md)。
 
 ## 横断ルール
 
+- 指示が衝突したら **ユーザーの指示 > このリポジトリの `AGENTS.md` / `docs/` > スキル(`.agents/skills/`)** の順で優先する。スキルは外部由来の汎用ガイドで、本リポジトリのスタックに合わない箇所がある
 - 作業対象が `frontend/` または `backend/` の場合は、そのディレクトリの `AGENTS.md` も読む
 - **バックエンドの API / WebSocket 仕様の互換性を維持する**。契約を変える場合はフロント・バック両方を同時に修正する
 - 通信契約を変える場合は [docs/architecture/communication.md](docs/architecture/communication.md) と該当ゲームの [docs/architecture/games/](docs/architecture/games/) も更新する

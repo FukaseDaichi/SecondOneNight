@@ -1,14 +1,14 @@
 # デプロイ構成
 
-BoardGame は、`frontend/` と `backend/` を同じリポジトリで管理するモノレポ。アクティブなリポジトリは main / future の2本に整理し、この作業ツリーは future 側として扱う。旧 backend 専用リポジトリは運用対象から外し、履歴はこのモノレポの `git log backend/` で辿る。
+BoardGame は、`frontend/` と `backend/` を同じリポジトリで管理するモノレポ。単一リポジトリ(`FukaseDaichi/SecondOneNight`)を `master` / `future` の2ブランチで運用する。旧 backend 専用リポジトリは運用対象から外し、履歴はこのモノレポの `git log backend/` で辿る。
 
-## リポジトリ運用
+## ブランチ運用
 
-- main リポジトリ: 安定版・本番反映用。Vercel / Heroku の本番接続を持つ。
-- future リポジトリ: この作業ツリー。次期 UI、設計整理、モダナイズを進める。本番デプロイには直接接続しない。
-- future で進めた内容を main へ昇格する時は、通信契約、設計書、検証結果を確認してから取り込む。
+- `master`: 安定版・本番反映用。Vercel / Heroku の本番接続はこのブランチを向く。
+- `future`: 次期 UI、設計整理、モダナイズを進めるブランチ。作業ブランチはここから切る。本番へは直接デプロイされない。
+- `future` の内容を `master` へマージする時は、通信契約、設計書、検証結果を確認してから取り込む。
 
-以下の本番デプロイ設定は main 側で保持する前提。
+以下の本番デプロイ設定は `master` を対象とする。
 
 ## frontend — Vercel
 
