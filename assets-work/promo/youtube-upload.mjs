@@ -3,6 +3,7 @@
 //   node youtube-upload.mjs --auth                    # first time: browser consent, stores .youtube-token.json
 //   node youtube-upload.mjs --dry-run                 # validate meta and print the request body, no network
 //   node youtube-upload.mjs [--video out/x.mp4] [--meta youtube-meta.json] [--thumb path.jpg]
+//   node youtube-upload.mjs --video-id <id> --thumb path.jpg   # thumbnail only, for an already uploaded video
 import { createServer } from 'node:http';
 import { randomBytes } from 'node:crypto';
 import { readFile, writeFile, stat } from 'node:fs/promises';
@@ -108,10 +109,17 @@ const resource = buildVideoResource(meta);
 if (has('--dry-run')) { console.log(JSON.stringify(resource, null, 2)); process.exit(0); }
 if (has('--auth')) { await authorize(); process.exit(0); }
 
+const thumb = flag('--thumb', null);
+const existingId = flag('--video-id', null);
+if (existingId) {
+    if (!thumb) fail('--video-id には --thumb が必要です');
+    await setThumbnail(await accessToken(), existingId, join(root, thumb));
+    console.log(`[youtube] ${videoUrl(existingId)}`);
+    process.exit(0);
+}
 const video = join(root, flag('--video', 'out/werewolf-promo-9x16.mp4'));
 await stat(video).catch(() => fail(`動画ファイルがありません: ${video}`));
 const token = await accessToken();
 const result = await uploadVideo(token, video, resource);
 console.log(`[youtube] 完了: ${videoUrl(result.id)}  (status: ${result.status?.privacyStatus ?? meta.privacyStatus}; 未審査プロジェクトの場合は非公開ロックです。YouTube Studio から公開してください)`);
-const thumb = flag('--thumb', null);
 if (thumb) await setThumbnail(token, result.id, join(root, thumb));

@@ -93,3 +93,11 @@ node assets-work/promo/youtube-upload.mjs --video out/werewolf-promo-9x16.mp4 --
 ```
 
 完了すると動画 URL が表示される。YouTube Studio で内容を確認して公開する。
+
+サムネイル設定だけ後からやり直す(クォータ超過などで失敗したとき。クォータは太平洋時間 0 時にリセット):
+
+```bash
+node assets-work/promo/youtube-upload.mjs --video-id <動画ID> --thumb thumbnail/best.jpg
+```
+
+初回アップロード(2026-10-20): https://www.youtube.com/watch?v=5tD1p3bUlzs(非公開)。サムネイルは `thumbnail/best.jpg`(imagegen 案 2)。
