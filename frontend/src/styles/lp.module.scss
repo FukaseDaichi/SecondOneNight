@@ -1057,6 +1057,33 @@
         color: rgba(242, 251, 251, 0.4);
     }
 }
+.footerNote {
+    max-width: 1160px;
+    margin: clamp(24px, 4vh, 36px) auto 0;
+    padding-top: clamp(20px, 3vh, 28px);
+    border-top: 1px solid rgba(242, 251, 251, 0.14);
+    display: grid;
+    gap: 10px;
+
+    p {
+        margin: 0;
+        font-size: 12px;
+        line-height: 2;
+        letter-spacing: 0.08em;
+        color: rgba(242, 251, 251, 0.55);
+        text-wrap: pretty;
+    }
+    a {
+        color: $teal-soft;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        transition: color 0.3s;
+
+        &:hover {
+            color: #d9f3f2;
+        }
+    }
+}
 
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
