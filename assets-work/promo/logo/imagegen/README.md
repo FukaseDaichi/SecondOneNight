@@ -2,7 +2,7 @@
 
 ## 採用
 
-ユーザー選定(2026-10-20): 横組み **logo-h-2**、縦積み **logo-stack-3**。`best-h.png` / `best-stack.png` はこの 2 案のコピー。以下の「おすすめ」「選定」は Codex 生成時の推奨で、採用結果とは異なる。
+ユーザー選定(2026-10-20): 横組み **logo-h-2** → `best-h.png`、縦積み **logo-stack-3** → `best-stack.png`。不採用の 4 案、候補の元ファイル、プレビュー HTML、検証スクリプトは削除済みで、このディレクトリに残るのは採用 2 点・この記録・プロンプト全文(`prompts.json`)のみ。以下の表・「おすすめ」「選定」は Codex 生成時の記録で、ファイルはもう存在しない。
 
 生成日: 2026-10-20。組み込み imagegen を使用し、全7回に `transparent_background: true` を指定。PNGは生成出力をそのままコピーしたもの。SVG・canvas・Python描画・背景除去・文字合成は行っていない。Pythonは読み取り検証と文書生成のみ。参照: `frontend/public/images/ogp.jpg` を最初に view_image で閲覧し、`docs/design.md` を読んだ。参考画像そのものを生成ツールへ入力せず、配色・筆文字・和柄・月と狼を文章で指定。人物は全案に存在しない。
 

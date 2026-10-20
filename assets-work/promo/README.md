@@ -19,7 +19,8 @@ youtube-upload.mjs YouTube Data API で非公開アップロード+概要欄・�
 youtube-meta.json  YouTube のタイトル・概要欄・タグ・公開設定の正本
 timeline.mjs       WAV 実測長から各シーンの秒数と字幕秒を確定 → out/timeline.json
 mux.mjs            Motion の Export に ナレーションを合成 → out/werewolf-promo-9x16.mp4
-logo/imagegen/     ロゴ(Codex の imagegen 生成、背景透過 PNG、プロンプト記録)
+logo/imagegen/     採用ロゴ 2 点(best-h.png / best-stack.png、背景透過)+ 生成記録。不採用案は削除済み
+thumbnail/         YouTube サムネイル(best.jpg と元 PNG、生成記録)。不採用案は削除済み
 .env               GEMINI_API_KEY=...(Git 管理外。.env.example 参照)
 out/               生成物(Git 管理外)
 ```
