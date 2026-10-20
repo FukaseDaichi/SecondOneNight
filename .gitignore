@@ -3,3 +3,7 @@ Thumbs.db
 .playwright-mcp
 # SDD 作業用スクラッチ(計画ごとの台帳・ブリーフ・レビューパッケージ)
 .superpowers/
+
+# promo video (assets-work/promo)
+assets-work/promo/.env
+assets-work/promo/out/
