@@ -5,13 +5,13 @@
     {
       "id": "hook",
       "name": "フック",
-      "narration": "議論中に、人が死ぬ。",
-      "emphasis": "議論中に、人が死ぬ。",
+      "narration": "議論中に、暗殺される！？",
+      "emphasis": "議論中に暗殺される！？",
       "narrationOffset": 1.6,
       "tailPad": 0.4,
       "subtitles": [
         {
-          "text": "議論中に、人が死ぬ。",
+          "text": "議論中に暗殺される！？",
           "at": 0
         }
       ]
@@ -104,7 +104,7 @@
       "id": "vote",
       "name": "ゆびさす・種明かし",
       "narration": "最後は、一斉投票。最多票が処刑され、役職が一枚ずつ、明かされる。処刑されたら勝ちの、変わり者もいる。",
-      "emphasis": "処刑されたら、勝ち",
+      "emphasis": "人狼処刑で村勝ち",
       "narrationOffset": 0.4,
       "tailPad": 0.4,
       "subtitles": [
