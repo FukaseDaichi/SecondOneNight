@@ -64,3 +64,21 @@ test('estimateSubtitleTimes splits on 。 and apportions by length', () => {
     assert.equal(r[0].text, '最後は、一斉投票。');
     assert.ok(r[1].at > 2 && r[1].at < 4, `at=${r[1].at}`);
 });
+
+import { narrationHash, collectFontStrings } from '../lib/script.mjs';
+
+test('narrationHash changes with text, voice or style and is stable otherwise', () => {
+    const a = narrationHash({ narration: 'こんにちは。' }, 'Achernar', 'S');
+    assert.equal(a, narrationHash({ narration: 'こんにちは。' }, 'Achernar', 'S'));
+    assert.notEqual(a, narrationHash({ narration: 'こんばんは。' }, 'Achernar', 'S'));
+    assert.notEqual(a, narrationHash({ narration: 'こんにちは。' }, 'Despina', 'S'));
+    assert.notEqual(a, narrationHash({ narration: 'こんにちは。' }, 'Achernar', 'T'));
+    assert.match(a, /^[0-9a-f]{16}$/);
+});
+
+test('collectFontStrings gathers every on-screen string from the script plus extras', () => {
+    const s = minimalScript();
+    s.scenes[0].narration = '弾痕。'; s.scenes[0].emphasis = '強調'; s.scenes[0].subtitles = [{ text: '字幕A', at: 0 }]; s.scenes[0].name = '場面名';
+    const text = collectFontStrings(s, 'ルーム番号 ※');
+    for (const needle of ['弾痕。', '強調', '字幕A', '場面名', 'ルーム番号 ※']) assert.ok(text.includes(needle), needle);
+});

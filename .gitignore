@@ -7,3 +7,5 @@ Thumbs.db
 # promo video (assets-work/promo)
 assets-work/promo/.env
 assets-work/promo/out/
+assets-work/promo/.youtube-client.json
+assets-work/promo/.youtube-token.json

@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 
 export const SCENE_ORDER = ['hook', 'title', 'pick', 'secret', 'public', 'vote', 'cta'];
 const ID_RE = /^[a-z][a-z0-9-]{0,30}$/;
@@ -63,4 +64,19 @@ export function estimateSubtitleTimes(narration, durationSec) {
         elapsed += text.length;
         return { text, at };
     });
+}
+
+/** 16-hex digest of what determines a narration WAV: text, voice and style. */
+export function narrationHash(scene, voice, style) {
+    return createHash('sha1').update([scene.narration, voice ?? '', style ?? ''].join('\u0000')).digest('hex').slice(0, 16);
+}
+
+/** Every string the film shows from the script, plus extra UI strings, one per line (input for font subsetting). */
+export function collectFontStrings(script, extra = '') {
+    const lines = [];
+    for (const sc of script.scenes) {
+        lines.push(sc.name, sc.narration, sc.emphasis ?? '');
+        for (const sub of sc.subtitles ?? []) lines.push(sub.text);
+    }
+    return [...lines, extra].filter(Boolean).join('\n');
 }

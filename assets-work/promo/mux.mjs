@@ -6,21 +6,18 @@ import { spawnSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildMuxArgs, checkNarrationFits } from './lib/mux-filter.mjs';
+import { parseArgs } from './lib/cli.mjs';
 
 const root = dirname(fileURLToPath(import.meta.url));
-const args = process.argv.slice(2);
-const flag = (name, dflt) => {
-    const i = args.indexOf(name);
-    return i === -1 ? dflt : args[i + 1];
-};
-const video = flag('--video', join(root, 'out', 'motion-export.mp4'));
-const out = flag('--out', join(root, 'out', 'werewolf-promo-9x16.mp4'));
-const narrationDir = join(root, 'out');
-
 function fail(msg) {
     console.error(`[mux] ${msg}`);
     process.exit(1);
 }
+let opts;
+try { opts = parseArgs(process.argv.slice(2), { values: ['video', 'out'], booleans: [] }); } catch (err) { fail(err.message); }
+const video = opts.video ? join(process.cwd(), opts.video) : join(root, 'out', 'motion-export.mp4');
+const out = opts.out ? join(process.cwd(), opts.out) : join(root, 'out', 'werewolf-promo-9x16.mp4');
+const narrationDir = join(root, 'out');
 
 function probe(file, extra = []) {
     const r = spawnSync('ffprobe', ['-v', 'error', ...extra, '-of', 'csv=p=0', file], { encoding: 'utf8' });

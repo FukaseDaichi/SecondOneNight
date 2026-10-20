@@ -27,10 +27,10 @@ md='''# セカンドワンナイト人狼 — imagegen ロゴ
 | --- | --- |
 '''
 md+=''.join(f'| `{n}.png` | {d} |\n' for n,d in zip(names,desc))
-md+='''| `best-h.png` | `logo-h-1.png` のバイト同一コピー。 |
-| `best-stack.png` | `logo-stack-2.png` 最終版のバイト同一コピー。 |
+md+='''| `best-h.png` | `logo-h-2.png` のバイト同一コピー(ユーザー採用)。 |
+| `best-stack.png` | `logo-stack-3.png` のバイト同一コピー(ユーザー採用)。 |
 
-総合推奨は **logo-h-1**。横一列のタイトルを主役に、左のローズ満月が視線の入口になり、狼と青海波がまとまっている。文字と装飾が競合しにくく、OGPの色調と和の雰囲気を保っている。縦用途は **logo-stack-2**。三日月の内側の抜けがあり、月・狼から3段のタイトルへ視線が下がる。
+生成時の Codex 推奨は **logo-h-1**(採用は上記のとおり logo-h-2 / logo-stack-3)。横一列のタイトルを主役に、左のローズ満月が視線の入口になり、狼と青海波がまとまっている。文字と装飾が競合しにくく、OGPの色調と和の雰囲気を保っている。縦用途は **logo-stack-2**。三日月の内側の抜けがあり、月・狼から3段のタイトルへ視線が下がる。
 
 ## 文字確認
 
@@ -75,3 +75,14 @@ md+='''## 補助ファイル
 指定ディレクトリ外のリポジトリファイルは変更していない。git add / git commit は実行していない。
 '''
 (r/'README.md').write_text(md)
+
+# PRESERVE_ADOPTION: keep the user's adoption note (between the H1 and the first "## " after it) when regenerating README.md
+import re as _re, pathlib as _pl
+_p=_pl.Path(__file__).with_name('README.md')
+if _p.exists():
+    _old=_p.read_text(encoding='utf-8'); _m=_re.search(r'(## 採用\n\n.*?\n\n)', _old, _re.S)
+    if _m:
+        _new=_p.read_text(encoding='utf-8')
+        if '## 採用' not in _new:
+            _new=_re.sub(r'^(# [^\n]*\n\n)', lambda m: m.group(1)+_m.group(1), _new, count=1, flags=_re.M)
+            _p.write_text(_new, encoding='utf-8')
