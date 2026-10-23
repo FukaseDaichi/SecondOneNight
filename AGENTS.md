@@ -9,7 +9,7 @@
 | ディレクトリ | 内容 | 作業ルール |
 | --- | --- | --- |
 | `frontend/` | Next.js + TypeScript | [frontend/AGENTS.md](frontend/AGENTS.md) |
-| `backend/` | Spring Boot 2.4 / Java 11(Maven) | [backend/AGENTS.md](backend/AGENTS.md) |
+| `backend/` | Spring Boot 3.5 / Java 21(Maven) | [backend/AGENTS.md](backend/AGENTS.md) |
 | `docs/` | 設計書・計画書(下記ドキュメントマップ) | - |
 
 ゲーム識別子: `timebomb` / `werewolf` / `hideout` / `decrypt` / `fakeartist`
@@ -45,7 +45,7 @@
 ## ローカル開発
 
 ```bash
-# バックエンド(要 JDK 11)
+# バックエンド(要 JDK 21)
 cd backend && ./mvnw spring-boot:run      # localhost:8080
 
 # フロントエンド

@@ -1,6 +1,6 @@
 # バックエンド アーキテクチャ
 
-Spring Boot 2.4 / Java 11。ルーム作成 REST と SockJS/STOMP のメッセージハンドラを提供する。
+Spring Boot 3.5 / Java 21。ルーム作成 REST と SockJS/STOMP のメッセージハンドラを提供する。
 
 この文書は**現在の実装**を説明する。ゲーム固有の status・状態遷移は [games/](games/) を参照。
 

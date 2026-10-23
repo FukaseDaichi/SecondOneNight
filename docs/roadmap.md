@@ -55,7 +55,7 @@
 
 7. future から main へ昇格する時の検証を実施する
    - frontend: `npm test && npm run lint && npm run build`
-   - backend: Java 11 環境で `./mvnw test`
+   - backend: Java 21 環境で `./mvnw test`
    - 手動確認: 本番相当バックエンド接続で、公開 werewolf と `/secret` の各ゲームのルーム作成・入室・主要進行を確認する。
 
 8. 紹介動画(`assets-work/promo/`)の残課題

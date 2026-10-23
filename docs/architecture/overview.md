@@ -30,7 +30,7 @@ flowchart LR
 | ディレクトリ | 役割 |
 | --- | --- |
 | `frontend/` | Next.js 15 / React 19 / TypeScript。ゲームページ、feature reducer、STOMP 接続フック、UI コンポーネント |
-| `backend/` | Spring Boot 2.4 / Java 11。ルーム作成 REST、SockJS/STOMP controller、Room/User entity |
+| `backend/` | Spring Boot 3.5 / Java 21。ルーム作成 REST、SockJS/STOMP controller、Room/User entity |
 | `docs/` | 現在の設計、future 側の未完了タスク、必要に応じた進行中計画 |
 
 ## リポジトリ運用
