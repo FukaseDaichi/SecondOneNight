@@ -6,8 +6,8 @@ Spring Boot で作られたバックエンドです。ルーム作成、SockJS/S
 
 | 種別      | 内容                              |
 | --------- | --------------------------------- |
-| Framework | Spring Boot 2.4                   |
-| Language  | Java 11                           |
+| Framework | Spring Boot 3.5                   |
+| Language  | Java 21                           |
 | Build     | Maven Wrapper                     |
 | Realtime  | Spring WebSocket / STOMP / SockJS |
 | Deploy    | Heroku                            |
