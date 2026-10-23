@@ -1,6 +1,6 @@
 # backend — エージェント向け作業ガイド
 
-Spring Boot 2.4 / Java 11(Maven)のバックエンド。Heroku(app: `boardgameap`)で稼働。
+Spring Boot 3.5 / Java 21(Maven)のバックエンド。Heroku(app: `boardgameap`)で稼働。
 
 このファイルは `backend/CLAUDE.md` から参照される。`backend/` 配下を触る時だけ必要な規約を書く。モノレポ全体のルールは [../AGENTS.md](../AGENTS.md) を参照。
 
@@ -13,7 +13,7 @@ Spring Boot 2.4 / Java 11(Maven)のバックエンド。Heroku(app: `boardgameap
 | ゲーム別 status / state 対応 | [../docs/architecture/games/](../docs/architecture/games/) |
 | デプロイ | [../docs/architecture/deployment.md](../docs/architecture/deployment.md) |
 
-## コマンド(このディレクトリで実行。要 JDK 11)
+## コマンド(このディレクトリで実行。要 JDK 21)
 
 ```bash
 ./mvnw spring-boot:run              # 起動(localhost:8080)
@@ -21,7 +21,7 @@ Spring Boot 2.4 / Java 11(Maven)のバックエンド。Heroku(app: `boardgameap
 ./mvnw test                         # テスト
 ```
 
-Java バージョンは `system.properties`(`java.runtime.version=11`)で固定。
+Java バージョンは `system.properties`(`java.runtime.version=21`)で固定。
 
 ## 最重要の制約
 

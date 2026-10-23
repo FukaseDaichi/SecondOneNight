@@ -23,7 +23,8 @@ BoardGame は、`frontend/` と `backend/` を同じリポジトリで管理す�
 - buildpack 構成(モノレポ対応):
   1. [heroku-buildpack-monorepo](https://github.com/lstoll/heroku-buildpack-monorepo) + 環境変数 `APP_BASE=backend` — `backend/` の内容をビルドルートに繰り上げる
   2. Java buildpack — Spring Boot を自動検出してビルド(Procfile なし)
-- Java バージョンは `backend/system.properties`(`java.runtime.version=11`)で指定
+- Java バージョンは `backend/system.properties`(`java.runtime.version=21`)で指定
+  - Java 21 は heroku-22 以降のスタックで利用可能。heroku-20 以前のスタックなら先にスタックを上げる
 - ロールバックは `heroku rollback` または接続先リポジトリの変更で可能
 
 ## 注意事項

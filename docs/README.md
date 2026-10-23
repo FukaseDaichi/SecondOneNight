@@ -17,6 +17,7 @@
 | セカンドワンナイト人狼のデザインシステムを確認する | [design.md](design.md) |
 | future 側の未完了タスクを確認する | [roadmap.md](roadmap.md) |
 | 進行中の作業計画がある場合に確認する | [plans/](plans/) |
+| 紹介動画(9:16)の台本・再生成手順を確認する | [../assets-work/promo/README.md](../assets-work/promo/README.md) |
 
 ## ドキュメントの分け方
 
