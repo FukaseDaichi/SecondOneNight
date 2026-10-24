@@ -72,5 +72,5 @@ cd frontend && npm install && npm run dev  # localhost:3000
 - **バックエンドの API / WebSocket 仕様の互換性を維持する**。契約を変える場合はフロント・バック両方を同時に修正する
 - 通信契約を変える場合は [docs/architecture/communication.md](docs/architecture/communication.md) と該当ゲームの [docs/architecture/games/](docs/architecture/games/) も更新する
 - 意図的な挙動差分(バグ修正・UX 改善)は PR 説明に記録し、現在仕様として残す必要がある内容は設計書へ反映する
-- master には直接コミットしない(作業ブランチ → PR)。push / PR 作成はユーザーの指示があるまで行わない
+- master には直接コミットしない(作業ブランチ → PR)。push / PR 作成はユーザーの指示があるまで行わない(Claude Code では `.claude/settings.json` の `permissions.ask` で `git push` / `gh pr create` / `gh pr merge` を確認必須にしている)
 - コミットメッセージは日本語の短文

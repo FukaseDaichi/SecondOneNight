@@ -27,6 +27,7 @@ npm run build    # 本番ビルド
 ## 完了ゲート(タスク完了時に必ず通すこと)
 
 1. `npm test && npm run lint && npm run build` が全て成功(lint は **error 0**。warning は既存分のみ可、新規を増やさない)
+   - Claude Code では Stop hook(`.claude/hooks/frontend-gate.sh`)が `frontend/src` の未コミット変更に対して prettier --check / lint / test を自動実行し、失敗時は差し戻す。build は対象外なので手動で通す
 2. 挙動に触れる変更は本番 Heroku 接続で動作確認: `npm run dev` → ブラウザ2タブで「ルーム作成 → 入室 → ゲーム進行」を確認
 
 ## ディレクトリ規約
